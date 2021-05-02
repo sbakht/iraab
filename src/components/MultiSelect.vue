@@ -31,47 +31,86 @@
 import "../vue-multiselect.css";
 import Multiselect from "@suadelabs/vue3-multiselect";
 
+const Ism = { id: 1, name: "Ism" };
+const Fil = { id: 2, name: "Fil" };
+const Harf = { id: 3, name: "Harf" };
+const initialOptions = [Ism, Fil, Harf];
+
+function hasNoTopLevelOptions(values) {
+  const strs = initialOptions.map(({ name }) => name);
+  return !values.some(({ name }) => strs.includes(name));
+}
+
+function excluder(options, values) {
+  const excludes = values.map((val) => val.exclude || []).flat();
+  const groups = values.map((val) => val.excludeGroup || []).flat();
+  const filteredExcluded = options.filter((val) => !excludes.includes(val.id));
+  const filteredGroup = filteredExcluded.filter(
+    (val) => !groups.includes(val.groupId)
+  );
+  return filteredGroup;
+}
+
 export default {
   components: { Multiselect },
   data() {
     return {
       value: [],
-      options: [{ name: "Ism" }, { name: "Fil" }, { name: "Harf" }],
     };
+  },
+  computed: {
+    options() {
+      if (hasNoTopLevelOptions(this.value)) {
+        return initialOptions;
+      }
+
+      const contains = (val) => this.value.some(({ name }) => name === val);
+
+      if (contains("Ism")) {
+        return excluder(this.ismOptions(), this.value);
+      }
+
+      if (contains("Fil")) {
+        return this.filOptions();
+      }
+
+      if (contains("Harf")) {
+        return this.harfOptions();
+      }
+
+      throw new Error("invalid state");
+    },
   },
   methods: {
     onSelect(option) {
       this.value = [...this.value, option];
-
-      if (option.name === "Ism") {
-        this.options = this.ismOptions();
-        return;
-      }
-      if (option.name === "Fil") {
-        this.options = this.filOptions();
-        return;
-      }
-      if (option.name === "Harf") {
-        this.options = this.harfOptions();
-        return;
-      }
     },
     onRemove(option) {
       this.value = this.value.filter((val) => val.name !== option.name);
-
-      const strs = ["Ism", "Fil", "Harf"];
-      const missingType = !this.value.some(({ name }) => strs.includes(name));
-      if (missingType) {
-        this.options = [{ name: "Ism" }, { name: "Fil" }, { name: "Harf" }];
+      if (hasNoTopLevelOptions(this.value)) {
         this.value = [];
       }
     },
     ismOptions() {
+      const mafool = {
+        id: 1,
+        items: [
+          { id: 7, name: "Mafool bihi", exclude: [6] },
+          { id: 8, name: "Mafool fi", exclude: [6] },
+          { id: 9, name: "Mafool laho", exclude: [6] },
+          { id: 10, name: "Mafool mutlaq", exclude: [6] },
+          { id: 11, name: "Mafool hal", exclude: [6] },
+        ],
+      };
+      const getItems = (group) => {
+        const groupId = group.id;
+        return group.items.map((item) => ({ ...item, groupId }));
+      };
       return [
-        { name: "Mubtada" },
-        { name: "Kabr" },
-        { name: "Fial" },
-        { name: "Mafool bihi" },
+        { id: 4, name: "Mubtada", exclude: [5] },
+        { id: 5, name: "Kabr", exclude: [4] },
+        { id: 6, name: "Fial", exclude: [7], excludeGroup: [1] },
+        ...getItems(mafool),
       ];
     },
     filOptions() {
