@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label class="typo__label">Simple select / dropdown</label>
+    <label class="typo__label">Iraab selection:</label>
     <multiselect
       :modelValue="value"
       :options="options"
@@ -17,7 +17,7 @@
       @remove="onRemove"
     >
       <template v-slot:singleLabel>hi</template>
-      <template v-slot:selection="{ values, search, isOpen }"
+      <template v-slot:selection="{ values, isOpen }"
         ><span class="multiselect__single" v-if="values.length && isOpen"
           >{{ values.length }} options selected</span
         ></template
@@ -31,76 +31,56 @@
 import "../vue-multiselect.css";
 import Multiselect from "@suadelabs/vue3-multiselect";
 
-function filterList(arr, items) {
-  return arr.filter(item => !items.find(m => item.name === m.name))
-}
-
 export default {
   components: { Multiselect },
   data() {
     return {
       value: [],
-      reset: false,
-      options: [
-        { name: "Ism"},
-        { name: "Fil"},
-        { name: "Harf"},
-      ],
+      options: [{ name: "Ism" }, { name: "Fil" }, { name: "Harf" }],
     };
   },
   methods: {
-    onSelect(option, id) {
-      this.value = [...this.value, option]
-      if(option.name === 'Ism') {
+    onSelect(option) {
+      this.value = [...this.value, option];
+
+      if (option.name === "Ism") {
         this.options = this.ismOptions();
         return;
       }
-      if(option.name === 'Fil') {
+      if (option.name === "Fil") {
         this.options = this.filOptions();
         return;
       }
-      if(option.name === 'Harf') {
+      if (option.name === "Harf") {
         this.options = this.harfOptions();
         return;
       }
     },
-    onRemove(option, id) {
-      this.value = this.value.filter(val => val.name !== option.name)
+    onRemove(option) {
+      this.value = this.value.filter((val) => val.name !== option.name);
 
-      const strs = ['Ism', 'Fil', 'Harf'];
-      const missingType = !this.value.some(({name}) => strs.includes(name))
-      if(missingType) {
-        this.options = [
-          { name: "Ism"},
-          { name: "Fil"},
-          { name: "Harf"},
-        ]
+      const strs = ["Ism", "Fil", "Harf"];
+      const missingType = !this.value.some(({ name }) => strs.includes(name));
+      if (missingType) {
+        this.options = [{ name: "Ism" }, { name: "Fil" }, { name: "Harf" }];
         this.value = [];
       }
-
     },
     ismOptions() {
       return [
-        { name: 'Mubtada' },
-        { name: 'Kabr' },
-        { name: 'Fial' },
-        { name: 'Mafool bihi' },
-      ]
+        { name: "Mubtada" },
+        { name: "Kabr" },
+        { name: "Fial" },
+        { name: "Mafool bihi" },
+      ];
     },
     filOptions() {
-      return [
-        { name: 'Madhi' },
-        { name: 'Mudhari' },
-        { name: 'Amr' },
-      ]
+      return [{ name: "Madhi" }, { name: "Mudhari" }, { name: "Amr" }];
     },
     harfOptions() {
-      return [
-        { name: 'Jar' },
-        { name: 'Zaida' },
-      ]
+      return [{ name: "Jar" }, { name: "Zaida" }];
     },
-  }
+  },
 };
 </script>
 
