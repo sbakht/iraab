@@ -30,16 +30,34 @@
 <script>
 import "../vue-multiselect.css";
 import Multiselect from "@suadelabs/vue3-multiselect";
+import { data } from "../data/data.js";
 
-const Ism = { id: 1, name: "Ism" };
-const Fil = { id: 2, name: "Fil" };
-const Harf = { id: 3, name: "Harf" };
+const {
+  Ism,
+  Fil,
+  Harf,
+  mafool,
+  Mubtada,
+  Kabr,
+  Fial,
+  Madhi,
+  Mudhari,
+  Amr,
+  Jar,
+  Zaida,
+  fils,
+  jars,
+} = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
   const strs = initialOptions.map(({ name }) => name);
   return !values.some(({ name }) => strs.includes(name));
 }
+const getItems = (group) => {
+  const groupId = group.id;
+  return group.items.map((item) => ({ ...item, groupId }));
+};
 
 function excluder(options, values) {
   const valuesIds = values.map((val) => val.id);
@@ -97,32 +115,13 @@ export default {
       }
     },
     ismOptions() {
-      const mafool = {
-        id: 1,
-        items: [
-          { id: 7, name: "Mafool bihi", exclude: [6] },
-          { id: 8, name: "Mafool fi", exclude: [6] },
-          { id: 9, name: "Mafool laho", exclude: [6] },
-          { id: 10, name: "Mafool mutlaq", exclude: [6] },
-          { id: 11, name: "Mafool hal", exclude: [6] },
-        ],
-      };
-      const getItems = (group) => {
-        const groupId = group.id;
-        return group.items.map((item) => ({ ...item, groupId }));
-      };
-      return [
-        { id: 4, name: "Mubtada", exclude: [5] },
-        { id: 5, name: "Kabr", exclude: [4] },
-        { id: 6, name: "Fial", exclude: [], excludeGroup: [1] },
-        ...getItems(mafool),
-      ];
+      return [Mubtada, Kabr, Fial, ...getItems(mafool)];
     },
     filOptions() {
-      return [{ name: "Madhi" }, { name: "Mudhari" }, { name: "Amr" }];
+      return getItems(fils);
     },
     harfOptions() {
-      return [{ name: "Jar" }, { name: "Zaida" }];
+      return getItems(jars);
     },
   },
 };

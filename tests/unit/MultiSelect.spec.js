@@ -1,13 +1,8 @@
 import { mount, shallowMount } from '@vue/test-utils'
+import { data } from '../../src/data/data.js'
 import MultiSelect from '@/components/MultiSelect.vue'
 
-const Ism = { id: 1, name: 'Ism' }
-const Fil = { id: 2, name: 'Fil' }
-const Harf = { id: 3, name: 'Harf' }
-const Mubtada = { id: 4, name: "Mubtada", exclude: [5] };
-const Kabr = { id: 5, name: "Kabr", exclude: [4] };
-const Fial = { id: 6, name: "Fial", exclude: [], excludeGroup: [1] };
-const MafoolBihi = { id: 7, name: "Mafool bihi", exclude: [6], excludeGroup: [1] };
+const { Ism, Fil, Fial, Harf, Mubtada, Kabr, MafoolBihi } = data;
 
 function expectIntialOptions({ selections, wrapper }) {
   const tags = wrapper.find('.multiselect__tag')
