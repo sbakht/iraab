@@ -32,22 +32,7 @@ import "../vue-multiselect.css";
 import Multiselect from "@suadelabs/vue3-multiselect";
 import { data } from "../data/data.js";
 
-const {
-  Ism,
-  Fil,
-  Harf,
-  mafool,
-  Mubtada,
-  Kabr,
-  Fial,
-  Madhi,
-  Mudhari,
-  Amr,
-  Jar,
-  Zaida,
-  fils,
-  jars,
-} = data;
+const { Ism, Fil, Harf, mafool, Mubtada, Kabr, Fial, fils, jars } = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
