@@ -42,11 +42,16 @@ function hasNoTopLevelOptions(values) {
 }
 
 function excluder(options, values) {
+  const valuesIds = values.map((val) => val.id);
+  const isSelected = (id) => valuesIds.includes(id);
+
   const excludes = values.map((val) => val.exclude || []).flat();
   const groups = values.map((val) => val.excludeGroup || []).flat();
-  const filteredExcluded = options.filter((val) => !excludes.includes(val.id));
+  const filteredExcluded = options.filter(
+    (val) => !excludes.includes(val.id) || isSelected(val.id)
+  );
   const filteredGroup = filteredExcluded.filter(
-    (val) => !groups.includes(val.groupId)
+    (val) => !groups.includes(val.groupId) || isSelected(val.id)
   );
   return filteredGroup;
 }
@@ -109,7 +114,7 @@ export default {
       return [
         { id: 4, name: "Mubtada", exclude: [5] },
         { id: 5, name: "Kabr", exclude: [4] },
-        { id: 6, name: "Fial", exclude: [7], excludeGroup: [1] },
+        { id: 6, name: "Fial", exclude: [], excludeGroup: [1] },
         ...getItems(mafool),
       ];
     },

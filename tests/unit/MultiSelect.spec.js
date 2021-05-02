@@ -7,6 +7,7 @@ const Harf = { id: 3, name: 'Harf' }
 const Mubtada = { id: 4, name: "Mubtada", exclude: [5] };
 const Kabr = { id: 5, name: "Kabr", exclude: [4] };
 const Fial = { id: 6, name: "Fial", exclude: [], excludeGroup: [1] };
+const MafoolBihi = { id: 7, name: "Mafool bihi", exclude: [6], excludeGroup: [1] };
 
 function expectIntialOptions({ selections, wrapper }) {
   const tags = wrapper.find('.multiselect__tag')
@@ -176,6 +177,24 @@ test('Cannot select any mafool when selected fial', async () => {
 
   expect(selections.html()).toContain('Fial')
   expect(selections.html()).not.toContain('Mafool bihi')
+  expect(selections.html()).not.toContain('Mafool fi')
+  expect(selections.html()).not.toContain('Mafool laho')
+  expect(selections.html()).not.toContain('Mafool mutlaq')
+  expect(selections.html()).not.toContain('Mafool hal')
+})
+
+test('Cannot select any other mafool when selected a mafool', async () => {
+  const wrapper = mount(MultiSelect, {
+    data() {
+      return {
+        value: [Ism, MafoolBihi],
+      }
+    }
+  })
+
+  const selections = wrapper.find('.multiselect__content');
+
+  expect(selections.html()).toContain('Mafool bihi')
   expect(selections.html()).not.toContain('Mafool fi')
   expect(selections.html()).not.toContain('Mafool laho')
   expect(selections.html()).not.toContain('Mafool mutlaq')
