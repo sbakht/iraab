@@ -195,3 +195,14 @@ test('Cannot select any other mafool when selected a mafool', async () => {
   expect(selections.html()).not.toContain('Mafool mutlaq')
   expect(selections.html()).not.toContain('Mafool hal')
 })
+
+test('emits value when changed', async () => {
+  const wrapper = mount(MultiSelect)
+
+  await wrapper.vm.onSelect(Ism)
+  await wrapper.vm.onSelect(Mubtada)
+
+  expect(wrapper.emitted('value')).toHaveLength(2)
+  expect(wrapper.emitted('value')[0][0]).toEqual([Ism])
+  expect(wrapper.emitted('value')[1][0]).toEqual([Ism, Mubtada])
+})

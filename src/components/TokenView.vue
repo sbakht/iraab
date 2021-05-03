@@ -1,12 +1,27 @@
 <template>
-  <div class="flex flex-col" :class="{'text-green-800': answer}">
-    <div class="arabic text-6xl">{{token}}</div>
+  <div class="flex flex-col" :class="{ 'text-green-800': answer }">
+    <div class="arabic text-6xl">{{ token }}</div>
 
-    <div class="text-gray-500 text-sm font-semibold self-center">
-      <template v-if="answer && !properties.length">
-        <p v-if="properties.length === 0">?</p>
-      </template>
-      <p v-for="property in properties" :key="property">{{property}}</p>
+    <div
+      v-if="answer && !properties.length"
+      class="text-gray-500 text-sm font-semibold self-center"
+      data-test="question"
+    >
+      <p>?</p>
+    </div>
+
+    <div
+      v-if="properties.length"
+      class="text-gray-500 text-sm font-semibold self-center"
+      data-test="properties"
+    >
+      <p
+        v-for="property in orderedProperties"
+        :key="property"
+        data-test="property"
+      >
+        {{ property.name }}
+      </p>
     </div>
   </div>
 </template>
@@ -16,17 +31,30 @@ export default {
   props: {
     token: {
       type: String,
-      required: true
+      required: true,
     },
     properties: {
       type: Object,
-      default: []
+      default: [],
     },
     answer: {
       type: Boolean,
       default: false,
-    }
-  }
+    },
+  },
+  computed: {
+    orderedProperties() {
+      const copy = JSON.parse(JSON.stringify(this.properties));
+      return copy.sort((a, b) => {
+        if (a.id < b.id) {
+          return -1;
+        } else if (a.id > b.id) {
+          return 1;
+        }
+        return 0;
+      });
+    },
+  },
 };
 </script>
 

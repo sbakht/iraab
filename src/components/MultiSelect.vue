@@ -92,12 +92,17 @@ export default {
   methods: {
     onSelect(option) {
       this.value = [...this.value, option];
+      this.onValueChange();
     },
     onRemove(option) {
       this.value = this.value.filter((val) => val.name !== option.name);
       if (hasNoTopLevelOptions(this.value)) {
         this.value = [];
       }
+      this.onValueChange();
+    },
+    onValueChange() {
+      this.$emit("value", this.value);
     },
     ismOptions() {
       return [Mubtada, Kabr, Fial, ...getItems(mafool)];
