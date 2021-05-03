@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col" :class="{ 'text-green-800': answer }">
+  <div class="flex flex-col" :class="{ 'text-green-800': answer, selected }">
     <div class="arabic text-6xl">{{ token }}</div>
 
     <div
@@ -34,10 +34,16 @@ export default {
       required: true,
     },
     properties: {
-      type: Object,
-      default: [],
+      type: Array,
+      default() {
+        return [];
+      },
     },
     answer: {
+      type: Boolean,
+      default: false,
+    },
+    selected: {
       type: Boolean,
       default: false,
     },

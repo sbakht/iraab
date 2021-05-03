@@ -61,9 +61,22 @@ function excluder(options, values) {
 
 export default {
   components: { Multiselect },
+  props: {
+    result: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+  },
+  watch: {
+    result(newVal) {
+      this.value = JSON.parse(JSON.stringify(newVal));
+    },
+  },
   data() {
     return {
-      value: [],
+      value: JSON.parse(JSON.stringify(this.result)),
     };
   },
   computed: {

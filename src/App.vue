@@ -1,40 +1,32 @@
 <template>
   <div>
-    <div class="m-16">
-      <multi-select></multi-select>
-    </div>
-    <div class="flex justify-center">
-      <TokenView
-        :answer="true"
-        token="مُساِمونَ"
-        :properties="properties"
-      ></TokenView>
-    </div>
-    <div class="flex justify-center">
-      <TokenView token="مُساِمونَ" :properties="properties"></TokenView>
-    </div>
-    <div class="flex justify-center">
-      <TokenView :answer="true" token="مُساِمونَ"></TokenView>
-    </div>
-    <div class="flex justify-center">
-      <TokenView token="مُساِمونَ"></TokenView>
-    </div>
+    <PlayerView :tokens="tokens"></PlayerView>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import MultiSelect from "./components/MultiSelect.vue";
-import TokenView from "./components/TokenView.vue";
+import PlayerView from "./components/PlayerView.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    TokenView,
-    MultiSelect,
+    PlayerView,
   },
   data() {
     return {
+      tokens: [
+        {
+          id: 1,
+          name: "arabic",
+          answer: true,
+        },
+        {
+          id: 2,
+          name: "word",
+          answer: true,
+        },
+      ],
       properties: ["Mubatada", "Rafa", "Proper", "Masculine", "Plural"],
     };
   },

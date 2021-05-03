@@ -206,3 +206,13 @@ test('emits value when changed', async () => {
   expect(wrapper.emitted('value')[0][0]).toEqual([Ism])
   expect(wrapper.emitted('value')[1][0]).toEqual([Ism, Mubtada])
 })
+
+test('update selected when prop changes', async () => {
+  const wrapper = mount(MultiSelect)
+  await wrapper.setProps({ result: [Ism] })
+
+  const selections = wrapper.find('.multiselect__content');
+  wrapper.html() // ?
+
+  expect(selections.html()).toContain('Mubtada')
+})
