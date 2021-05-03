@@ -31,6 +31,7 @@
 import "../vue-multiselect.css";
 import Multiselect from "@suadelabs/vue3-multiselect";
 import { data } from "../data/data.js";
+import { mapGetters } from "vuex";
 
 const { Ism, Fil, Harf, mafool, Mubtada, Kabr, Fial, fils, jars } = data;
 const initialOptions = [Ism, Fil, Harf];
@@ -61,25 +62,8 @@ function excluder(options, values) {
 
 export default {
   components: { Multiselect },
-  props: {
-    result: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-  },
-  watch: {
-    result(newVal) {
-      this.value = JSON.parse(JSON.stringify(newVal));
-    },
-  },
-  data() {
-    return {
-      value: JSON.parse(JSON.stringify(this.result)),
-    };
-  },
   computed: {
+    ...mapGetters({ value: "currentAnswer" }),
     options() {
       if (hasNoTopLevelOptions(this.value)) {
         return initialOptions;
@@ -104,18 +88,14 @@ export default {
   },
   methods: {
     onSelect(option) {
-      this.value = [...this.value, option];
-      this.onValueChange();
+      this.$store.commit("addToAnswer", {
+        addition: option,
+      });
     },
     onRemove(option) {
-      this.value = this.value.filter((val) => val.name !== option.name);
-      if (hasNoTopLevelOptions(this.value)) {
-        this.value = [];
-      }
-      this.onValueChange();
-    },
-    onValueChange() {
-      this.$emit("value", this.value);
+      this.$store.commit("removeFromAnswer", {
+        removal: option,
+      });
     },
     ismOptions() {
       return [Mubtada, Kabr, Fial, ...getItems(mafool)];

@@ -1,34 +1,45 @@
 import { createStore } from 'vuex'
+import { data } from '../data/data';
 
-export default createStore({
-  strict: true,
+const { Ism, Fil, Harf, mafool, Mubtada, Kabr, Fial, fils, jars } = data;
+const initialOptions = [Ism, Fil, Harf];
+
+function hasNoTopLevelOptions(values) {
+  const strs = initialOptions.map(({ name }) => name);
+  return !values.some(({ name }) => strs.includes(name));
+}
+
+export const seed = (seedData = {}) => createStore({
   state: {
-    sentences: [
-      {
-        id: 1,
-        name: 'arabic',
-        answer: true,
-      },
-      {
-        id: 2,
-        name: 'word',
-        answer: true,
-      }
-    ],
+    answerIndex: 0,
+    sentences: [],
     userAnswers: [],
+    ...seedData.state,
   },
   mutations: {
-    setUserAnswers(state, data) {
-      state.userA = data;
+    addToAnswer(state, { addition }) {
+      const value = state.userAnswers[state.answerIndex] || [];
+      const newVal = [...value, addition];
+      state.userAnswers[state.answerIndex] = newVal
     },
-    setSentences(state, data) {
-      state.sentences = data;
+    removeFromAnswer(state, { removal }) {
+      const value = state.userAnswers[state.answerIndex];
+      const newVal = value.filter(({ name }) => name !== removal.name);
+      state.userAnswers[state.answerIndex] = newVal;
+
+      if (hasNoTopLevelOptions(newVal)) {
+        state.userAnswers[state.answerIndex] = [];
+      }
     },
-    // updateUserAnswer(state, data) {
-    // },
+    setAnswerIndex(state, i) {
+      state.answerIndex = i
+    }
   },
-  actions: {
-  },
-  modules: {
+  getters: {
+    currentAnswer(state) {
+      return state.userAnswers[state.answerIndex] || []
+    }
   }
 })
+
+export default seed();

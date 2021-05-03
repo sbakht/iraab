@@ -1,41 +1,39 @@
 import { mount } from '@vue/test-utils'
 import { data } from '../../src/data/data.js'
 import PlayerView from '@/components/PlayerView.vue'
-import { createStore } from 'vuex'
+import { seed } from '../../src/store/index'
 
 const { Ism, Mubtada, Fil } = data
 
-let store;
-beforeEach(() => {
-  store = createStore({
-    state: {
-      sentences: [
-        {
-          id: 1,
-          name: 'arabic',
-          answer: true,
-        },
-        {
-          id: 2,
-          name: 'word',
-          answer: true,
-        }
-      ]
-    },
-  })
-})
-
-test('sets properties for tokens', async () => {
+function mkWrapper(data = {}) {
   const wrapper = mount(PlayerView, {
     global: {
-      plugins: [store]
-    },
-    data() {
-      return {
-        userAnswers: [[Ism, Mubtada], [Fil]]
-      }
+      plugins: [seed(data.store)]
     }
   })
+  return wrapper;
+}
+
+test('sets properties for tokens', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences: [
+          {
+            id: 1,
+            name: 'arabic',
+            answer: true,
+          },
+          {
+            id: 2,
+            name: 'word',
+            answer: true,
+          }
+        ],
+        userAnswers: [[Ism, Mubtada], [Fil]],
+      }
+    }
+  });
 
   const first = wrapper.findAll('[data-token="1"] [data-test=property]')
   const second = wrapper.findAll('[data-token="2"] [data-test=property]')
@@ -46,11 +44,25 @@ test('sets properties for tokens', async () => {
 })
 
 test('defaults to first token being selected', async () => {
-  const wrapper = mount(PlayerView, {
-    global: {
-      plugins: [store]
-    },
-  })
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences: [
+          {
+            id: 1,
+            name: 'arabic',
+            answer: true,
+          },
+          {
+            id: 2,
+            name: 'word',
+            answer: true,
+          }
+        ],
+        userAnswers: [[Ism, Mubtada], [Fil]],
+      }
+    }
+  });
 
   const tokenViews = wrapper.findAllComponents({ name: 'TokenView' });
 
@@ -59,15 +71,28 @@ test('defaults to first token being selected', async () => {
 })
 
 test('switch active token to clicked token', async () => {
-  const wrapper = mount(PlayerView, {
-    global: {
-      plugins: [store]
-    },
-  })
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences: [
+          {
+            id: 1,
+            name: 'arabic',
+            answer: true,
+          },
+          {
+            id: 2,
+            name: 'word',
+            answer: true,
+          }
+        ],
+        userAnswers: [[Ism, Mubtada], [Fil]],
+      }
+    }
+  });
 
   const tokenViews = wrapper.findAllComponents({ name: 'TokenView' });
   await tokenViews[1].trigger('click')
-
 
   expect(tokenViews[0].classes()).not.toContain('selected');
   expect(tokenViews[1].classes()).toContain('selected');

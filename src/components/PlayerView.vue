@@ -8,38 +8,30 @@
       :properties="token.properties || userAnswers[i] || []"
       :selected="i === index"
       :data-token="token.id"
-      @click="index = i"
+      @click="onClick(i)"
     ></TokenView>
-    <MultiSelect :result="focusedAnswer" @value="onValue"></MultiSelect>
+    <MultiSelect></MultiSelect>
   </div>
 </template>
 
 <script>
 import MultiSelect from "./MultiSelect";
 import TokenView from "./TokenView";
-// import { mapState } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   components: { MultiSelect, TokenView },
-  data() {
-    return {
-      index: 0,
-      userAnswers: [],
-    };
-  },
   methods: {
-    onValue(value) {
-      this.userAnswers[this.index] = value;
+    onClick(i) {
+      this.$store.commit("setAnswerIndex", i);
     },
   },
   computed: {
-    tokens() {
-      return this.$store.state.sentences;
-    },
-    // ...mapState({ tokens: "sentences" }),
-    focusedAnswer() {
-      return this.userAnswers[this.index] || [];
-    },
+    ...mapState({
+      tokens: "sentences",
+      userAnswers: "userAnswers",
+      index: "answerIndex",
+    }),
   },
 };
 </script>

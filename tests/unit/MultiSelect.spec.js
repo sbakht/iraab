@@ -1,8 +1,10 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { data } from '../../src/data/data.js'
 import MultiSelect from '@/components/MultiSelect.vue'
+import { seed } from '../../src/store/index'
 
 const { Ism, Fil, Fial, Harf, Mubtada, Kabr, MafoolBihi } = data;
+
 
 function expectIntialOptions({ selections, wrapper }) {
   const tags = wrapper.find('.multiselect__tag')
@@ -14,8 +16,17 @@ function expectIntialOptions({ selections, wrapper }) {
   expect(wrapper.findAll('.multiselect__element')).toHaveLength(3)
 }
 
+function mkWrapper(data = {}) {
+  const wrapper = mount(MultiSelect, {
+    global: {
+      plugins: [seed(data.store)]
+    }
+  })
+  return wrapper;
+}
+
 test('has a label with text', () => {
-  const wrapper = mount(MultiSelect)
+  const wrapper = mkWrapper();
 
   const label = wrapper.get('label');
 
@@ -23,7 +34,7 @@ test('has a label with text', () => {
 })
 
 test('default selection to ism fil harf', () => {
-  const wrapper = mount(MultiSelect)
+  const wrapper = mkWrapper();
 
   const selections = wrapper.find('.multiselect__content');
 
@@ -31,7 +42,7 @@ test('default selection to ism fil harf', () => {
 })
 
 test('update selection when selecting ism', async () => {
-  const wrapper = mount(MultiSelect)
+  const wrapper = mkWrapper();
 
   await wrapper.vm.onSelect(Ism)
   const selections = wrapper.find('.multiselect__content');
@@ -44,7 +55,7 @@ test('update selection when selecting ism', async () => {
 })
 
 test('update selection when selecting fil', async () => {
-  const wrapper = mount(MultiSelect)
+  const wrapper = mkWrapper();
 
   await wrapper.vm.onSelect(Fil)
   const selections = wrapper.find('.multiselect__content');
@@ -56,7 +67,7 @@ test('update selection when selecting fil', async () => {
 })
 
 test('update selection when selecting harf', async () => {
-  const wrapper = mount(MultiSelect)
+  const wrapper = mkWrapper();
 
   await wrapper.vm.onSelect(Harf)
   const selections = wrapper.find('.multiselect__content');
@@ -67,10 +78,10 @@ test('update selection when selecting harf', async () => {
 })
 
 test('clear selection when deselect ism', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism, Mubtada],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism, Mubtada]]
       }
     }
   })
@@ -82,10 +93,10 @@ test('clear selection when deselect ism', async () => {
 })
 
 test('clear selection when deselect fil', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Fil],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Fil]]
       }
     }
   })
@@ -97,10 +108,10 @@ test('clear selection when deselect fil', async () => {
 })
 
 test('clear selection when deselect harf', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Harf],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Harf]]
       }
     }
   })
@@ -112,10 +123,10 @@ test('clear selection when deselect harf', async () => {
 })
 
 test('Ism properties remain selectable on select', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism]]
       }
     }
   })
@@ -130,10 +141,10 @@ test('Ism properties remain selectable on select', async () => {
 })
 
 test('Cannot select kabr when selected mubtada', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism, Mubtada],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism, Mubtada]]
       }
     }
   })
@@ -145,13 +156,14 @@ test('Cannot select kabr when selected mubtada', async () => {
 })
 
 test('Cannot select mubtada when selected kabr', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism, Kabr],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism, Kabr]]
       }
     }
   })
+
 
   const selections = wrapper.find('.multiselect__content');
 
@@ -160,13 +172,14 @@ test('Cannot select mubtada when selected kabr', async () => {
 })
 
 test('Cannot select any mafool when selected fial', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism, Fial],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism, Fial]]
       }
     }
   })
+
 
   const selections = wrapper.find('.multiselect__content');
 
@@ -179,13 +192,14 @@ test('Cannot select any mafool when selected fial', async () => {
 })
 
 test('Cannot select any other mafool when selected a mafool', async () => {
-  const wrapper = mount(MultiSelect, {
-    data() {
-      return {
-        value: [Ism, MafoolBihi],
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: [[Ism, MafoolBihi]]
       }
     }
   })
+
 
   const selections = wrapper.find('.multiselect__content');
 
@@ -194,25 +208,4 @@ test('Cannot select any other mafool when selected a mafool', async () => {
   expect(selections.html()).not.toContain('Mafool laho')
   expect(selections.html()).not.toContain('Mafool mutlaq')
   expect(selections.html()).not.toContain('Mafool hal')
-})
-
-test('emits value when changed', async () => {
-  const wrapper = mount(MultiSelect)
-
-  await wrapper.vm.onSelect(Ism)
-  await wrapper.vm.onSelect(Mubtada)
-
-  expect(wrapper.emitted('value')).toHaveLength(2)
-  expect(wrapper.emitted('value')[0][0]).toEqual([Ism])
-  expect(wrapper.emitted('value')[1][0]).toEqual([Ism, Mubtada])
-})
-
-test('update selected when prop changes', async () => {
-  const wrapper = mount(MultiSelect)
-  await wrapper.setProps({ result: [Ism] })
-
-  const selections = wrapper.find('.multiselect__content');
-  wrapper.html() // ?
-
-  expect(selections.html()).toContain('Mubtada')
 })

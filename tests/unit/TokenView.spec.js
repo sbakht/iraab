@@ -1,4 +1,4 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { data } from '../../src/data/data.js'
 import TokenView from '@/components/TokenView.vue'
 
