@@ -17,15 +17,10 @@
 <script>
 import MultiSelect from "./MultiSelect";
 import TokenView from "./TokenView";
+// import { mapState } from "vuex";
 
 export default {
   components: { MultiSelect, TokenView },
-  props: {
-    tokens: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
       index: 0,
@@ -38,6 +33,10 @@ export default {
     },
   },
   computed: {
+    tokens() {
+      return this.$store.state.sentences;
+    },
+    // ...mapState({ tokens: "sentences" }),
     focusedAnswer() {
       return this.userAnswers[this.index] || [];
     },

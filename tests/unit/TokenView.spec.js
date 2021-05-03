@@ -68,3 +68,24 @@ test('should order properties by id', () => {
   expect(properties[0].text()).toBe('Ism');
   expect(properties[1].text()).toBe('Mubtada');
 })
+
+test('should not have selected class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+    }
+  })
+
+  expect(wrapper.classes()).not.toContain('selected');
+})
+
+test('should have selected class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+      selected: true,
+    }
+  })
+
+  expect(wrapper.classes()).toContain('selected');
+})
