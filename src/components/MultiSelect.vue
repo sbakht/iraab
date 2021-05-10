@@ -23,7 +23,7 @@
         ></template
       >
     </multiselect>
-    <pre class="language-json"><code>{{ value  }}</code></pre>
+    <!-- <pre class="language-json"><code>{{ value  }}</code></pre> -->
   </div>
 </template>
 

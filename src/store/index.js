@@ -89,7 +89,7 @@ export default seed({
     activeSentenceId: '123',
     sentences: {
       byId: {
-        123: { words: ['1', '2', '3', '4'] }
+        123: { words: ['1', '2', '3', '4', '5'] }
       },
       allIds: ['123'],
     },
@@ -97,38 +97,45 @@ export default seed({
       byId: {
         1: {
           id: '1',
-          name: 'arabic',
+          name: 'زيدٌ',
           answers: { '123': { answerable: true, key: '5' } },
           sentences: ['123'],
         },
         2: {
           id: '2',
-          name: 'word',
+          name: 'هو',
           answers: { '123': { answerable: true, key: '6' } },
           sentences: ['123'],
         },
         3: {
           id: '3',
-          name: 'word',
+          name: 'جالسٌ',
           answers: { '123': { answerable: true, key: '7' } },
           sentences: ['123'],
         },
         4: {
           id: '4',
-          name: 'word',
+          name: 'فِ',
           answers: { '123': { answerable: false } },
           sentences: ['123'],
         },
+        5: {
+          id: '5',
+          name: 'الْمسجدِ',
+          answers: { '123': { answerable: true, key: '8' } },
+          sentences: ['123'],
+        },
       },
-      allIds: ['1', '2', '3', '4']
+      allIds: ['1', '2', '3', '4', '5']
     },
     answers: {
       byId: {
         5: [Ism, Mubtada],
         6: [Fil],
         7: [],
+        8: [],
       },
-      allIds: ['5', '6', '7'],
+      allIds: ['5', '6', '7', '8'],
     }
   }
 });

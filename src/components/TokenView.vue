@@ -1,10 +1,17 @@
 <template>
-  <div class="flex flex-col" :class="{ 'text-green-800': answer, selected }">
+  <div
+    class="flex flex-col items-center component p-5"
+    :class="{
+      'text-green-300': !answer,
+      'bg-indigo-50 rounded-lg': selected,
+      'cursor-pointer hover:text-indigo-500': answer,
+    }"
+  >
     <div class="arabic text-6xl">{{ token }}</div>
 
     <div
       v-if="answer && !properties.length"
-      class="text-gray-500 text-sm font-semibold self-center"
+      class="text-gray-500 text-sm font-semibold self-center mt-2"
       data-test="question"
     >
       <p>?</p>
@@ -12,7 +19,7 @@
 
     <div
       v-if="properties.length"
-      class="text-gray-500 text-sm font-semibold self-center"
+      class="text-gray-500 text-sm font-semibold self-center mt-2"
       data-test="properties"
     >
       <p
@@ -65,4 +72,11 @@ export default {
 </script>
 
 <style>
+.component {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 </style>

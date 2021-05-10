@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <TokenView
-      v-for="token in sentence.words"
-      :key="token.id"
-      :token="token.name"
-      :answer="token.answerable"
-      :properties="token.properties || token.answer"
-      :selected="token.id === activeWordId"
-      :data-token="token.id"
-      @click="focusWord(token)"
-    ></TokenView>
+  <div class="max-w-screen-lg m-auto">
+    <div class="flex flex-row-reverse">
+      <div class="px-3" v-for="token in sentence.words" :key="token.id">
+        <TokenView
+          :token="token.name"
+          :answer="token.answerable"
+          :properties="token.properties || token.answer"
+          :selected="token.id === activeWordId"
+          :data-token="token.id"
+          @click.stop="focusWord(token)"
+        ></TokenView>
+      </div>
+    </div>
     <MultiSelect></MultiSelect>
   </div>
 </template>
