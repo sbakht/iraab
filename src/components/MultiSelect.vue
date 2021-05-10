@@ -33,7 +33,7 @@ import Multiselect from "@suadelabs/vue3-multiselect";
 import { data } from "../data/data.js";
 import { mapGetters } from "vuex";
 
-const { Ism, Fil, Harf, mafool, Mubtada, Kabr, Fial, fils, jars } = data;
+const { Ism, Fil, Harf, IsmOptions, fils, jars } = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
@@ -98,7 +98,7 @@ export default {
       });
     },
     ismOptions() {
-      return [Mubtada, Kabr, Fial, ...getItems(mafool)];
+      return IsmOptions;
     },
     filOptions() {
       return getItems(fils);

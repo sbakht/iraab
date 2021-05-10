@@ -5,6 +5,7 @@ const Harf = { id: 3, name: 'Harf' }
 const Mubtada = { id: 4, name: "Mubtada", exclude: [5] };
 const Kabr = { id: 5, name: "Kabr", exclude: [4] };
 const Fial = { id: 6, name: "Fial", exclude: [], excludeGroup: [1] };
+const Majroor = { id: 20, name: "Majroor", exclude: [4, 5, 6], excludeGroup: [1] };
 
 const Madhi = { id: 12, name: "Madhi", exclude: [], excludeGroup: [] };
 const Mudhari = { id: 13, name: "Mudhari", exclude: [], excludeGroup: [] };
@@ -28,15 +29,33 @@ const jars = {
 
 const mafool = {
   id: 1,
+  exclude: [6],
+  excludeGroup: [1],
   items: [
-    { id: 7, name: "Mafool bihi", exclude: [6], excludeGroup: [1] },
-    { id: 8, name: "Mafool fi", exclude: [6], excludeGroup: [1] },
-    { id: 9, name: "Mafool laho", exclude: [6], excludeGroup: [1] },
-    { id: 10, name: "Mafool mutlaq", exclude: [6], excludeGroup: [1] },
-    { id: 11, name: "Mafool hal", exclude: [6], excludeGroup: [1] },
+    { id: 7, name: "Mafool bihi", exclude: [], excludeGroup: [] },
+    { id: 8, name: "Mafool fi", exclude: [], excludeGroup: [] },
+    { id: 9, name: "Mafool laho", exclude: [], excludeGroup: [] },
+    { id: 10, name: "Mafool mutlaq", exclude: [], excludeGroup: [] },
+    { id: 11, name: "Mafool hal", exclude: [], excludeGroup: [] },
   ],
 };
 
+const getItems = (group) => {
+  const groupId = group.id;
+  return group.items.map((item) => ({
+    ...item, groupId,
+    exclude: group.exclude.concat(item.exclude || []),
+    excludeGroup: group.excludeGroup.concat(item.excludeGroup || []),
+  }));
+};
+
+const IsmGroup = {
+  id: 2,
+  items: [Mubtada, Kabr, Fial, Majroor, ...getItems(mafool)],
+}
+
+const IsmOptions = IsmGroup.items
+
 export const data = {
-  Ism, Fil, Harf, Mubtada, Kabr, Fial, mafool, fils, MafoolBihi: mafool.items[0], Madhi, Mudhari, Amr, Jar, Zaida, jars
+  Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi: mafool.items[0], Madhi, Mudhari, Amr, Jar, Zaida, jars
 }
