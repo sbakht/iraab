@@ -1,14 +1,14 @@
 <template>
   <div>
     <TokenView
-      v-for="(token, i) in findSentence(123)"
+      v-for="(token, i) in findSentence(123).words"
       :key="token.id"
       :token="token.name"
       :answer="token.answer"
       :properties="token.properties || token.userAnswer"
-      :selected="i === index"
+      :selected="token.id === activeWordId"
       :data-token="token.id"
-      @click="onClick(i)"
+      @click="focusWord(token)"
     ></TokenView>
     <MultiSelect></MultiSelect>
   </div>
@@ -22,14 +22,14 @@ import { mapState, mapGetters } from "vuex";
 export default {
   components: { MultiSelect, TokenView },
   methods: {
-    onClick(i) {
-      this.$store.commit("setAnswerIndex", i);
+    focusWord(word) {
+      this.$store.commit("setFocusedWord", word);
     },
   },
   computed: {
     ...mapState({
       userAnswers: "userAnswers",
-      index: "answerIndex",
+      activeWordId: "activeWordId",
     }),
     ...mapGetters({
       findSentence: "findSentence",

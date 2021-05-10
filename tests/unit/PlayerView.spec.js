@@ -15,22 +15,26 @@ function mkWrapper(data = {}) {
 }
 const sentences = {
   byId: {
-    123: [
-      {
-        id: 1,
-        name: 'arabic',
-        answer: true,
-        userAnswer: '5'
-      },
-      {
-        id: 2,
-        name: 'word',
-        answer: true,
-        userAnswer: '6'
-      }
-    ]
+    123: { words: ['1', '2'] }
   },
   allIds: ['123'],
+}
+const words = {
+  byId: {
+    1: {
+      id: '1',
+      name: 'arabic',
+      answer: true,
+      userAnswer: '5'
+    },
+    2: {
+      id: '2',
+      name: 'word',
+      answer: true,
+      userAnswer: '6'
+    },
+  },
+  allIds: ['1', '2']
 }
 const userAnswers = {
   byId: {
@@ -40,11 +44,26 @@ const userAnswers = {
   allIds: ['5', '6'],
 };
 
+test('renders words', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences,
+        words,
+        userAnswers,
+      }
+    }
+  });
+
+  expect(wrapper.findAll('.arabic').length).toBe(2);
+})
+
 test('sets properties for tokens', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
         sentences,
+        words,
         userAnswers,
       }
     }
@@ -52,6 +71,8 @@ test('sets properties for tokens', async () => {
 
   const first = wrapper.findAll('[data-token="1"] [data-test=property]')
   const second = wrapper.findAll('[data-token="2"] [data-test=property]')
+
+  expect(wrapper.findAll('.arabic').length).toBe(2);
 
   expect(first[0].text()).toBe('Ism');
   expect(first[1].text()).toBe('Mubtada');
@@ -62,7 +83,9 @@ test('defaults to first token being selected', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeWordId: '1',
         sentences,
+        words,
         userAnswers,
       }
     }
@@ -79,6 +102,7 @@ test('switch active token to clicked token', async () => {
     store: {
       state: {
         sentences,
+        words,
         userAnswers,
       }
     }

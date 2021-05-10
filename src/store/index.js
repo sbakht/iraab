@@ -12,10 +12,14 @@ function hasNoTopLevelOptions(values) {
 export const seed = (seedData = {}) => createStore({
   strict: true,
   state: {
-    answerIndex: 0,
     activeQuestionId: '456',
+    activeWordId: null,
     activeAnswerId: '456',
     sentences: {
+      byId: {},
+      allIds: [],
+    },
+    words: {
       byId: {},
       allIds: [],
     },
@@ -44,8 +48,9 @@ export const seed = (seedData = {}) => createStore({
       }
       state.userAnswers.byId[state.activeQuestionId] = newAnswer;
     },
-    setAnswerIndex(state, i) {
-      state.answerIndex = i
+    setFocusedWord(state, word) {
+      state.activeAnswerId = word.userAnswer
+      state.activeWordId = word.id;
     }
   },
   getters: {
@@ -55,11 +60,17 @@ export const seed = (seedData = {}) => createStore({
     findAnswer: state => id => {
       return state.userAnswers.byId[id] || [];
     },
+    findWord: state => id => {
+      return state.words.byId[id] || [];
+    },
     findSentence: (state, getters) => id => {
       const sentence = state.sentences.byId[id] || [];
-      return sentence.map(word => {
-        return { ...word, userAnswer: getters.findAnswer(word.userAnswer) }
-      })
+      const words = sentence.words.map(wordId => {
+        const word = getters.findWord(wordId);
+        const userAnswer = getters.findAnswer(word.userAnswer);
+        return { ...word, userAnswer };
+      });
+      return { ...sentence, words };
     },
     list(state) {
       return state.sentences.allIds.map(id => state.sentences.byId[id]);
