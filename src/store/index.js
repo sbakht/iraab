@@ -14,7 +14,7 @@ export const seed = (seedData = {}) => createStore({
   state: {
     activeSentenceId: null,
     activeWordId: null,
-    activeAnswerId: '456',
+    activeAnswerId: null,
     sentences: {
       byId: {},
       allIds: [],

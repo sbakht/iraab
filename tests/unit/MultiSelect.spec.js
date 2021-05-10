@@ -88,6 +88,7 @@ test('clear selection when deselect ism', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism, Mubtada]
@@ -107,6 +108,7 @@ test('clear selection when deselect fil', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Fil]
@@ -126,6 +128,7 @@ test('clear selection when deselect harf', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Harf]
@@ -145,6 +148,7 @@ test('Ism properties are selectable', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism]
@@ -166,6 +170,7 @@ test('Ism properties remain selectable on select', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism]
@@ -188,6 +193,7 @@ test('Cannot select kabr when selected mubtada', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism, Mubtada]
@@ -207,6 +213,7 @@ test('Cannot select mubtada when selected kabr', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism, Kabr]
@@ -227,6 +234,7 @@ test('Cannot select any mafool when selected fial', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism, Fial]
@@ -251,6 +259,7 @@ test('Cannot select any other mafool when selected a mafool', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeAnswerId: '456',
         userAnswers: mkAnswers(
           {
             456: [Ism, MafoolBihi]
