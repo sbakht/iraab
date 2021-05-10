@@ -1,11 +1,11 @@
 <template>
   <div>
     <TokenView
-      v-for="(token, i) in tokens"
+      v-for="(token, i) in findSentence(123)"
       :key="token.id"
       :token="token.name"
       :answer="token.answer"
-      :properties="token.properties || userAnswers[i] || []"
+      :properties="token.properties || findAnswer(456)[i] || []"
       :selected="i === index"
       :data-token="token.id"
       @click="onClick(i)"
@@ -17,7 +17,7 @@
 <script>
 import MultiSelect from "./MultiSelect";
 import TokenView from "./TokenView";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   components: { MultiSelect, TokenView },
@@ -28,9 +28,12 @@ export default {
   },
   computed: {
     ...mapState({
-      tokens: "sentences",
       userAnswers: "userAnswers",
       index: "answerIndex",
+    }),
+    ...mapGetters({
+      findSentence: "findSentence",
+      findAnswer: "findAnswer",
     }),
   },
 };

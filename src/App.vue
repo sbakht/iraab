@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PlayerView :tokens="tokens"></PlayerView>
+    <PlayerView></PlayerView>
   </div>
 </template>
 
@@ -12,23 +12,6 @@ export default defineComponent({
   name: "App",
   components: {
     PlayerView,
-  },
-  data() {
-    return {
-      tokens: [
-        {
-          id: 1,
-          name: "arabic",
-          answer: true,
-        },
-        {
-          id: 2,
-          name: "word",
-          answer: true,
-        },
-      ],
-      properties: ["Mubatada", "Rafa", "Proper", "Masculine", "Plural"],
-    };
   },
 });
 </script>

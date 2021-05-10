@@ -12,34 +12,68 @@ function hasNoTopLevelOptions(values) {
 export const seed = (seedData = {}) => createStore({
   state: {
     answerIndex: 0,
-    sentences: [],
-    userAnswers: [],
+    activeQuestionId: '456',
+    sentences: {
+      byId: {},
+      allIds: [],
+    },
+    userAnswers: {
+      byId: {},
+      allIds: [],
+    },
     ...seedData.state,
   },
   mutations: {
     addToAnswer(state, { addition }) {
-      const value = state.userAnswers[state.answerIndex] || [];
-      const newVal = [...value, addition];
-      state.userAnswers[state.answerIndex] = newVal
+      const oldAnswer = (state.userAnswers.byId[state.activeQuestionId] || [])[state.answerIndex] || [];
+      const newAnswer = [...oldAnswer, addition];
+      if (!state.userAnswers.byId[state.activeQuestionId]) {
+        state.userAnswers.byId[state.activeQuestionId] = []
+      }
+      state.userAnswers.byId[state.activeQuestionId][state.answerIndex] = newAnswer;
     },
     removeFromAnswer(state, { removal }) {
-      const value = state.userAnswers[state.answerIndex];
-      const newVal = value.filter(({ name }) => name !== removal.name);
-      state.userAnswers[state.answerIndex] = newVal;
+      const oldAnswer = state.userAnswers.byId[state.activeQuestionId] || [];
+      let newAnswer = oldAnswer.filter(({ name }) => name !== removal.name);
 
-      if (hasNoTopLevelOptions(newVal)) {
-        state.userAnswers[state.answerIndex] = [];
+      if (hasNoTopLevelOptions(newAnswer)) {
+        newAnswer = []
       }
+      state.userAnswers.byId[state.activeQuestionId] = newAnswer;
     },
     setAnswerIndex(state, i) {
       state.answerIndex = i
     }
   },
   getters: {
-    currentAnswer(state) {
-      return state.userAnswers[state.answerIndex] || []
+    currentAnswer(state, getters) {
+      return getters.findAnswer(state.activeQuestionId)[state.answerIndex] || []
+    },
+    findAnswer: state => id => {
+      return state.userAnswers.byId[id] || [];
+    },
+    findSentence: state => id => {
+      return state.sentences.byId[id] || {};
+    },
+    list(state) {
+      return state.sentences.allIds.map(id => state.sentences.byId[id]);
     }
   }
 })
 
-export default seed();
+export default seed({
+  state: {
+    sentences: [[
+      {
+        id: 1,
+        name: "arabic",
+        oldAnswer: true,
+      },
+      {
+        id: 2,
+        name: "word",
+        oldAnswer: true,
+      },
+    ]]
+  }
+});

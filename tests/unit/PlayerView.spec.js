@@ -13,24 +13,36 @@ function mkWrapper(data = {}) {
   })
   return wrapper;
 }
+const sentences = {
+  byId: {
+    123: [
+      {
+        id: 1,
+        name: 'arabic',
+        answer: true,
+      },
+      {
+        id: 2,
+        name: 'word',
+        answer: true,
+      }
+    ]
+  },
+  allIds: ['123'],
+}
+const userAnswers = {
+  byId: {
+    456: [[Ism, Mubtada], [Fil]]
+  },
+  allIds: ['456'],
+};
 
 test('sets properties for tokens', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        sentences: [
-          {
-            id: 1,
-            name: 'arabic',
-            answer: true,
-          },
-          {
-            id: 2,
-            name: 'word',
-            answer: true,
-          }
-        ],
-        userAnswers: [[Ism, Mubtada], [Fil]],
+        sentences,
+        userAnswers,
       }
     }
   });
@@ -47,19 +59,8 @@ test('defaults to first token being selected', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        sentences: [
-          {
-            id: 1,
-            name: 'arabic',
-            answer: true,
-          },
-          {
-            id: 2,
-            name: 'word',
-            answer: true,
-          }
-        ],
-        userAnswers: [[Ism, Mubtada], [Fil]],
+        sentences,
+        userAnswers,
       }
     }
   });
@@ -74,19 +75,8 @@ test('switch active token to clicked token', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        sentences: [
-          {
-            id: 1,
-            name: 'arabic',
-            answer: true,
-          },
-          {
-            id: 2,
-            name: 'word',
-            answer: true,
-          }
-        ],
-        userAnswers: [[Ism, Mubtada], [Fil]],
+        sentences,
+        userAnswers,
       }
     }
   });
