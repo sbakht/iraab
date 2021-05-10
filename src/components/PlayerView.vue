@@ -5,7 +5,7 @@
       :key="token.id"
       :token="token.name"
       :answer="token.answer"
-      :properties="token.properties || findAnswer(456)[i] || []"
+      :properties="token.properties || token.userAnswer"
       :selected="i === index"
       :data-token="token.id"
       @click="onClick(i)"
@@ -33,7 +33,6 @@ export default {
     }),
     ...mapGetters({
       findSentence: "findSentence",
-      findAnswer: "findAnswer",
     }),
   },
 };

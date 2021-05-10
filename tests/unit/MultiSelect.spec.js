@@ -90,7 +90,7 @@ test('clear selection when deselect ism', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism, Mubtada]]
+            456: [Ism, Mubtada]
           }
         )
       }
@@ -109,7 +109,7 @@ test('clear selection when deselect fil', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Fil]]
+            456: [Fil]
           }
         )
       }
@@ -128,7 +128,7 @@ test('clear selection when deselect harf', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Harf]]
+            456: [Harf]
           }
         )
       }
@@ -141,13 +141,34 @@ test('clear selection when deselect harf', async () => {
   expectIntialOptions({ selections, wrapper });
 })
 
+test('Ism properties are selectable', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        userAnswers: mkAnswers(
+          {
+            456: [Ism]
+          }
+        )
+      }
+    }
+  })
+
+  const selections = wrapper.find('.multiselect__content');
+
+  expect(selections.html()).toContain('Mubtada')
+  expect(selections.html()).toContain('Fial')
+  expect(selections.html()).toContain('Mafool bihi')
+  expect(wrapper.findAll('.multiselect__element').length).toBeGreaterThanOrEqual(3)
+})
+
 test('Ism properties remain selectable on select', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism]]
+            456: [Ism]
           }
         )
       }
@@ -169,7 +190,7 @@ test('Cannot select kabr when selected mubtada', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism, Mubtada]]
+            456: [Ism, Mubtada]
           }
         )
       }
@@ -188,7 +209,7 @@ test('Cannot select mubtada when selected kabr', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism, Kabr]]
+            456: [Ism, Kabr]
           }
         )
       }
@@ -208,7 +229,7 @@ test('Cannot select any mafool when selected fial', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism, Fial]]
+            456: [Ism, Fial]
           }
         )
       }
@@ -232,7 +253,7 @@ test('Cannot select any other mafool when selected a mafool', async () => {
       state: {
         userAnswers: mkAnswers(
           {
-            456: [[Ism, MafoolBihi]]
+            456: [Ism, MafoolBihi]
           }
         )
       }

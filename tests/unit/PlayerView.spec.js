@@ -20,11 +20,13 @@ const sentences = {
         id: 1,
         name: 'arabic',
         answer: true,
+        userAnswer: '5'
       },
       {
         id: 2,
         name: 'word',
         answer: true,
+        userAnswer: '6'
       }
     ]
   },
@@ -32,9 +34,10 @@ const sentences = {
 }
 const userAnswers = {
   byId: {
-    456: [[Ism, Mubtada], [Fil]]
+    5: [Ism, Mubtada],
+    6: [Fil],
   },
-  allIds: ['456'],
+  allIds: ['5', '6'],
 };
 
 test('sets properties for tokens', async () => {

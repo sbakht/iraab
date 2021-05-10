@@ -10,9 +10,11 @@ function hasNoTopLevelOptions(values) {
 }
 
 export const seed = (seedData = {}) => createStore({
+  strict: true,
   state: {
     answerIndex: 0,
     activeQuestionId: '456',
+    activeAnswerId: '456',
     sentences: {
       byId: {},
       allIds: [],
@@ -25,12 +27,13 @@ export const seed = (seedData = {}) => createStore({
   },
   mutations: {
     addToAnswer(state, { addition }) {
-      const oldAnswer = (state.userAnswers.byId[state.activeQuestionId] || [])[state.answerIndex] || [];
-      const newAnswer = [...oldAnswer, addition];
+      const oldAnswer = state.userAnswers.byId[state.activeAnswerId] || [];
+      let newAnswer = [...oldAnswer, addition];
+
       if (!state.userAnswers.byId[state.activeQuestionId]) {
-        state.userAnswers.byId[state.activeQuestionId] = []
+        state.userAnswers.byId[state.activeAnswerId] = []
       }
-      state.userAnswers.byId[state.activeQuestionId][state.answerIndex] = newAnswer;
+      state.userAnswers.byId[state.activeAnswerId] = newAnswer;
     },
     removeFromAnswer(state, { removal }) {
       const oldAnswer = state.userAnswers.byId[state.activeQuestionId] || [];
@@ -47,13 +50,16 @@ export const seed = (seedData = {}) => createStore({
   },
   getters: {
     currentAnswer(state, getters) {
-      return getters.findAnswer(state.activeQuestionId)[state.answerIndex] || []
+      return getters.findAnswer(state.activeAnswerId) || [];
     },
     findAnswer: state => id => {
       return state.userAnswers.byId[id] || [];
     },
-    findSentence: state => id => {
-      return state.sentences.byId[id] || {};
+    findSentence: (state, getters) => id => {
+      const sentence = state.sentences.byId[id] || [];
+      return sentence.map(word => {
+        return { ...word, userAnswer: getters.findAnswer(word.userAnswer) }
+      })
     },
     list(state) {
       return state.sentences.allIds.map(id => state.sentences.byId[id]);
