@@ -48,7 +48,7 @@ const words = {
   },
   allIds: ['1', '2', '3', '4']
 }
-const userAnswers = {
+const answers = {
   byId: {
     5: [Ism, Mubtada],
     6: [Fil],
@@ -65,7 +65,7 @@ beforeEach(() => {
         activeWordId: '1',
         sentences,
         words,
-        userAnswers,
+        answers,
       }
     }
   });
@@ -119,7 +119,7 @@ test('switch active token to clicked token when no token is selected', async () 
         activeSentenceId: '123',
         sentences,
         words,
-        userAnswers,
+        answers,
       }
     }
   });

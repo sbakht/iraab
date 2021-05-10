@@ -5,7 +5,7 @@
       :key="token.id"
       :token="token.name"
       :answer="token.answerable"
-      :properties="token.properties || token.userAnswer"
+      :properties="token.properties || token.answer"
       :selected="token.id === activeWordId"
       :data-token="token.id"
       @click="focusWord(token)"

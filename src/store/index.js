@@ -23,7 +23,7 @@ export const seed = (seedData = {}) => createStore({
       byId: {},
       allIds: [],
     },
-    userAnswers: {
+    answers: {
       byId: {},
       allIds: [],
     },
@@ -31,25 +31,25 @@ export const seed = (seedData = {}) => createStore({
   },
   mutations: {
     addToAnswer(state, { addition }) {
-      const oldAnswer = state.userAnswers.byId[state.activeAnswerId] || [];
+      const oldAnswer = state.answers.byId[state.activeAnswerId] || [];
       let newAnswer = [...oldAnswer, addition];
 
-      if (!state.userAnswers.byId[state.activeAnswerId]) {
-        state.userAnswers.byId[state.activeAnswerId] = []
+      if (!state.answers.byId[state.activeAnswerId]) {
+        state.answers.byId[state.activeAnswerId] = []
       }
-      state.userAnswers.byId[state.activeAnswerId] = newAnswer;
+      state.answers.byId[state.activeAnswerId] = newAnswer;
     },
     removeFromAnswer(state, { removal }) {
-      const oldAnswer = state.userAnswers.byId[state.activeAnswerId] || [];
+      const oldAnswer = state.answers.byId[state.activeAnswerId] || [];
       let newAnswer = oldAnswer.filter(({ name }) => name !== removal.name);
 
       if (hasNoTopLevelOptions(newAnswer)) {
         newAnswer = []
       }
-      state.userAnswers.byId[state.activeAnswerId] = newAnswer;
+      state.answers.byId[state.activeAnswerId] = newAnswer;
     },
     setFocusedWord(state, word) {
-      state.activeAnswerId = word.userAnswer
+      state.activeAnswerId = word.answer
       state.activeWordId = word.id;
     }
   },
@@ -61,7 +61,7 @@ export const seed = (seedData = {}) => createStore({
       return getters.findSentence(state.activeSentenceId) || {};
     },
     findAnswer: state => id => {
-      return state.userAnswers.byId[id] || [];
+      return state.answers.byId[id] || [];
     },
     findWord: state => id => {
       return state.words.byId[id] || [];
@@ -71,8 +71,8 @@ export const seed = (seedData = {}) => createStore({
       const words = sentence.words.map(wordId => {
         const word = getters.findWord(wordId);
         const answerable = word.answers[id].answerable;
-        const userAnswer = getters.findAnswer(word.answers[id].key) || [];
-        return { ...word, userAnswer, answerable };
+        const answer = getters.findAnswer(word.answers[id].key) || [];
+        return { ...word, answer, answerable };
       });
       return { ...sentence, words };
     },
@@ -84,6 +84,7 @@ export const seed = (seedData = {}) => createStore({
 
 export default seed({
   state: {
+    activeSentenceId: '123',
     sentences: {
       byId: {
         123: { words: ['1', '2', '3', '4'] }
@@ -119,7 +120,7 @@ export default seed({
       },
       allIds: ['1', '2', '3', '4']
     },
-    userAnswer: {
+    answers: {
       byId: {
         5: [Ism, Mubtada],
         6: [Fil],

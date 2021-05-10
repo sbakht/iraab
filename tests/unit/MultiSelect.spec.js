@@ -89,7 +89,7 @@ test('clear selection when deselect ism', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism, Mubtada]
           }
@@ -109,7 +109,7 @@ test('clear selection when deselect fil', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Fil]
           }
@@ -129,7 +129,7 @@ test('clear selection when deselect harf', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Harf]
           }
@@ -149,7 +149,7 @@ test('Ism properties are selectable', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism]
           }
@@ -171,7 +171,7 @@ test('Ism properties remain selectable on select', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism]
           }
@@ -194,7 +194,7 @@ test('Cannot select kabr when selected mubtada', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism, Mubtada]
           }
@@ -214,7 +214,7 @@ test('Cannot select mubtada when selected kabr', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism, Kabr]
           }
@@ -235,7 +235,7 @@ test('Cannot select any mafool when selected fial', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism, Fial]
           }
@@ -260,7 +260,7 @@ test('Cannot select any other mafool when selected a mafool', async () => {
     store: {
       state: {
         activeAnswerId: '456',
-        userAnswers: mkAnswers(
+        answers: mkAnswers(
           {
             456: [Ism, MafoolBihi]
           }
