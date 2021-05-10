@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { data } from '../data/data';
 
-const { Ism, Fil, Harf, mafool, Mubtada, Kabr, Fial, fils, jars } = data;
+const { Ism, Fil, Harf, Mubtada } = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
