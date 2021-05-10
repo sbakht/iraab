@@ -12,7 +12,7 @@ function hasNoTopLevelOptions(values) {
 export const seed = (seedData = {}) => createStore({
   strict: true,
   state: {
-    activeQuestionId: '456',
+    activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: '456',
     sentences: {
@@ -34,19 +34,19 @@ export const seed = (seedData = {}) => createStore({
       const oldAnswer = state.userAnswers.byId[state.activeAnswerId] || [];
       let newAnswer = [...oldAnswer, addition];
 
-      if (!state.userAnswers.byId[state.activeQuestionId]) {
+      if (!state.userAnswers.byId[state.activeAnswerId]) {
         state.userAnswers.byId[state.activeAnswerId] = []
       }
       state.userAnswers.byId[state.activeAnswerId] = newAnswer;
     },
     removeFromAnswer(state, { removal }) {
-      const oldAnswer = state.userAnswers.byId[state.activeQuestionId] || [];
+      const oldAnswer = state.userAnswers.byId[state.activeAnswerId] || [];
       let newAnswer = oldAnswer.filter(({ name }) => name !== removal.name);
 
       if (hasNoTopLevelOptions(newAnswer)) {
         newAnswer = []
       }
-      state.userAnswers.byId[state.activeQuestionId] = newAnswer;
+      state.userAnswers.byId[state.activeAnswerId] = newAnswer;
     },
     setFocusedWord(state, word) {
       state.activeAnswerId = word.userAnswer
@@ -56,6 +56,9 @@ export const seed = (seedData = {}) => createStore({
   getters: {
     currentAnswer(state, getters) {
       return getters.findAnswer(state.activeAnswerId) || [];
+    },
+    currentSentence(state, getters) {
+      return getters.findSentence(state.activeSentenceId) || {};
     },
     findAnswer: state => id => {
       return state.userAnswers.byId[id] || [];

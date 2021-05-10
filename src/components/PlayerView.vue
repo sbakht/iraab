@@ -1,7 +1,7 @@
 <template>
   <div>
     <TokenView
-      v-for="(token, i) in findSentence(123).words"
+      v-for="token in sentence.words"
       :key="token.id"
       :token="token.name"
       :answer="token.answerable"
@@ -32,7 +32,7 @@ export default {
       activeWordId: "activeWordId",
     }),
     ...mapGetters({
-      findSentence: "findSentence",
+      sentence: "currentSentence",
     }),
   },
 };

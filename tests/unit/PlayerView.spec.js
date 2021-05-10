@@ -56,46 +56,31 @@ const userAnswers = {
   allIds: ['5', '6'],
 };
 
-test('renders words', async () => {
-  const wrapper = mkWrapper({
+let wrapper
+beforeEach(() => {
+  wrapper = mkWrapper({
     store: {
       state: {
+        activeSentenceId: '123',
+        activeWordId: '1',
         sentences,
         words,
         userAnswers,
       }
     }
   });
+})
 
+test('renders words', async () => {
   expect(wrapper.findAll('.arabic').length).toBe(4);
 })
 
 test('renders question mark for word that needs answer', async () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        sentences,
-        words,
-        userAnswers,
-      }
-    }
-  });
-
   const third = wrapper.find('[data-token="3"]')
   expect(third.html()).toContain('?');
 })
 
 test('does not render question mark for word that doesnt need answer', async () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        sentences,
-        words,
-        userAnswers,
-      }
-    }
-  });
-
   const fourth = wrapper.findAll('[data-token="4"]')
   const property = wrapper.findAll('[data-token="4"] [data-test=properties]')
 
@@ -104,16 +89,6 @@ test('does not render question mark for word that doesnt need answer', async () 
 })
 
 test('sets properties for tokens', async () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        sentences,
-        words,
-        userAnswers,
-      }
-    }
-  });
-
   const first = wrapper.findAll('[data-token="1"] [data-test=property]')
   const second = wrapper.findAll('[data-token="2"] [data-test=property]')
 
@@ -123,17 +98,6 @@ test('sets properties for tokens', async () => {
 })
 
 test('defaults to first token being selected', async () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        activeWordId: '1',
-        sentences,
-        words,
-        userAnswers,
-      }
-    }
-  });
-
   const tokenViews = wrapper.findAllComponents({ name: 'TokenView' });
 
   expect(tokenViews[0].classes()).toContain('selected');
@@ -141,9 +105,18 @@ test('defaults to first token being selected', async () => {
 })
 
 test('switch active token to clicked token', async () => {
+  const tokenViews = wrapper.findAllComponents({ name: 'TokenView' });
+  await tokenViews[1].trigger('click')
+
+  expect(tokenViews[0].classes()).not.toContain('selected');
+  expect(tokenViews[1].classes()).toContain('selected');
+})
+
+test('switch active token to clicked token when no token is selected', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
+        activeSentenceId: '123',
         sentences,
         words,
         userAnswers,
