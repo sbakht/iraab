@@ -4,7 +4,7 @@
       v-for="(token, i) in findSentence(123).words"
       :key="token.id"
       :token="token.name"
-      :answer="token.answer"
+      :answer="token.answerable"
       :properties="token.properties || token.userAnswer"
       :selected="token.id === activeWordId"
       :data-token="token.id"

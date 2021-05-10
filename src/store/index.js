@@ -67,8 +67,9 @@ export const seed = (seedData = {}) => createStore({
       const sentence = state.sentences.byId[id] || [];
       const words = sentence.words.map(wordId => {
         const word = getters.findWord(wordId);
-        const userAnswer = getters.findAnswer(word.userAnswer);
-        return { ...word, userAnswer };
+        const answerable = word.answers[id].answerable;
+        const userAnswer = getters.findAnswer(word.answers[id].key) || [];
+        return { ...word, userAnswer, answerable };
       });
       return { ...sentence, words };
     },

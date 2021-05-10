@@ -15,7 +15,7 @@ function mkWrapper(data = {}) {
 }
 const sentences = {
   byId: {
-    123: { words: ['1', '2'] }
+    123: { words: ['1', '2', '3', '4'] }
   },
   allIds: ['123'],
 }
@@ -24,17 +24,29 @@ const words = {
     1: {
       id: '1',
       name: 'arabic',
-      answer: true,
-      userAnswer: '5'
+      answers: { '123': { answerable: true, key: '5' } },
+      sentences: ['123'],
     },
     2: {
       id: '2',
       name: 'word',
-      answer: true,
-      userAnswer: '6'
+      answers: { '123': { answerable: true, key: '6' } },
+      sentences: ['123'],
+    },
+    3: {
+      id: '3',
+      name: 'word',
+      answers: { '123': { answerable: true } },
+      sentences: ['123'],
+    },
+    4: {
+      id: '4',
+      name: 'word',
+      answers: { '123': { answerable: false } },
+      sentences: ['123'],
     },
   },
-  allIds: ['1', '2']
+  allIds: ['1', '2', '3', '4']
 }
 const userAnswers = {
   byId: {
@@ -55,7 +67,40 @@ test('renders words', async () => {
     }
   });
 
-  expect(wrapper.findAll('.arabic').length).toBe(2);
+  expect(wrapper.findAll('.arabic').length).toBe(4);
+})
+
+test('renders question mark for word that needs answer', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences,
+        words,
+        userAnswers,
+      }
+    }
+  });
+
+  const third = wrapper.find('[data-token="3"]')
+  expect(third.html()).toContain('?');
+})
+
+test('does not render question mark for word that doesnt need answer', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        sentences,
+        words,
+        userAnswers,
+      }
+    }
+  });
+
+  const fourth = wrapper.findAll('[data-token="4"]')
+  const property = wrapper.findAll('[data-token="4"] [data-test=properties]')
+
+  expect(fourth[0].html()).not.toContain('?');
+  expect(property.length).toBe(0);
 })
 
 test('sets properties for tokens', async () => {
@@ -71,8 +116,6 @@ test('sets properties for tokens', async () => {
 
   const first = wrapper.findAll('[data-token="1"] [data-test=property]')
   const second = wrapper.findAll('[data-token="2"] [data-test=property]')
-
-  expect(wrapper.findAll('.arabic').length).toBe(2);
 
   expect(first[0].text()).toBe('Ism');
   expect(first[1].text()).toBe('Mubtada');
