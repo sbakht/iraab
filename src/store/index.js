@@ -49,8 +49,10 @@ export const seed = (seedData = {}) => createStore({
       state.answers.byId[state.activeAnswerId] = newAnswer;
     },
     setFocusedWord(state, word) {
-      state.activeAnswerId = word.answer
-      state.activeWordId = word.id;
+      if (word.answers[state.activeSentenceId].answerable) {
+        state.activeAnswerId = word.answers[state.activeSentenceId].key
+        state.activeWordId = word.id;
+      }
     }
   },
   getters: {
@@ -108,7 +110,7 @@ export default seed({
         3: {
           id: '3',
           name: 'word',
-          answers: { '123': { answerable: true } },
+          answers: { '123': { answerable: true, key: '7' } },
           sentences: ['123'],
         },
         4: {
@@ -124,8 +126,9 @@ export default seed({
       byId: {
         5: [Ism, Mubtada],
         6: [Fil],
+        7: [],
       },
-      allIds: ['5', '6'],
+      allIds: ['5', '6', '7'],
     }
   }
 });
