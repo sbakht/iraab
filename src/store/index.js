@@ -84,17 +84,47 @@ export const seed = (seedData = {}) => createStore({
 
 export default seed({
   state: {
-    sentences: [[
-      {
-        id: 1,
-        name: "arabic",
-        oldAnswer: true,
+    sentences: {
+      byId: {
+        123: { words: ['1', '2', '3', '4'] }
       },
-      {
-        id: 2,
-        name: "word",
-        oldAnswer: true,
+      allIds: ['123'],
+    },
+    words: {
+      byId: {
+        1: {
+          id: '1',
+          name: 'arabic',
+          answers: { '123': { answerable: true, key: '5' } },
+          sentences: ['123'],
+        },
+        2: {
+          id: '2',
+          name: 'word',
+          answers: { '123': { answerable: true, key: '6' } },
+          sentences: ['123'],
+        },
+        3: {
+          id: '3',
+          name: 'word',
+          answers: { '123': { answerable: true } },
+          sentences: ['123'],
+        },
+        4: {
+          id: '4',
+          name: 'word',
+          answers: { '123': { answerable: false } },
+          sentences: ['123'],
+        },
       },
-    ]]
+      allIds: ['1', '2', '3', '4']
+    },
+    userAnswer: {
+      byId: {
+        5: [Ism, Mubtada],
+        6: [Fil],
+      },
+      allIds: ['5', '6'],
+    }
   }
 });
