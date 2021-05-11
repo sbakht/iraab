@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-screen-lg m-auto">
-    <div class="flex flex-row-reverse">
+    <div class="flex flex-row-reverse flex-wrap">
       <div class="px-3" v-for="token in sentence.words" :key="token.id">
         <TokenView
           :token="token.name"

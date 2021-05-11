@@ -53,7 +53,12 @@ export const seed = (seedData = {}) => createStore({
         state.activeAnswerId = word.answers[state.activeSentenceId].key
         state.activeWordId = word.id;
       }
-    }
+    },
+    setFocusedSentence(state, id) {
+      state.activeSentenceId = id;
+      state.activeWordId = null;
+      state.activeAnswerId = null;
+    },
   },
   getters: {
     currentAnswer(state, getters) {
