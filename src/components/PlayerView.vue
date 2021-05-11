@@ -12,7 +12,7 @@
         ></TokenView>
       </div>
     </div>
-    <MultiSelect></MultiSelect>
+    <MultiSelect :disabled="!activeWordId"></MultiSelect>
   </div>
 </template>
 

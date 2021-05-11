@@ -23,11 +23,12 @@ function mkAnswers(byId) {
   }
 }
 
-function mkWrapper(data = {}) {
+function mkWrapper(data = {}, rest) {
   const wrapper = mount(MultiSelect, {
     global: {
       plugins: [seed(data.store)]
-    }
+    },
+    ...rest,
   })
   return wrapper;
 }
@@ -277,4 +278,24 @@ test('Cannot select any other mafool when selected a mafool', async () => {
   expect(selections.html()).not.toContain('Mafool laho')
   expect(selections.html()).not.toContain('Mafool mutlaq')
   expect(selections.html()).not.toContain('Mafool hal')
+})
+
+test('should render enabled by default', () => {
+  const wrapper = mkWrapper();
+
+  const div = wrapper.get('.multiselect');
+
+  expect(div.classes()).not.toContain('multiselect--disabled')
+})
+
+test('should render disabled', () => {
+  const wrapper = mkWrapper({}, {
+    props: {
+      disabled: true
+    }
+  });
+
+  const div = wrapper.get('.multiselect');
+
+  expect(div.classes()).toContain('multiselect--disabled')
 })

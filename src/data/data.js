@@ -54,8 +54,10 @@ const IsmGroup = {
   items: [Mubtada, Kabr, Fial, Majroor, ...getItems(mafool)],
 }
 
+const MafoolBihi = getItems(mafool)[0]
+
 const IsmOptions = IsmGroup.items
 
 export const data = {
-  Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi: mafool.items[0], Madhi, Mudhari, Amr, Jar, Zaida, jars
+  Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi, Madhi, Mudhari, Amr, Jar, Zaida, jars
 }

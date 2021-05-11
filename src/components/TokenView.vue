@@ -3,7 +3,7 @@
     class="flex flex-col items-center component p-5"
     :class="{
       'text-green-300': !answer,
-      'bg-indigo-50 rounded-lg': selected,
+      'bg-indigo-50 rounded-lg selected': selected,
       'cursor-pointer hover:text-indigo-500': answer,
     }"
   >

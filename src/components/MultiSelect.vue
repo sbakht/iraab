@@ -2,6 +2,7 @@
   <div>
     <label class="typo__label">Iraab selection:</label>
     <multiselect
+      :disabled="disabled"
       :modelValue="value"
       :options="options"
       :multiple="true"
@@ -9,19 +10,13 @@
       :close-on-select="false"
       :clear-on-select="false"
       :preserve-search="true"
-      placeholder="Pick some"
+      placeholder="Select iraab"
       label="name"
       track-by="name"
       :preselect-first="false"
       @select="onSelect"
       @remove="onRemove"
     >
-      <template v-slot:singleLabel>hi</template>
-      <template v-slot:selection="{ values, isOpen }"
-        ><span class="multiselect__single" v-if="values.length && isOpen"
-          >{{ values.length }} options selected</span
-        ></template
-      >
     </multiselect>
     <!-- <pre class="language-json"><code>{{ value  }}</code></pre> -->
   </div>
@@ -62,6 +57,12 @@ function excluder(options, values) {
 
 export default {
   components: { Multiselect },
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapGetters({ value: "currentAnswer" }),
     options() {
