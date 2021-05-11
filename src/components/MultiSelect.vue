@@ -11,6 +11,7 @@
       :clear-on-select="false"
       :preserve-search="true"
       placeholder="Select iraab"
+      open-direction="bottom"
       label="name"
       track-by="name"
       :preselect-first="false"

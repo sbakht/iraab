@@ -5,6 +5,7 @@
         <TokenView
           :token="token.name"
           :answer="token.answerable"
+          :correctness="token.correctness"
           :properties="
             (token.hideAnswer && []) ||
             (!token.answerable && token.answerKey) ||

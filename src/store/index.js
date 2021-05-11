@@ -9,6 +9,23 @@ function hasNoTopLevelOptions(values) {
   return !values.some(({ name }) => strs.includes(name));
 }
 
+function getCorrectness(answer, key) {
+  if (!answer) {
+    return '';
+  }
+
+  if (answer.length === key.length) {
+    const equals = !answer.filter(val => {
+      return !key.includes(val);
+    }).length;
+    if (equals) {
+      return 'correct'
+    }
+    return 'incorrect'
+  }
+  return '';
+}
+
 export const seed = (seedData = {}) => createStore({
   strict: true,
   state: {
@@ -89,6 +106,11 @@ export const seed = (seedData = {}) => createStore({
         const answerKey = getters.findAnswerKey(word.answers[id].answerKey);
         const hideAnswer = !!word.answers[id].hideAnswer;
 
+
+        if (answer && !answerable) {
+          console.log(word);
+          throw new Error('Nonanswerble word should not have answer')
+        }
         if (!answer && answerable) {
           console.log(word);
           throw new Error('Word is answerable but has no key')
@@ -98,7 +120,9 @@ export const seed = (seedData = {}) => createStore({
           throw new Error('Missing answer key')
         }
 
-        return { ...word, answer, answerable, answerKey, hideAnswer };
+        const correctness = getCorrectness(answer, answerKey);
+
+        return { ...word, answer, answerable, answerKey, hideAnswer, correctness };
       });
       return { ...sentence, words };
     },
@@ -122,7 +146,7 @@ export default seed({
         1: {
           id: '1',
           name: 'زيدٌ',
-          answers: { '123': { answerable: false, key: '1', answerKey: '1' } },
+          answers: { '123': { answerable: false, answerKey: '1' } },
           sentences: ['123'],
         },
         2: {

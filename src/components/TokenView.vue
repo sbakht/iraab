@@ -5,8 +5,21 @@
       'text-green-300': !answer,
       'bg-indigo-50 rounded-lg selected': selected,
       'cursor-pointer hover:text-indigo-500': answer,
+      'text-red-500 incorrect': correctness === 'incorrect',
+      'text-green-500 correct': correctness === 'correct',
     }"
   >
+    <CheckMark
+      v-if="correctness === 'correct'"
+      width="20"
+      height="20"
+    ></CheckMark>
+    <CrossMark
+      v-if="correctness === 'incorrect'"
+      width="20"
+      height="20"
+    ></CrossMark>
+    <div v-if="correctness === ''" style="width: 20px; height: 20px"></div>
     <div class="arabic text-6xl">{{ token }}</div>
 
     <div
@@ -34,7 +47,10 @@
 </template>
 
 <script>
+import CheckMark from "./icons/CheckMark";
+import CrossMark from "./icons/CrossMark";
 export default {
+  components: { CheckMark, CrossMark },
   props: {
     token: {
       type: String,
@@ -53,6 +69,14 @@ export default {
     selected: {
       type: Boolean,
       default: false,
+    },
+    correctness: {
+      type: String,
+      validate(val) {
+        const possible = ["", "correct", "incorrect"];
+        return possible.includes(val);
+      },
+      default: "",
     },
   },
   computed: {

@@ -89,3 +89,48 @@ test('should have selected class', () => {
 
   expect(wrapper.classes()).toContain('selected');
 })
+
+test('should have not have any correctness class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+    }
+  })
+
+  expect(wrapper.classes()).not.toContain('correct');
+  expect(wrapper.classes()).not.toContain('incorrect');
+})
+
+test('should have not have any correctness class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+      correctness: '',
+    }
+  })
+
+  expect(wrapper.classes()).not.toContain('correct');
+  expect(wrapper.classes()).not.toContain('incorrect');
+})
+
+test('should have correct class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+      correctness: 'correct',
+    }
+  })
+
+  expect(wrapper.classes()).toContain('correct');
+})
+
+test('should have incorrect class', () => {
+  const wrapper = mount(TokenView, {
+    props: {
+      token: 'arabic',
+      correctness: 'incorrect',
+    }
+  })
+
+  expect(wrapper.classes()).toContain('incorrect');
+})
