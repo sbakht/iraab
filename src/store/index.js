@@ -59,7 +59,7 @@ export const seed = (seedData = {}) => createStore({
     activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: null,
-    check: Check.SUBMIT,
+    check: Check.CHANGE,
     submitted: false,
     sentences: {
       byId: {},
