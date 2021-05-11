@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { data } from '../data/data';
 
-const { Ism, Fil, Harf, Mubtada, Kabr, Jar } = data;
+const { Ism, Fil, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
@@ -129,7 +129,7 @@ export default seed({
         5: {
           id: '5',
           name: 'الْمسجدِ',
-          answers: { '123': { answerable: true, key: '8' } },
+          answers: { '123': { answerable: true, key: '8', answerKey: '11' } },
           sentences: ['123'],
         },
       },
@@ -143,6 +143,7 @@ export default seed({
         8: [],
         9: [Ism, Kabr],
         10: [Harf, Jar],
+        11: [Ism, Majroor],
       },
       allIds: ['5', '6', '7', '8'],
     }

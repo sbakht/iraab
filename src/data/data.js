@@ -3,7 +3,7 @@ const Fil = { id: 2, name: 'Fil' }
 const Harf = { id: 3, name: 'Harf' }
 
 const Mubtada = { id: 4, name: "Mubtada", exclude: [5] };
-const Kabr = { id: 5, name: "Kabr", exclude: [4] };
+const Kabr = { id: 5, name: "Kabr", exclude: [4, 20], excludeGroup: [1] };
 const Fial = { id: 6, name: "Fial", exclude: [], excludeGroup: [1] };
 const Majroor = { id: 20, name: "Majroor", exclude: [4, 5, 6], excludeGroup: [1] };
 
@@ -29,7 +29,7 @@ const jars = {
 
 const mafool = {
   id: 1,
-  exclude: [6],
+  exclude: [6, 20],
   excludeGroup: [1],
   items: [
     { id: 7, name: "Mafool bihi", exclude: [], excludeGroup: [] },
