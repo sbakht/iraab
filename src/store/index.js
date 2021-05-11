@@ -27,6 +27,10 @@ export const seed = (seedData = {}) => createStore({
       byId: {},
       allIds: [],
     },
+    answerKey: {
+      byId: {},
+      allIds: [],
+    },
     ...seedData.state,
   },
   mutations: {
@@ -68,7 +72,10 @@ export const seed = (seedData = {}) => createStore({
       return getters.findSentence(state.activeSentenceId) || {};
     },
     findAnswer: state => id => {
-      return state.answers.byId[id] || [];
+      return state.answers.byId[id];
+    },
+    findAnswerKey: state => id => {
+      return state.answerKey.byId[id];
     },
     findWord: state => id => {
       return state.words.byId[id] || [];
@@ -78,9 +85,19 @@ export const seed = (seedData = {}) => createStore({
       const words = sentence.words.map(wordId => {
         const word = getters.findWord(wordId);
         const answerable = word.answers[id].answerable;
-        const answer = getters.findAnswer(word.answers[id].key) || [];
-        const answerKey = getters.findAnswer(word.answers[id].answerKey) || [];
+        const answer = getters.findAnswer(word.answers[id].key);
+        const answerKey = getters.findAnswerKey(word.answers[id].answerKey);
         const hideAnswer = !!word.answers[id].hideAnswer;
+
+        if (!answer && answerable) {
+          console.log(word);
+          throw new Error('Word is answerable but has no key')
+        }
+        if (!hideAnswer && !answerKey) {
+          console.log(word);
+          throw new Error('Missing answer key')
+        }
+
         return { ...word, answer, answerable, answerKey, hideAnswer };
       });
       return { ...sentence, words };
@@ -105,47 +122,52 @@ export default seed({
         1: {
           id: '1',
           name: 'زيدٌ',
-          answers: { '123': { answerable: false, key: '5', answerKey: '5' } },
+          answers: { '123': { answerable: false, key: '1', answerKey: '1' } },
           sentences: ['123'],
         },
         2: {
           id: '2',
           name: 'هو',
-          answers: { '123': { answerable: true, key: '6', answerKey: '5' } },
+          answers: { '123': { answerable: true, key: '1', answerKey: '1' } },
           sentences: ['123'],
         },
         3: {
           id: '3',
           name: 'جالسٌ',
-          answers: { '123': { answerable: true, key: '7', answerKey: '9' } },
+          answers: { '123': { answerable: true, key: '2', answerKey: '2' } },
           sentences: ['123'],
         },
         4: {
           id: '4',
           name: 'فِ',
-          answers: { '123': { answerable: false, hideAnswer: true, answerKey: '10' } },
+          answers: { '123': { answerable: false, hideAnswer: true, answerKey: '3' } },
           sentences: ['123'],
         },
         5: {
           id: '5',
           name: 'الْمسجدِ',
-          answers: { '123': { answerable: true, key: '8', answerKey: '11' } },
+          answers: { '123': { answerable: true, key: '3', answerKey: '4' } },
           sentences: ['123'],
         },
       },
       allIds: ['1', '2', '3', '4', '5']
     },
+    answerKey: {
+      byId: {
+        1: [Ism, Mubtada],
+        2: [Ism, Kabr],
+        3: [Harf, Jar],
+        4: [Ism, Majroor],
+      },
+      allIds: ['1', '2', '3', '4'],
+    },
     answers: {
       byId: {
-        5: [Ism, Mubtada],
-        6: [Ism],
-        7: [],
-        8: [],
-        9: [Ism, Kabr],
-        10: [Harf, Jar],
-        11: [Ism, Majroor],
+        1: [Ism],
+        2: [],
+        3: [],
       },
-      allIds: ['5', '6', '7', '8'],
+      allIds: ['1', '2', '3'],
     }
   }
 });
