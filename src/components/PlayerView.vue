@@ -5,7 +5,11 @@
         <TokenView
           :token="token.name"
           :answer="token.answerable"
-          :properties="token.properties || token.answer"
+          :properties="
+            (token.hideAnswer && []) ||
+            (!token.answerable && token.answerKey) ||
+            token.answer
+          "
           :selected="token.id === activeWordId"
           :data-token="token.id"
           @click.stop="focusWord(token)"

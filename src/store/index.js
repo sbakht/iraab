@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { data } from '../data/data';
 
-const { Ism, Fil, Harf, Mubtada } = data;
+const { Ism, Fil, Harf, Mubtada, Kabr, Jar } = data;
 const initialOptions = [Ism, Fil, Harf];
 
 function hasNoTopLevelOptions(values) {
@@ -79,7 +79,9 @@ export const seed = (seedData = {}) => createStore({
         const word = getters.findWord(wordId);
         const answerable = word.answers[id].answerable;
         const answer = getters.findAnswer(word.answers[id].key) || [];
-        return { ...word, answer, answerable };
+        const answerKey = getters.findAnswer(word.answers[id].answerKey) || [];
+        const hideAnswer = !!word.answers[id].hideAnswer;
+        return { ...word, answer, answerable, answerKey, hideAnswer };
       });
       return { ...sentence, words };
     },
@@ -103,25 +105,25 @@ export default seed({
         1: {
           id: '1',
           name: 'زيدٌ',
-          answers: { '123': { answerable: true, key: '5' } },
+          answers: { '123': { answerable: false, key: '5', answerKey: '5' } },
           sentences: ['123'],
         },
         2: {
           id: '2',
           name: 'هو',
-          answers: { '123': { answerable: true, key: '6' } },
+          answers: { '123': { answerable: true, key: '6', answerKey: '5' } },
           sentences: ['123'],
         },
         3: {
           id: '3',
           name: 'جالسٌ',
-          answers: { '123': { answerable: true, key: '7' } },
+          answers: { '123': { answerable: true, key: '7', answerKey: '9' } },
           sentences: ['123'],
         },
         4: {
           id: '4',
           name: 'فِ',
-          answers: { '123': { answerable: false } },
+          answers: { '123': { answerable: false, hideAnswer: true, answerKey: '10' } },
           sentences: ['123'],
         },
         5: {
@@ -136,9 +138,11 @@ export default seed({
     answers: {
       byId: {
         5: [Ism, Mubtada],
-        6: [Fil],
+        6: [Ism],
         7: [],
         8: [],
+        9: [Ism, Kabr],
+        10: [Harf, Jar],
       },
       allIds: ['5', '6', '7', '8'],
     }
