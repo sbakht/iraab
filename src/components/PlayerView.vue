@@ -18,6 +18,7 @@
       </div>
     </div>
     <MultiSelect :disabled="!activeWordId"></MultiSelect>
+    <button v-if="isSubmit" @click="onSubmit">Submit</button>
   </div>
 </template>
 
@@ -32,15 +33,23 @@ export default {
     focusWord(word) {
       this.$store.commit("setFocusedWord", word);
     },
+    onSubmit() {
+      this.$store.commit("setSubmitted", true);
+    },
   },
   computed: {
     ...mapState({
       userAnswers: "userAnswers",
       activeWordId: "activeWordId",
+      submitted: "submitted",
     }),
     ...mapGetters({
       sentence: "currentSentence",
+      checkType: "checkType",
     }),
+    isSubmit() {
+      return this.checkType === "SUBMIT";
+    },
   },
 };
 </script>

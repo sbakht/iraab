@@ -9,22 +9,49 @@ function hasNoTopLevelOptions(values) {
   return !values.some(({ name }) => strs.includes(name));
 }
 
-function getCorrectness(answer, key) {
+function getCorrectness(answer, key, state) {
+  if (state.check === Check.QUIZ) {
+    return ''
+  }
+
   if (!answer) {
     return '';
   }
-
-  if (answer.length === key.length) {
-    const equals = !answer.filter(val => {
-      return !key.includes(val);
-    }).length;
-    if (equals) {
-      return 'correct'
+  if (state.check === Check.SUBMIT) {
+    if (!state.submitted) {
+      return '';
+    }
+    if (answer.length === key.length) {
+      const equals = !answer.filter(val => {
+        return !key.includes(val);
+      }).length;
+      if (equals) {
+        return 'correct'
+      }
     }
     return 'incorrect'
   }
-  return '';
+
+  if (state.check === Check.CHANGE) {
+    if (answer.length === key.length) {
+      const equals = !answer.filter(val => {
+        return !key.includes(val);
+      }).length;
+      if (equals) {
+        return 'correct'
+      }
+      return 'incorrect'
+    }
+    return '';
+  }
+  throw new Error("Unhandled getCorrectness check")
 }
+
+const Check = Object.freeze({
+  SUBMIT: Symbol(''),
+  CHANGE: Symbol(''),
+  QUIZ: Symbol(''),
+})
 
 export const seed = (seedData = {}) => createStore({
   strict: true,
@@ -32,6 +59,8 @@ export const seed = (seedData = {}) => createStore({
     activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: null,
+    check: Check.SUBMIT,
+    submitted: false,
     sentences: {
       byId: {},
       allIds: [],
@@ -80,6 +109,9 @@ export const seed = (seedData = {}) => createStore({
       state.activeWordId = null;
       state.activeAnswerId = null;
     },
+    setSubmitted(state, bool) {
+      state.submitted = bool;
+    },
   },
   getters: {
     currentAnswer(state, getters) {
@@ -120,7 +152,7 @@ export const seed = (seedData = {}) => createStore({
           throw new Error('Missing answer key')
         }
 
-        const correctness = getCorrectness(answer, answerKey);
+        const correctness = getCorrectness(answer, answerKey, state);
 
         return { ...word, answer, answerable, answerKey, hideAnswer, correctness };
       });
@@ -128,6 +160,17 @@ export const seed = (seedData = {}) => createStore({
     },
     list(state) {
       return state.sentences.allIds.map(id => state.sentences.byId[id]);
+    },
+    checkType(state) {
+      if (state.check === Check.SUBMIT) {
+        return "SUBMIT"
+      }
+      if (state.check === Check.CHANGE) {
+        return "CHANGE"
+      }
+      if (state.check === Check.QUIZ) {
+        return "QUIZ"
+      }
     }
   }
 })
