@@ -1,8 +1,13 @@
+import { v4 as uuidv4 } from 'uuid';
 import { data } from '../data/data';
 const { Ism, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 
+function createWord() {
+
+}
+
 export const seed = {
-  activeSentenceId: '123',
+  activeSentenceId: '13',
   sentences: {
     byId: {
       123: { words: ['1', '2', '3', '4', '5'] }
