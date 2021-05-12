@@ -123,8 +123,9 @@ export const seed = (seedData = {}) => createStore({
   },
   actions: {
     fetch({ commit }) {
-      const data = Api.fetchData();
-      commit('setState', data);
+      Api.fetchData().then(data => {
+        commit('setState', data);
+      })
     },
   },
   getters: {
