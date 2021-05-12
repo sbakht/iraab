@@ -3,7 +3,7 @@ import { data } from '../data/data';
 const { Ism, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 
 export const seed = {
-  activeSentenceId: '13',
+  activeSentenceId: '123',
   sentences: {
     byId: {
       123: { words: ['1', '2', '3', '4', '5'] }
@@ -111,5 +111,5 @@ function createWord({ sentenceId, name, answerable, answerKeyId, answerId = crea
 
 // search and provide answer key from before (answer key should already have all possibilities, otherwise create on runtime)
 // pass in answerId if giving a starting point
-createWord({ sentenceId: '123', name: 'bob', answerable: true, answerKeyId: '1' })
-createWord({ sentenceId: '123', name: 'bob', answerable: false, answerKeyId: '1' })
+// createWord({ sentenceId: '123', name: 'bob', answerable: true, answerKeyId: '1' })
+// createWord({ sentenceId: '123', name: 'bob', answerable: false, answerKeyId: '1' })
