@@ -13,6 +13,9 @@ export default defineComponent({
   components: {
     PlayerView,
   },
+  mounted() {
+    this.$store.dispatch("fetch");
+  },
 });
 </script>
 
