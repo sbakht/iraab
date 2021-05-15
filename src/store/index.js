@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import { data } from '../data/data';
-import { createGraph, fromGraph } from '../utils/GraphUtils'
 import Api from '../api/Api';
+import GraphModule from './GraphModule.js';
 
 
 const { Ism, Fil, Harf } = data;
@@ -56,15 +56,13 @@ const Check = Object.freeze({
   QUIZ: Symbol(''),
 })
 
-function read(state) {
-  return createGraph(state.graph, state.graphwords);
-}
 
 export const seed = (seedData = {}) => createStore({
   strict: true,
+  modules: {
+    Graph: GraphModule,
+  },
   state: {
-    graph: {},
-    graphwords: [],
     activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: null,
@@ -89,12 +87,6 @@ export const seed = (seedData = {}) => createStore({
     ...seedData.state,
   },
   mutations: {
-    setGraph(state, graph) {
-      state.graph = fromGraph(graph);
-    },
-    setWords(state, words) {
-      state.graphwords = words
-    },
     addToAnswer(state, { addition }) {
       const oldAnswer = state.answers.byId[state.activeAnswerId] || [];
       let newAnswer = [...oldAnswer, addition];
@@ -140,16 +132,7 @@ export const seed = (seedData = {}) => createStore({
       Api.fetchData().then(data => {
         commit('setState', data);
       })
-      Api.fetchGraph().then(graph => {
-        commit('setGraph', graph.graph);
-        commit('setWords', graph.words);
-      })
     },
-    addNode({ commit, state }, node) {
-      const { graph } = read(state);
-      graph.setNode(node)
-      commit('setGraph', graph)
-    }
   },
   getters: {
     currentAnswer(state, getters) {
@@ -210,9 +193,6 @@ export const seed = (seedData = {}) => createStore({
         return "QUIZ"
       }
     },
-    graph(state) {
-      return read(state);
-    }
   }
 })
 

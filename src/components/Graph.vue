@@ -41,10 +41,10 @@ export default {
   name: "App",
   components: {},
   mounted() {
-    this.$store.dispatch("fetch");
+    this.$store.dispatch("Graph/fetch");
   },
   computed: {
-    ...mapGetters({ Graph: "graph" }),
+    ...mapGetters("Graph", { Graph: "graph" }),
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
     },
@@ -63,7 +63,7 @@ export default {
       return this.Graph.graph.node(id);
     },
     addNode() {
-      this.$store.dispatch("addNode", Math.random());
+      this.$store.dispatch("Graph/addNode", Math.random());
     },
   },
 };

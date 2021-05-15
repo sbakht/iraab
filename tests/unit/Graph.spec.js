@@ -39,6 +39,7 @@ test('renders words and their parts of speech', () => {
       state: {
         graph: fromGraph(graphSeed.graph),
         graphwords: graphSeed.words,
+        phrases: graphSeed.phrases,
       }
     }
   });
@@ -56,6 +57,7 @@ test('renders token and their relationship', () => {
       state: {
         graph: fromGraph(graphSeed.graph),
         graphwords: graphSeed.words,
+        phrases: graphSeed.phrases,
       }
     }
   });
@@ -70,6 +72,7 @@ test('renders phrase and their relationship', () => {
       state: {
         graph: fromGraph(graphSeed.graph),
         graphwords: graphSeed.words,
+        phrases: graphSeed.phrases,
       }
     }
   });

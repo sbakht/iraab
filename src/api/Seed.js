@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { graphSeed as graph } from './Graph';
+import { graphSeed as graph } from './SeedGraph';
 import { data } from '../data/data';
 const { Ism, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 

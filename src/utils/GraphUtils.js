@@ -1,4 +1,5 @@
 var graphlib = require("graphlib");
+import { v4 as uuidv4 } from 'uuid';
 
 function rangeToWords({ range }) {
   const tokens = this.words;
@@ -40,7 +41,6 @@ function rangeToWords({ range }) {
       }
     }
   }
-  console.log(words);
   return words;
 }
 function rangeToTokens({ range }) {
@@ -82,7 +82,7 @@ function rangeToTokens({ range }) {
 
 function wordsToString() {
   return this.words.map(token => {
-    return token.toWord(); //?
+    return token.toWord();
   })
 }
 
@@ -91,6 +91,7 @@ function words() {
 }
 
 function makeWord(tokens, label) {
+  const id = uuidv4();
   function makeMultiWords(label, tokens) {
     const proto = {
       toWord() {
@@ -101,7 +102,10 @@ function makeWord(tokens, label) {
     }
     const obj = Object.create(proto);
     obj.label = label;
-    obj.tokens = tokens;
+    obj.tokens = tokens.map(token => ({ ...token, id: token.id || 'token-' + uuidv4() }));
+    if (!obj.id) {
+      obj.id = 'word-' + uuidv4
+    }
     return obj
   }
 
@@ -114,6 +118,8 @@ function makeWord(tokens, label) {
     const obj = Object.create(proto);
     obj.label = token.name;
     obj.token = token;
+    obj.token.id = 'token-' + id
+    obj.id = 'word-' + id
     return obj
   }
 
@@ -155,6 +161,23 @@ function getPhrases() {
 
 function addWords(words) {
   this.words = this.words.concat(words);
+  this.createTokenNodes();
+}
+
+function makePhrase(phrase) {
+  return { ...phrase, id: phrase.id || 'phrase-' + uuidv4() }
+}
+
+function addPhrases(phrases) {
+  this.phrases = this.phrases.concat(phrases);
+  this.createPhraseNodes();
+}
+
+function createPhraseNodes() {
+  const phrases = this.phrases;
+  phrases.forEach(phrase => {
+    this.graph.setNode(phrase.id, phrase)
+  });
 }
 
 function getTokenObjects() {
@@ -170,6 +193,19 @@ function getTokenObjects() {
   return tokens;
 }
 
+function createTokenNodes() {
+  const tokens = this.getTokenObjects();
+  tokens.forEach(token => {
+    this.graph.setNode(token.id, token);
+  })
+}
+
+function createGrammarLink(o1, o2, grammar) {
+  const id1 = o1.id || o1
+  const id2 = o2.id || o2
+  this.graph.setEdge(id1, id2, grammar);
+}
+
 function setGraph(graph) {
   if (graph instanceof graphlib.Graph) {
     this.graph = graph;
@@ -178,15 +214,41 @@ function setGraph(graph) {
   }
 }
 
-export function createGraph(seed, words = []) {
+export function createGraph(seed, words = [], phrases = []) {
   let graph;
   if (seed) {
     graph = graphlib.json.read(seed);
   } else {
     graph = new graphlib.Graph()
   }
-  const obj = Object.assign(Object.create(GraphUtils), { graph, tokens: [], words: [] });
+  const obj = Object.assign(Object.create(GraphUtils), { graph, tokens: [], words: [], phrases: [] });
   obj.addWords(words);
+  obj.addPhrases(phrases);
+  return obj;
+}
+
+export function loadGraph(data) {
+  const obj = Object.assign(Object.create(GraphUtils), { graph: new graphlib.Graph(), tokens: [], words: [], phrases: [] });
+
+  const words = data.words.allIds.map(id => {
+    const word = data.words.byId[id];
+    if (word.token) {
+      const token = data.tokens.byId[word.token];
+      return { ...word, label: word.label || token.name, token }
+    }
+    if (word.tokens) {
+      const tokens = word.tokens.map(token => data.tokens.byId[token]);
+      return { ...word, tokens }
+    }
+  })
+  obj.addWords(words);
+  obj.addPhrases(data.phrases.allIds.map(id => data.phrases.byId[id]))
+
+  const connections = data.connections.allIds.map(id => data.connections.byId[id]);
+  connections.map(({ from, to, grammar }) => {
+    obj.createGrammarLink(from, to, grammar)
+  })
+
   return obj;
 }
 
@@ -206,6 +268,11 @@ const GraphUtils = {
   addWords,
   setGraph,
   words,
+  createTokenNodes,
+  addPhrases,
+  createPhraseNodes,
+  makePhrase,
+  createGrammarLink,
 };
 
 export default GraphUtils;
