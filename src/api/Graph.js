@@ -11,14 +11,14 @@ const irab = Graph.graph;
 
 //zayd he went to masjid
 const words = [
-  Graph.makeWord({ name: "zayd", pos: Speech.Ism.Noun.PN }),
-  Graph.makeWord({ name: "he", pos: Speech.Ism.Pronoun.PRON }),
-  Graph.makeWord({ name: "went", pos: Speech.Fil.Verb.V }),
-  Graph.makeWord({ name: "to", pos: Speech.Harf.Preposition.P }),
+  Graph.makeWord({ id: 'token-a', name: "zayd", pos: Speech.Ism.Noun.PN }),
+  Graph.makeWord({ id: 'token-b', name: "he", pos: Speech.Ism.Pronoun.PRON }),
+  Graph.makeWord({ id: 'token-c', name: "went", pos: Speech.Fil.Verb.V }),
+  Graph.makeWord({ id: 'token-d', name: "to", pos: Speech.Harf.Preposition.P }),
   Graph.makeWord([
-    { name: "masjid", pos: Speech.Ism.Noun.PN },
-    { name: "his", pos: Speech.Ism.Pronoun.PRON }
-  ], "testlabel"),
+    { id: 'token-e', name: "masjid", pos: Speech.Ism.Noun.PN },
+    { id: 'token-f', name: "his", pos: Speech.Ism.Pronoun.PRON }
+  ], "his masjid"),
 ]
 
 Graph.addWords(words);
@@ -38,7 +38,7 @@ irab.setNode('token-b', he)
 irab.setNode('token-c', went)
 irab.setNode('token-d', to)
 irab.setNode('token-e', masjid)
-irab.setNode('token-i', his)
+irab.setNode('token-f', his)
 
 irab.setNode('phrase-g', { id: 'phrase-g', phrase: Phrase.PP, range: { from: 'to', to: 'his' } })
 irab.setNode('phrase-f', { id: 'phrase-f', phrase: Phrase.VS, range: { from: 'went', to: 'his' } })
@@ -48,7 +48,7 @@ irab.setEdge('token-e', 'token-d', data.Majroor)
 irab.setEdge('phrase-g', 'token-c', data.Mutaalliq)
 irab.setEdge('phrase-f', 'token-b', data.Kabr)
 irab.setEdge('phrase-h', 'token-a', data.Kabr)
-irab.setEdge('token-i', 'token-e', data.MudafIlayhi)
+irab.setEdge('token-f', 'token-e', data.MudafIlayhi)
 
 Graph.rangeToTokens(irab.node('phrase-g')) //?
 
@@ -61,7 +61,7 @@ Graph.toHead('token-b') //?
 Graph.toHead('token-c') //?
 Graph.toHead('token-d') //?
 Graph.toHead('token-e') //?
-Graph.toHead('token-i') //?
+Graph.toHead('token-f') //?
 
 Graph.toHead('phrase-g') //?
 Graph.toHead('phrase-f') //?

@@ -1,5 +1,48 @@
 var graphlib = require("graphlib");
 
+function rangeToWords({ range }) {
+  const tokens = this.words;
+  const from = range.from;
+  const to = range.to;
+  const result = []
+  const words = []
+  let started = false;
+
+  function go(token) {
+    let added = false;
+    if (token.name === from) {
+      started = true;
+    }
+    if (started) {
+      result.push(token);
+      added = true;
+    }
+    if (token.name === to) {
+      return { done: true, added };
+    }
+    return { done: false, added };
+  }
+
+  for (let obj of tokens) {
+    if (obj.token) {
+      const x = go(obj.token);
+      if (x.added) {
+        words.push(obj)
+      }
+    }
+    if (obj.tokens) {
+      for (let token of obj.tokens) {
+        const x = go(token);
+        if (x.added) {
+          words.push(obj)
+          break;
+        }
+      }
+    }
+  }
+  console.log(words);
+  return words;
+}
 function rangeToTokens({ range }) {
   const tokens = this.words;
   const from = range.from;
@@ -154,6 +197,7 @@ export function fromGraph(graph) {
 const GraphUtils = {
   wordsToString,
   rangeToTokens,
+  rangeToWords,
   makeWord,
   toHead,
   getTokens,
