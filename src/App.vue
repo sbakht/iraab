@@ -1,27 +1,56 @@
 <template>
   <div @click="addNode">
-    {{ graph.nodes() }}
-    <!-- <PlayerView></PlayerView> -->
+    <div class="p-4">
+      <div v-for="word in words" :key="word.label">
+        <template v-if="word.token">
+          {{ word.label }} - {{ word.token && word.token.pos.tag }}
+        </template>
+        <template v-if="word.tokens">
+          {{ word.label }}
+          <span v-for="token in word.tokens" :key="token.name">
+            {{ token.pos.tag }}
+          </span>
+        </template>
+      </div>
+    </div>
+
+    <div class="p-4">
+      <div v-for="phrase in phrases" :key="phrase.id">
+        {{ Graph.rangeToTokens(phrase).map((token) => token.name) }} is a
+        {{ phrase.phrase.tag }} that is
+        {{ Graph.toHead(phrase.id).connection.name }} to
+        {{ getToken(Graph.toHead(phrase.id).head).name }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapGetters } from "vuex";
-// import PlayerView from "./components/PlayerView.vue";
 
 export default defineComponent({
   name: "App",
-  components: {
-    // PlayerView,
-  },
+  components: {},
   mounted() {
     this.$store.dispatch("fetch");
   },
   computed: {
-    ...mapGetters({ graph: "graph" }),
+    ...mapGetters({ Graph: "graph" }),
+    tokens() {
+      return this.Graph.getTokens();
+    },
+    words() {
+      return this.Graph.words;
+    },
+    phrases() {
+      return this.Graph.getPhrases().map((id) => this.Graph.graph.node(id));
+    },
   },
   methods: {
+    getToken(id) {
+      return this.Graph.graph.node(id);
+    },
     addNode() {
       this.$store.dispatch("addNode", Math.random());
     },

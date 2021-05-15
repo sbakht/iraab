@@ -1,6 +1,7 @@
 var graphlib = require("graphlib");
 
-function rangeToTokens(tokens, { range }) {
+function rangeToTokens({ range }) {
+  const tokens = this.words;
   const from = range.from;
   const to = range.to;
   const result = []
@@ -36,10 +37,14 @@ function rangeToTokens(tokens, { range }) {
   return result;
 }
 
-function tokensToString(tokens) {
-  return tokens.map(token => {
-    return token.toWord();
+function wordsToString() {
+  return this.words.map(token => {
+    return token.toWord(); //?
   })
+}
+
+function words() {
+
 }
 
 function makeWord(tokens, label) {
@@ -105,17 +110,58 @@ function getPhrases() {
   return this.graph.nodes().filter(str => str.includes('phrase'))
 }
 
-export function createGraph() {
-  return Object.assign(Object.create(GraphUtils), { graph: new graphlib.Graph() })
+function addWords(words) {
+  this.words = this.words.concat(words);
+}
+
+function getTokenObjects() {
+  let tokens = [];
+  this.words.map(word => {
+    if (word.token) {
+      tokens.push(word.token)
+    }
+    if (word.tokens) {
+      tokens = tokens.concat(word.tokens)
+    }
+  })
+  return tokens;
+}
+
+function setGraph(graph) {
+  if (graph instanceof graphlib.Graph) {
+    this.graph = graph;
+  } else {
+    this.graph = graphlib.json.read(graph);
+  }
+}
+
+export function createGraph(seed, words = []) {
+  let graph;
+  if (seed) {
+    graph = graphlib.json.read(seed);
+  } else {
+    graph = new graphlib.Graph()
+  }
+  const obj = Object.assign(Object.create(GraphUtils), { graph, tokens: [], words: [] });
+  obj.addWords(words);
+  return obj;
+}
+
+export function fromGraph(graph) {
+  return graphlib.json.write(graph)
 }
 
 const GraphUtils = {
-  tokensToString,
+  wordsToString,
   rangeToTokens,
   makeWord,
   toHead,
   getTokens,
   getPhrases,
+  getTokenObjects,
+  addWords,
+  setGraph,
+  words,
 };
 
 export default GraphUtils;

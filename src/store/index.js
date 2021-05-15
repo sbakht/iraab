@@ -1,6 +1,6 @@
-var graphlib = require("graphlib");
 import { createStore } from 'vuex'
 import { data } from '../data/data';
+import { createGraph, fromGraph } from '../utils/GraphUtils'
 import Api from '../api/Api';
 
 
@@ -57,13 +57,14 @@ const Check = Object.freeze({
 })
 
 function read(state) {
-  return graphlib.json.read(state.graph);
+  return createGraph(state.graph, state.graphwords);
 }
 
 export const seed = (seedData = {}) => createStore({
   strict: true,
   state: {
     graph: {},
+    graphwords: [],
     activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: null,
@@ -89,7 +90,10 @@ export const seed = (seedData = {}) => createStore({
   },
   mutations: {
     setGraph(state, graph) {
-      state.graph = graphlib.json.write(graph)
+      state.graph = fromGraph(graph);
+    },
+    setWords(state, words) {
+      state.graphwords = words
     },
     addToAnswer(state, { addition }) {
       const oldAnswer = state.answers.byId[state.activeAnswerId] || [];
@@ -136,12 +140,13 @@ export const seed = (seedData = {}) => createStore({
       Api.fetchData().then(data => {
         commit('setState', data);
       })
-      Api.fetchGraph().then(data => {
-        commit('setGraph', data);
+      Api.fetchGraph().then(graph => {
+        commit('setGraph', graph.graph);
+        commit('setWords', graph.words);
       })
     },
     addNode({ commit, state }, node) {
-      const graph = read(state);
+      const { graph } = read(state);
       graph.setNode(node)
       commit('setGraph', graph)
     }

@@ -10,9 +10,9 @@ const Graph = createGraph();
 const irab = Graph.graph;
 
 //zayd he went to masjid
-const tokens = [
+const words = [
   Graph.makeWord({ name: "zayd", pos: Speech.Ism.Noun.PN }),
-  Graph.makeWord({ name: "huwa", pos: Speech.Ism.Pronoun.PRON }),
+  Graph.makeWord({ name: "he", pos: Speech.Ism.Pronoun.PRON }),
   Graph.makeWord({ name: "went", pos: Speech.Fil.Verb.V }),
   Graph.makeWord({ name: "to", pos: Speech.Harf.Preposition.P }),
   Graph.makeWord([
@@ -21,14 +21,15 @@ const tokens = [
   ], "testlabel"),
 ]
 
+Graph.addWords(words);
+const tokens = Graph.getTokenObjects();
+
 const zayd = tokens[0]
 const he = tokens[1]
 const went = tokens[2]
 const to = tokens[3]
-const hisMasjid = tokens[4]
-
-const masjid = hisMasjid.tokens[0]
-const his = hisMasjid.tokens[1]
+const masjid = tokens[4]
+const his = tokens[5]
 
 
 
@@ -39,9 +40,9 @@ irab.setNode('token-d', to)
 irab.setNode('token-e', masjid)
 irab.setNode('token-i', his)
 
-irab.setNode('phrase-g', { phrase: Phrase.PP, range: { from: 'to', to: 'his' } })
-irab.setNode('phrase-f', { phrase: Phrase.VS, range: { from: 'went', to: 'his' } })
-irab.setNode('phrase-h', { phrase: Phrase.NS, range: { from: 'he', to: 'his' } })
+irab.setNode('phrase-g', { id: 'phrase-g', phrase: Phrase.PP, range: { from: 'to', to: 'his' } })
+irab.setNode('phrase-f', { id: 'phrase-f', phrase: Phrase.VS, range: { from: 'went', to: 'his' } })
+irab.setNode('phrase-h', { id: 'phrase-h', phrase: Phrase.NS, range: { from: 'he', to: 'his' } })
 
 irab.setEdge('token-e', 'token-d', data.Majroor)
 irab.setEdge('phrase-g', 'token-c', data.Mutaalliq)
@@ -49,9 +50,11 @@ irab.setEdge('phrase-f', 'token-b', data.Kabr)
 irab.setEdge('phrase-h', 'token-a', data.Kabr)
 irab.setEdge('token-i', 'token-e', data.MudafIlayhi)
 
-Graph.rangeToTokens(tokens, irab.node('phrase-g')) //?
+Graph.rangeToTokens(irab.node('phrase-g')) //?
 
-Graph.tokensToString(tokens) //?
+Graph.wordsToString() //?
+
+// Graph.words() //?
 
 Graph.toHead('token-a') //?
 Graph.toHead('token-b') //?
@@ -70,5 +73,4 @@ Graph.getTokens() //?
 Graph.getPhrases() //?
 
 
-
-export const graphSeed = irab
+export const graphSeed = Graph
