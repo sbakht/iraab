@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-var graphlib = require("graphlib");
+import { graphSeed as graph } from './Graph';
 import { data } from '../data/data';
 const { Ism, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 
@@ -175,9 +175,5 @@ function addWords() {
 
 addWords()
 
-const graph = new graphlib.Graph()
-graph.setNode('1')
-graph.setNode('2')
-graph.setNode('2')
 
 export const graphSeed = graph
