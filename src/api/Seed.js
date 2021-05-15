@@ -1,49 +1,78 @@
 import { v4 as uuidv4 } from 'uuid';
+var graphlib = require("graphlib");
 import { data } from '../data/data';
 const { Ism, Harf, Mubtada, Kabr, Jar, Majroor } = data;
 
+// export const seed = {
+//   activeSentenceId: '123',
+//   sentences: {
+//     byId: {
+//       123: { words: ['1', '2', '3', '4', '5'] }
+//     },
+//     allIds: ['123'],
+//   },
+//   words: {
+//     byId: {
+//       1: {
+//         id: '1',
+//         name: 'زيدٌ',
+//         answers: { '123': { answerable: false, answerKey: '1' } },
+//         sentences: ['123'],
+//       },
+//       2: {
+//         id: '2',
+//         name: 'هو',
+//         answers: { '123': { answerable: true, key: '1', answerKey: '1' } },
+//         sentences: ['123'],
+//       },
+//       3: {
+//         id: '3',
+//         name: 'جالسٌ',
+//         answers: { '123': { answerable: true, key: '2', answerKey: '2' } },
+//         sentences: ['123'],
+//       },
+//       4: {
+//         id: '4',
+//         name: 'فِ',
+//         answers: { '123': { answerable: false, hideAnswer: true, answerKey: '3' } },
+//         sentences: ['123'],
+//       },
+//       5: {
+//         id: '5',
+//         name: 'الْمسجدِ',
+//         answers: { '123': { answerable: true, key: '3', answerKey: '4' } },
+//         sentences: ['123'],
+//       },
+//     },
+//     allIds: ['1', '2', '3', '4', '5']
+//   },
+//   answerKey: {
+//     byId: {
+//       1: [Ism, Mubtada],
+//       2: [Ism, Kabr],
+//       3: [Harf, Jar],
+//       4: [Ism, Majroor],
+//     },
+//     allIds: ['1', '2', '3', '4'],
+//   },
+//   answers: {
+//     byId: {
+//       1: [Ism],
+//       2: [],
+//       3: [],
+//     },
+//     allIds: ['1', '2', '3'],
+//   }
+// }
 export const seed = {
   activeSentenceId: '123',
   sentences: {
-    byId: {
-      123: { words: ['1', '2', '3', '4', '5'] }
-    },
-    allIds: ['123'],
+    byId: {},
+    allIds: [],
   },
   words: {
-    byId: {
-      1: {
-        id: '1',
-        name: 'زيدٌ',
-        answers: { '123': { answerable: false, answerKey: '1' } },
-        sentences: ['123'],
-      },
-      2: {
-        id: '2',
-        name: 'هو',
-        answers: { '123': { answerable: true, key: '1', answerKey: '1' } },
-        sentences: ['123'],
-      },
-      3: {
-        id: '3',
-        name: 'جالسٌ',
-        answers: { '123': { answerable: true, key: '2', answerKey: '2' } },
-        sentences: ['123'],
-      },
-      4: {
-        id: '4',
-        name: 'فِ',
-        answers: { '123': { answerable: false, hideAnswer: true, answerKey: '3' } },
-        sentences: ['123'],
-      },
-      5: {
-        id: '5',
-        name: 'الْمسجدِ',
-        answers: { '123': { answerable: true, key: '3', answerKey: '4' } },
-        sentences: ['123'],
-      },
-    },
-    allIds: ['1', '2', '3', '4', '5']
+    byId: {},
+    allIds: [],
   },
   answerKey: {
     byId: {
@@ -55,12 +84,8 @@ export const seed = {
     allIds: ['1', '2', '3', '4'],
   },
   answers: {
-    byId: {
-      1: [Ism],
-      2: [],
-      3: [],
-    },
-    allIds: ['1', '2', '3'],
+    byId: {},
+    allIds: [],
   }
 }
 
@@ -109,7 +134,50 @@ function createWord({ sentenceId, name, answerable, answerKeyId, answerId = crea
   setAnswerable(sentenceId, word.id, answerable, false, answerId);
 }
 
+function createWords({ sentenceId, words }) {
+  words.forEach(word => {
+    createWord({ sentenceId, ...word })
+  })
+}
+
 // search and provide answer key from before (answer key should already have all possibilities, otherwise create on runtime)
 // pass in answerId if giving a starting point
 // createWord({ sentenceId: '123', name: 'bob', answerable: true, answerKeyId: '1' })
 // createWord({ sentenceId: '123', name: 'bob', answerable: false, answerKeyId: '1' })
+
+function createSentence() {
+  const id = uuidv4();
+  return {
+    id,
+    words: []
+  }
+}
+
+function addSentence(sentence) {
+  seed.sentences.byId[sentence.id] = sentence;
+  seed.sentences.allIds.push(sentence.id);
+}
+
+const newSentence = createSentence();
+addSentence(newSentence)
+
+createWords({
+  sentenceId: newSentence.id,
+  words: [
+    { name: 'bob', answerable: true, answerKeyId: '1' },
+    { name: 'bob', answerable: false, answerKeyId: '1' },
+  ]
+});
+
+function addWords() {
+
+}
+
+addWords()
+
+const graph = new graphlib.Graph()
+graph.setNode('1')
+graph.setNode('2')
+graph.setNode('2')
+
+export const graphSeed = graph

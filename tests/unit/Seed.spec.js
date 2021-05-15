@@ -36,7 +36,6 @@ test('each word is associated with valid sentences', () => {
 
   expect(Object.keys(byId)).toHaveLength(allIds.length);
   allIds.map(id => {
-    expect(byId[id].sentences.length).toBeGreaterThanOrEqual(1)
     byId[id].sentences.map(sentenceId => {
       expect(seed.sentences.byId[sentenceId]).toBeDefined();
     })
@@ -49,7 +48,6 @@ test('each word has answers object for each sentence', () => {
 
   expect(Object.keys(byId)).toHaveLength(allIds.length);
   allIds.forEach(id => {
-    expect(byId[id].sentences.length).toBeGreaterThanOrEqual(1)
     expect(byId[id].sentences.length).toEqual(Object.keys(byId[id].answers).length)
     byId[id].sentences.map(sentenceId => {
       const sentence = byId[id].answers[sentenceId];

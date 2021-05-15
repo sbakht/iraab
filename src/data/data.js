@@ -13,6 +13,8 @@ const Amr = { id: 14, name: "Amr", exclude: [], excludeGroup: [] };
 
 const Jar = { id: 15, name: "Jar", exclude: [], excludeGroup: [] };
 const Zaida = { id: 16, name: "Zaida", exclude: [], excludeGroup: [] };
+const Mutaalliq = { id: 17, name: "Mutaalliq", exclude: [], excludeGroup: [] };
+const MudafIlayhi = { id: 18, name: "Mudaf Ilayhi", exclude: [], excludeGroup: [] };
 
 const fils = {
   id: 2,
@@ -59,5 +61,5 @@ const MafoolBihi = getItems(mafool)[0]
 const IsmOptions = IsmGroup.items
 
 export const data = {
-  Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi, Madhi, Mudhari, Amr, Jar, Zaida, jars
+  Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi, Madhi, Mudhari, Amr, Jar, Zaida, jars, Mutaalliq, MudafIlayhi
 }

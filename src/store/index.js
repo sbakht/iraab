@@ -1,6 +1,8 @@
+var graphlib = require("graphlib");
 import { createStore } from 'vuex'
 import { data } from '../data/data';
 import Api from '../api/Api';
+
 
 const { Ism, Fil, Harf } = data;
 const initialOptions = [Ism, Fil, Harf];
@@ -54,9 +56,14 @@ const Check = Object.freeze({
   QUIZ: Symbol(''),
 })
 
+function read(state) {
+  return graphlib.json.read(state.graph);
+}
+
 export const seed = (seedData = {}) => createStore({
   strict: true,
   state: {
+    graph: {},
     activeSentenceId: null,
     activeWordId: null,
     activeAnswerId: null,
@@ -81,6 +88,9 @@ export const seed = (seedData = {}) => createStore({
     ...seedData.state,
   },
   mutations: {
+    setGraph(state, graph) {
+      state.graph = graphlib.json.write(graph)
+    },
     addToAnswer(state, { addition }) {
       const oldAnswer = state.answers.byId[state.activeAnswerId] || [];
       let newAnswer = [...oldAnswer, addition];
@@ -126,7 +136,15 @@ export const seed = (seedData = {}) => createStore({
       Api.fetchData().then(data => {
         commit('setState', data);
       })
+      Api.fetchGraph().then(data => {
+        commit('setGraph', data);
+      })
     },
+    addNode({ commit, state }, node) {
+      const graph = read(state);
+      graph.setNode(node)
+      commit('setGraph', graph)
+    }
   },
   getters: {
     currentAnswer(state, getters) {
@@ -186,6 +204,9 @@ export const seed = (seedData = {}) => createStore({
       if (state.check === Check.QUIZ) {
         return "QUIZ"
       }
+    },
+    graph(state) {
+      return read(state);
     }
   }
 })

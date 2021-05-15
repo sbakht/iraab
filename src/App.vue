@@ -1,20 +1,30 @@
 <template>
-  <div>
-    <PlayerView></PlayerView>
+  <div @click="addNode">
+    {{ graph.nodes() }}
+    <!-- <PlayerView></PlayerView> -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import PlayerView from "./components/PlayerView.vue";
+import { mapGetters } from "vuex";
+// import PlayerView from "./components/PlayerView.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    PlayerView,
+    // PlayerView,
   },
   mounted() {
     this.$store.dispatch("fetch");
+  },
+  computed: {
+    ...mapGetters({ graph: "graph" }),
+  },
+  methods: {
+    addNode() {
+      this.$store.dispatch("addNode", Math.random());
+    },
   },
 });
 </script>
