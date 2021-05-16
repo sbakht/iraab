@@ -1,43 +1,57 @@
-import { createGraph, fromGraph } from '../utils/GraphUtils'
+import { loadGraph } from '../utils/GraphUtils'
+import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
 
-function read(state) {
-  return createGraph(state.graph, state.graphwords, state.phrases);
-}
 
 export const seed = (seedData = {}) => ({
   namespaced: true,
   state: () => ({
-    graph: {},
-    graphwords: [],
-    phrases: [],
+    tokens: {
+      byId: {},
+      allIds: [],
+    },
+    words: {
+      byId: {},
+      allIds: [],
+    },
+    phrases: {
+      byId: {},
+      allIds: [],
+    },
+    connections: {
+      byId: {},
+      allIds: []
+    },
     ...seedData.state,
   }),
   mutations: {
-    setGraph(state, graph) {
-      state.graph = fromGraph(graph);
+    setData(state, data) {
+      state.tokens = data.tokens;
+      state.words = data.words;
+      state.phrases = data.phrases;
+      state.connections = data.connections;
     },
-    setWords(state, words) {
-      state.graphwords = words
-    },
+    addToken(state, name) {
+      const id = 'token-' + uuidv4()
+      state.tokens.byId[id] = { id, name, pos: 'PRO' }
+      state.tokens.allIds.push(id);
+      console.log(state.tokens)
+    }
   },
   actions: {
     fetch({ commit }) {
-      Api.fetchGraph().then(graph => {
-        commit('setGraph', graph.graph);
-        commit('setWords', graph.words);
+      Api.fetchGraph().then(data => {
+        commit('setData', data);
       })
     },
-    addNode({ commit, state }, node) {
-      const { graph } = read(state);
-      graph.setNode(node)
-      commit('setGraph', graph)
+    addNode({ commit }) {
+      commit('addToken', 'bob')
     }
   },
   getters: {
     graph(state) {
-      return read(state);
-    }
+      return loadGraph(state, state.tokens);
+    },
   }
 })
 

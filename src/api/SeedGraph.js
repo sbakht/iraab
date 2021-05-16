@@ -2,7 +2,7 @@ import { data } from '../data/data';
 import { Speech } from './PartsOfSpeech'
 import { Phrase } from './Phrase';
 // import { createGraph, loadGraph } from '../utils/GraphUtils'
-import { loadGraph } from '../utils/GraphUtils'
+// import { loadGraph } from '../utils/GraphUtils'
 
 const obj = {
   tokens: {
@@ -88,8 +88,8 @@ const obj = {
 // Graph.createGrammarLink(phrases[2], zayd, data.Kabr)
 
 
-const loaded = loadGraph(obj);
+// const loaded = loadGraph(obj);
 
 
-export const graphSeed = loaded
+export const graphSeed = obj
 // export const graphSeed = Graph

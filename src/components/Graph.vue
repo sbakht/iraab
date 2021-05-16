@@ -63,6 +63,7 @@ export default {
       return this.Graph.graph.node(id);
     },
     addNode() {
+      console.log("add");
       this.$store.dispatch("Graph/addNode", Math.random());
     },
   },
