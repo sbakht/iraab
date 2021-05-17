@@ -4,6 +4,7 @@
       <v-circle :config="configCircle" ref="start"></v-circle>
       <v-circle :config="configCircle2" ref="control"></v-circle>
       <v-circle :config="configCircle3" ref="end"></v-circle>
+      <v-text :config="text" ref="text"></v-text>
       <QuadraticLine
         v-if="mounted"
         :from="quad.start"
@@ -35,6 +36,14 @@ export default {
       configKonva: {
         width: width,
         height: height,
+      },
+      text: {
+        x: width / 2,
+        y: 15,
+        text: "Simple Text",
+        fontSize: 30,
+        fontFamily: "Calibri",
+        fill: "green",
       },
       configCircle: {
         ...circle,

@@ -1,9 +1,8 @@
 
 import { mount } from '@vue/test-utils'
-import { graphSeed } from '../../src/api/Graph'
+import { graphSeed } from '../../src/api/Seed'
 import Component from '@/components/Graph.vue'
 import { seed } from '../../src/store/index'
-import { fromGraph } from '../../src/utils/GraphUtils'
 
 
 function expectIntialOptions({ selections, wrapper }) {
@@ -26,7 +25,7 @@ function mkAnswers(byId) {
 function mkWrapper(data = {}, rest) {
   const wrapper = mount(Component, {
     global: {
-      plugins: [seed(data.store)]
+      plugins: [seed({}, data.store)]
     },
     ...rest,
   })
@@ -37,9 +36,7 @@ test('renders words and their parts of speech', () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        graph: fromGraph(graphSeed.graph),
-        graphwords: graphSeed.words,
-        phrases: graphSeed.phrases,
+        ...graphSeed
       }
     }
   });
@@ -55,9 +52,7 @@ test('renders token and their relationship', () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        graph: fromGraph(graphSeed.graph),
-        graphwords: graphSeed.words,
-        phrases: graphSeed.phrases,
+        ...graphSeed
       }
     }
   });
@@ -70,9 +65,7 @@ test('renders phrase and their relationship', () => {
   const wrapper = mkWrapper({
     store: {
       state: {
-        graph: fromGraph(graphSeed.graph),
-        graphwords: graphSeed.words,
-        phrases: graphSeed.phrases,
+        ...graphSeed
       }
     }
   });

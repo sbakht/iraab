@@ -28,9 +28,9 @@ const obj = {
   },
   phrases: {
     byId: {
-      'phrase-1': { id: 'phrase-1', phrase: Phrase.PP, range: { from: 'to', to: 'his' } },
-      'phrase-2': { id: 'phrase-2', phrase: Phrase.VS, range: { from: 'went', to: 'his' } },
-      'phrase-3': { id: 'phrase-3', phrase: Phrase.NS, range: { from: 'he', to: 'his' } },
+      'phrase-1': { id: 'phrase-1', phrase: Phrase.PP, range: { from: 'token-4', to: 'token-6' } },
+      'phrase-2': { id: 'phrase-2', phrase: Phrase.VS, range: { from: 'token-3', to: 'token-6' } },
+      'phrase-3': { id: 'phrase-3', phrase: Phrase.NS, range: { from: 'token-2', to: 'token-6' } },
     },
     allIds: ['phrase-1', 'phrase-2', 'phrase-3'],
   },

@@ -40,7 +40,7 @@ export const seed = (seedData = {}) => ({
   },
   actions: {
     fetch({ commit }) {
-      Api.fetchGraph().then(data => {
+      return Api.fetchGraph().then(data => {
         commit('setData', data);
       })
     },
@@ -55,4 +55,4 @@ export const seed = (seedData = {}) => ({
   }
 })
 
-export default seed();
+export default seed;

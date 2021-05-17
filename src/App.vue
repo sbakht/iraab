@@ -1,17 +1,16 @@
 <template>
   <div>
     <Graph></Graph>
-    <Konva></Konva>
+    <!-- <Konva></Konva> -->
   </div>
 </template>
 
 <script lang="ts">
 import Graph from "./components/Graph.vue";
-import Konva from "./components/Konva.vue";
 
 export default {
   name: "App",
-  components: { Graph, Konva },
+  components: { Graph },
   mounted() {
     this.$store.dispatch("fetch");
   },

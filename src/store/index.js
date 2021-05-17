@@ -57,10 +57,10 @@ const Check = Object.freeze({
 })
 
 
-export const seed = (seedData = {}) => createStore({
+export const seed = (seedData = {}, graphModuleData = {}) => createStore({
   strict: true,
   modules: {
-    Graph: GraphModule,
+    Graph: GraphModule(graphModuleData),
   },
   state: {
     activeSentenceId: null,

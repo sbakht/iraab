@@ -11,14 +11,14 @@ function rangeToWords({ range }) {
 
   function go(token) {
     let added = false;
-    if (token.name === from) {
+    if (token.id === from) {
       started = true;
     }
     if (started) {
       result.push(token);
       added = true;
     }
-    if (token.name === to) {
+    if (token.id === to) {
       return { done: true, added };
     }
     return { done: false, added };
