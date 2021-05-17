@@ -4,21 +4,23 @@
       <v-circle :config="configCircle" ref="start"></v-circle>
       <v-circle :config="configCircle2" ref="control"></v-circle>
       <v-circle :config="configCircle3" ref="end"></v-circle>
-      <v-shape
-        :config="{
-          sceneFunc: mkLine,
-          stroke: 'red',
-          strokeWidth: 4,
-        }"
-      />
+      <QuadraticLine
+        v-if="mounted"
+        :from="quad.start"
+        :control="quad.control"
+        :to="quad.end"
+      ></QuadraticLine>
     </v-layer>
   </v-stage>
 </template>
 
 <script>
+import QuadraticLine from "./QuadraticLine";
 const width = window.innerWidth;
 const height = window.innerHeight;
+
 export default {
+  components: { QuadraticLine },
   data() {
     const circle = {
       radius: 70,
@@ -29,6 +31,7 @@ export default {
     };
     return {
       quad: {},
+      mounted: false,
       configKonva: {
         width: width,
         height: height,
@@ -51,30 +54,12 @@ export default {
     };
   },
   mounted() {
-    // const stage = this.$refs.stage.getNode();
-    // const layer = this.$refs.layer.getNode();
-    // const rect = this.$refs.rect.getNode();
-    console.log(this.quad);
     this.quad.start = this.$refs.start.getNode();
     this.quad.control = this.$refs.control.getNode();
     this.quad.end = this.$refs.end.getNode();
+    this.mounted = true;
   },
-  methods: {
-    mkLine(ctx, shape) {
-      const quad = this.quad;
-      if (this.quad.start) {
-        ctx.beginPath();
-        ctx.moveTo(quad.start.x(), quad.start.y());
-        ctx.quadraticCurveTo(
-          quad.control.x(),
-          quad.control.y(),
-          quad.end.x(),
-          quad.end.y()
-        );
-        ctx.fillStrokeShape(shape);
-      }
-    },
-  },
+  methods: {},
 };
 </script>
 
