@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 function rangeToWords({ range }) {
   const tokens = this.words;
   const from = range.from;
-  const to = range.to;
+  const to = range.to; //?
   const result = []
-  const words = []
+  const words = [] //?
   let started = false;
 
   function go(token) {
@@ -29,6 +29,9 @@ function rangeToWords({ range }) {
       const x = go(obj.token);
       if (x.added) {
         words.push(obj)
+        if (x.done) {
+          return words;
+        }
       }
     }
     if (obj.tokens) {
@@ -36,6 +39,9 @@ function rangeToWords({ range }) {
         const x = go(token);
         if (x.added) {
           words.push(obj)
+          if (x.done) {
+            return words;
+          }
           break;
         }
       }
@@ -252,6 +258,53 @@ export function loadGraph(data) {
   return obj;
 }
 
+function wordsToTokens(words) {
+  return words.map(word => {
+    if (word.token) {
+      return word.token;
+    }
+    if (word.tokens) {
+      return word.tokens;
+    }
+  }).flat()
+}
+
+
+function getLevel(data) {
+  const self = this;
+  function containedWordsInPhrase(phrase) {
+    return self.rangeToWords(phrase)
+  }
+
+
+  function isPhraseContainedInOtherPhrase(outer, inner) {
+    const outerTokens = wordsToTokens(containedWordsInPhrase(outer))
+    const innerTokens = wordsToTokens(containedWordsInPhrase(inner))
+
+    return innerTokens.filter(token => outerTokens.some(o => o.id !== token.id)).length === innerTokens.length && innerTokens.length < outerTokens.length
+  }
+
+  if (data.grammar) {
+    const connection = data;
+    const containedPhrases = this.phrases.filter(inner => isPhraseContainedInOtherPhrase({ ...connection, range: { from: connection.from, to: connection.to } }, inner))
+    if (!containedPhrases.length) {
+      return 1;
+    }
+
+    // const internals = 
+    return 1 + Math.max(...containedPhrases.map(getLevel.bind(this)));
+  } else {
+    const phrase = data;
+    const containedPhrases = this.phrases.filter(inner => isPhraseContainedInOtherPhrase(phrase, inner))
+    if (!containedPhrases.length) {
+      return 1;
+    }
+
+    // const internals = 
+    return 1 + Math.max(...containedPhrases.map(getLevel.bind(this)));
+  }
+}
+
 export function fromGraph(graph) {
   return graphlib.json.write(graph)
 }
@@ -273,6 +326,7 @@ const GraphUtils = {
   createPhraseNodes,
   makePhrase,
   createGrammarLink,
+  getLevel,
 };
 
 export default GraphUtils;

@@ -11,6 +11,10 @@
     :config="{ ...circle, x: center(), y: 250 }"
     ref="controller"
   ></v-circle>
+  <v-text
+    :config="{ ...text, text: connection.name, x: center(), y: 250 }"
+    ref="controller"
+  ></v-text>
 </template>
 
 <script>
@@ -36,6 +40,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    connection: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -49,6 +57,12 @@ export default {
         stroke: "black",
         strokeWidth: 4,
         draggable: true,
+      },
+      text: {
+        y: 15,
+        fontSize: 30,
+        fontFamily: "Calibri",
+        fill: "green",
       },
     };
   },

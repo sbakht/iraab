@@ -1,7 +1,6 @@
 import { data } from '../data/data';
 import { Speech } from './PartsOfSpeech'
 import { Phrase } from './Phrase';
-// import { createGraph, loadGraph } from '../utils/GraphUtils'
 // import { loadGraph } from '../utils/GraphUtils'
 
 const obj = {
@@ -45,6 +44,13 @@ const obj = {
     allIds: ['connection-1', 'connection-2', 'connection-3', 'connection-4', 'connection-5']
   },
 }
+// const loaded = loadGraph(obj);
+
+// const phrases = obj.phrases.byId;
+
+
+
+// loaded.getLevel(obj.phrases.byId['phrase-3']) //?
 
 
 // const Graph = createGraph();
@@ -88,7 +94,6 @@ const obj = {
 // Graph.createGrammarLink(phrases[2], zayd, data.Kabr)
 
 
-// const loaded = loadGraph(obj);
 
 
 export const graphSeed = obj

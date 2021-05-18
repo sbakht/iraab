@@ -34,9 +34,6 @@
     </div>
     <v-stage :config="configKonva">
       <v-layer>
-        <v-circle :config="configCircle" ref="start"></v-circle>
-        <v-circle :config="configCircle2" ref="control"></v-circle>
-        <v-circle :config="configCircle3" ref="end"></v-circle>
         <div v-for="(token, i) in tokens" :key="token.id">
           <!-- <v-text
             :config="{ ...text, x: i * 300 + 150, text: token.name }"
@@ -60,17 +57,25 @@
             :context="$refs"
             :from="token.id"
             control="control"
+            :connection="Graph.toHead(token.id).connection"
             :to="getToken(Graph.toHead(token.id).head).id"
           ></QuadraticLine>
         </div>
         <template v-if="mounted">
-          <div v-for="(phrase, i) in phrases" :key="phrase.id">
+          <div v-for="phrase in phrases" :key="phrase.id">
             <v-line
               :config="{
-                ...line,
+                ...phraseLine,
                 x: $refs[phrase.range.from].getNode().x(),
-                y: i * 150,
-                points: [0, 0, $refs[phrase.range.to].getNode().x(), 0],
+                y: 150 * Graph.getLevel(phrase),
+                points: [
+                  0,
+                  0,
+                  $refs[phrase.range.to].getNode().x() +
+                    $refs[phrase.range.to].getNode().width() -
+                    $refs[phrase.range.from].getNode().x(),
+                  0,
+                ],
               }"
               :ref="phrase.id"
             ></v-line>
@@ -80,6 +85,7 @@
               control="control"
               :phrase="true"
               :to="getToken(Graph.toHead(phrase.id).head).id"
+              :connection="Graph.toHead(phrase.id).connection"
             ></QuadraticLine>
             <!-- {{ phrase.phrase }}
           "{{
@@ -120,9 +126,9 @@ export default {
         width: width,
         height: height,
       },
-      line: {
-        stroke: "red",
-        strokeWidth: 15,
+      phraseLine: {
+        stroke: "#548DD4",
+        strokeWidth: 2,
         lineCap: "round",
         lineJoin: "round",
       },
