@@ -38,10 +38,23 @@
         <v-circle :config="configCircle2" ref="control"></v-circle>
         <v-circle :config="configCircle3" ref="end"></v-circle>
         <div v-for="(token, i) in tokens" :key="token.id">
-          <v-text
+          <!-- <v-text
             :config="{ ...text, x: i * 300 + 150, text: token.name }"
             :ref="token.id"
-          ></v-text>
+          ></v-text> -->
+          <v-rect
+            :config="{
+              ...text,
+              x: i * 300 + 150,
+              width: 100,
+              height: 50,
+              fill: 'green',
+              stroke: 'black',
+              strokeWidth: 4,
+              meme: i,
+            }"
+            :ref="token.id"
+          ></v-rect>
           <QuadraticLine
             v-if="mounted && head(token.id)"
             :context="$refs"
@@ -65,6 +78,7 @@
               :context="$refs"
               :from="phrase.id"
               control="control"
+              :phrase="true"
               :to="getToken(Graph.toHead(phrase.id).head).id"
             ></QuadraticLine>
             <!-- {{ phrase.phrase }}

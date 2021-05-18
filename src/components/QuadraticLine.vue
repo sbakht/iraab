@@ -32,6 +32,10 @@ export default {
       type: Object,
       required: true,
     },
+    phrase: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -57,24 +61,35 @@ export default {
   methods: {
     mkLine(ctx, shape) {
       ctx.beginPath();
-      ctx.moveTo(this.fromObj.x(), this.fromObj.y());
+      ctx.moveTo(this.getX(this.fromObj), this.getY(this.fromObj));
       ctx.quadraticCurveTo(
         this.controlObj.x(),
         this.controlObj.y(),
-        this.toObj.x(),
-        this.toObj.y()
+        this.getX(this.toObj),
+        this.getY(this.toObj)
       );
       ctx.fillStrokeShape(shape);
     },
-    getCenter(obj) {
+    getX(obj) {
       const x1 = obj.x();
       const x2 = obj.width();
-      return (x1 + x2) / 2;
+      return (x1 * 2 + x2) / 2;
+    },
+    getY(obj) {
+      const x1 = obj.y();
+      const x2 = obj.height();
+      return x1 + x2;
     },
     center() {
       try {
-        const x1 = this.fromObj.x();
-        const x2 = this.toObj.x();
+        let x1;
+        let x2;
+        if (this.phrase) {
+          x1 = this.fromObj.x() + this.fromObj.width() / 2;
+        } else {
+          x1 = this.fromObj.x() + this.fromObj.width();
+        }
+        x2 = this.getX(this.toObj);
         return (x1 + x2) / 2;
       } catch (e) {
         return 0;
