@@ -52,6 +52,17 @@ export const seed = (seedData = {}) => ({
     graph(state) {
       return loadGraph(state, state.tokens);
     },
+    findPhrase(state) {
+      return id => {
+        return state.phrases.byId[id];
+      }
+    },
+    phrases(state) {
+      return state.phrases.allIds.map(id => state.phrases.byId[id]);
+    },
+    connections(state) {
+      return state.connections.allIds.map(id => state.connections.byId[id]);
+    }
   }
 })
 

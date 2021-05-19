@@ -8,13 +8,13 @@
     }"
   />
   <v-circle
-    :config="{ ...circle, x: center(), y: 250 }"
+    :config="{ ...circle, x: center(), y: height }"
     ref="controller"
   ></v-circle>
-  <v-text
+  <!-- <v-text
     :config="{ ...text, text: connection.name, x: center(), y: 250 }"
     ref="controller"
-  ></v-text>
+  ></v-text> -->
 </template>
 
 <script>
@@ -43,6 +43,9 @@ export default {
     connection: {
       type: Object,
       required: true,
+    },
+    height: {
+      type: Number,
     },
   },
   data() {

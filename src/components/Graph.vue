@@ -52,14 +52,15 @@
             }"
             :ref="token.id"
           ></v-rect>
-          <QuadraticLine
+          <!-- <QuadraticLine
             v-if="mounted && head(token.id)"
             :context="$refs"
             :from="token.id"
             control="control"
             :connection="Graph.toHead(token.id).connection"
             :to="getToken(Graph.toHead(token.id).head).id"
-          ></QuadraticLine>
+            :height="250"
+          ></QuadraticLine> -->
         </div>
         <template v-if="mounted">
           <div v-for="phrase in phrases" :key="phrase.id">
@@ -67,7 +68,7 @@
               :config="{
                 ...phraseLine,
                 x: $refs[phrase.range.from].getNode().x(),
-                y: 150 * Graph.getLevel(phrase),
+                y: 250 * Graph.getLevel(phrase),
                 points: [
                   0,
                   0,
@@ -79,22 +80,28 @@
               }"
               :ref="phrase.id"
             ></v-line>
+          </div>
+          <div v-for="connection in connections" :key="connection.id">
             <QuadraticLine
+              v-if="mounted && isPhraseConnection(connection)"
               :context="$refs"
-              :from="phrase.id"
-              control="control"
+              :from="connection.from"
               :phrase="true"
-              :to="getToken(Graph.toHead(phrase.id).head).id"
-              :connection="Graph.toHead(phrase.id).connection"
+              control="control"
+              :connection="connection"
+              :to="connection.to"
+              :height="250 * Graph.getLevel(findPhrase(connection.from)) + 100"
             ></QuadraticLine>
-            <!-- {{ phrase.phrase }}
-          "{{
-            Graph.rangeToWords(phrase)
-              .map((token) => token.label)
-              .join(" ")
-          }}" is a {{ phrase.phrase.tag }} that is
-          {{ Graph.toHead(phrase.id).connection.name }} to
-          {{ getToken(Graph.toHead(phrase.id).head).name }} -->
+            <QuadraticLine
+              v-if="mounted && !isPhraseConnection(connection)"
+              :context="$refs"
+              :from="connection.from"
+              :phrase="false"
+              control="control"
+              :connection="connection"
+              :to="connection.to"
+              :height="250 * Graph.getLevel(connection)"
+            ></QuadraticLine>
           </div>
         </template>
       </v-layer>
@@ -165,7 +172,11 @@ export default {
     });
   },
   computed: {
-    ...mapGetters("Graph", { Graph: "graph" }),
+    ...mapGetters("Graph", {
+      Graph: "graph",
+      connections: "connections",
+      findPhrase: "findPhrase",
+    }),
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
     },
@@ -177,6 +188,13 @@ export default {
     },
   },
   methods: {
+    test(token) {
+      const connection = this.Graph.toHead(token.id).connection;
+      return this.Graph.getLevel(connection);
+    },
+    isPhraseConnection(connection) {
+      return connection.from.includes("phrase");
+    },
     head(id) {
       return this.Graph.toHead(id);
     },
