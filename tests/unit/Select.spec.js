@@ -1,7 +1,7 @@
 
 import { mount } from '@vue/test-utils'
 import { graphSeed } from '../../src/api/Seed'
-import Component from '@/components/Graph.vue'
+import Component from '@/components/Selectable.vue'
 import { seed } from '../../src/store/index'
 
 
@@ -73,4 +73,38 @@ test('renders phrase and their relationship', () => {
   expect(wrapper.text()).toContain('"to his masjid" is a PP that is Mutaalliq to went')
   expect(wrapper.text()).toContain('"went to his masjid" is a VS that is Kabr to he')
   expect(wrapper.text()).toContain('"he went to his masjid" is a NS that is Kabr to zayd')
+})
+
+test('initalizes to no bold words', () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...graphSeed
+      }
+    }
+  });
+
+  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-3').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-4').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-5').classes()).not.toContain('font-bold')
+})
+
+test('sets bold to words on click', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...graphSeed
+      }
+    }
+  });
+
+  await wrapper.find('button[data-testid="connection-3"').trigger('click')
+
+  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-3').classes()).not.toContain('font-bold')
+  expect(wrapper.find('.word-4').classes()).toContain('font-bold')
+  expect(wrapper.find('.word-5').classes()).toContain('font-bold')
 })

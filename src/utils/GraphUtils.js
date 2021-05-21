@@ -269,15 +269,21 @@ export function wordsToTokens(words) {
   }).flat()
 }
 
-export function isSubset(outer, inner, { param, strict }) {
+export function isSubset(outer, inner, { param, strict, partial }) {
   if (!param) {
     const isSubset = inner.filter(innerVal => outer.some(outerVal => outerVal === innerVal)).length === inner.length
+    if (partial) {
+      return inner.filter(innerVal => outer.some(outerVal => outerVal === innerVal)).length > 0
+    }
     if (strict) {
       return isSubset && inner.length < outer.length
     }
     return isSubset
   }
   const isSubset = inner.filter(innerVal => outer.some(outerVal => outerVal[param] === innerVal[param])).length === inner.length
+  if (partial) {
+    return inner.filter(innerVal => outer.some(outerVal => outerVal === innerVal)).length > 0
+  }
   if (strict) {
     return isSubset && inner.length < outer.length
   }

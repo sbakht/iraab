@@ -142,8 +142,8 @@ export const seed = (seedData = {}) => ({
     words(state, getters) {
       return state.words.allIds.map(getters.findWord);
     },
-    phrases(state) {
-      return state.phrases.allIds.map(id => state.phrases.byId[id]);
+    phrases(state, getters) {
+      return state.phrases.allIds.map(getters.findPhrase);
     },
     connections(state, getters) {
       return state.connections.allIds.map(getters.findConnection);
