@@ -6,8 +6,8 @@
         :key="word.label"
         class="mx-4"
         :class="{
-          'font-bold': highlightFrom(word),
-          'text-green-300': highlightTo(word),
+          'active-from': highlightFrom(word),
+          'active-to': highlightTo(word),
           [word.id]: true,
         }"
       >
@@ -135,4 +135,11 @@ export default {
 </script>
 
 <style>
+.active-from {
+  @apply text-blue-500;
+}
+
+.active-to {
+  @apply text-red-500;
+}
 </style>
