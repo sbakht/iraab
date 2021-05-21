@@ -21,7 +21,7 @@
 export default {
   props: {
     from: {
-      type: String,
+      type: Object,
       required: true,
     },
     control: {
@@ -29,7 +29,7 @@ export default {
       required: true,
     },
     to: {
-      type: String,
+      type: Object,
       required: true,
     },
     context: {
@@ -71,9 +71,9 @@ export default {
   },
   mounted() {
     this.ready = true;
-    this.fromObj = this.context[this.from].getNode();
+    this.fromObj = this.context[this.from.id].getNode();
     this.controlObj = this.$refs.controller.getNode();
-    this.toObj = this.context[this.to].getNode();
+    this.toObj = this.context[this.to.id].getNode();
   },
   methods: {
     mkLine(ctx, shape) {

@@ -258,7 +258,7 @@ export function loadGraph(data) {
   return obj;
 }
 
-function wordsToTokens(words) {
+export function wordsToTokens(words) {
   return words.map(word => {
     if (word.token) {
       return word.token;
@@ -269,6 +269,20 @@ function wordsToTokens(words) {
   }).flat()
 }
 
+export function isSubset(outer, inner, { param, strict }) {
+  if (!param) {
+    const isSubset = inner.filter(innerVal => outer.some(outerVal => outerVal === innerVal)).length === inner.length
+    if (strict) {
+      return isSubset && inner.length < outer.length
+    }
+    return isSubset
+  }
+  const isSubset = inner.filter(innerVal => outer.some(outerVal => outerVal[param] === innerVal[param])).length === inner.length
+  if (strict) {
+    return isSubset && inner.length < outer.length
+  }
+  return isSubset
+}
 
 function getLevel(data) {
   const self = this;
@@ -276,12 +290,11 @@ function getLevel(data) {
     return self.rangeToWords(phrase)
   }
 
-
   function isPhraseContainedInOtherPhrase(outer, inner) {
     const outerTokens = wordsToTokens(containedWordsInPhrase(outer))
     const innerTokens = wordsToTokens(containedWordsInPhrase(inner))
 
-    return innerTokens.filter(token => outerTokens.some(o => o.id !== token.id)).length === innerTokens.length && innerTokens.length < outerTokens.length
+    return innerTokens.filter(token => outerTokens.some(o => o.id === token.id)).length === innerTokens.length && innerTokens.length < outerTokens.length
   }
 
   if (data.grammar) {

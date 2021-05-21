@@ -1,7 +1,8 @@
 <template>
   <div id="nav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/graph">Dependency Graph</router-link>
+    <router-link to="/graph">Dependency Graph</router-link> |
+    <router-link to="/selectable">Selectable</router-link>
   </div>
   <router-view />
 </template>

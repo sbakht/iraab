@@ -12,6 +12,11 @@ const routes = [
     name: 'Graph',
     component: () => import(/* webpackChunkName: "graph" */ '../views/Graph.vue')
   },
+  {
+    path: '/selectable',
+    name: 'Select',
+    component: () => import(/* webpackChunkName: "select" */ '../views/Select.vue')
+  },
 ]
 
 const router = createRouter({

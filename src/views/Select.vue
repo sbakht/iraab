@@ -1,15 +1,15 @@
 <template>
   <div>
-    <Graph></Graph>
+    <Selectable></Selectable>
   </div>
 </template>
 
 <script>
-import Graph from "@/components/Graph.vue";
+import Selectable from "@/components/Selectable.vue";
 
 export default {
   name: "App",
-  components: { Graph },
+  components: { Selectable },
   mounted() {
     this.$store.dispatch("Graph/fetch");
   },

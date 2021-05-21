@@ -2,6 +2,51 @@ import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
 
+function rangeToWords(tokens, { from, to }) {
+  const result = []
+  const words = [] //?
+  let started = false;
+
+  function go(token) {
+    let added = false;
+    if (token.id === from) {
+      started = true;
+    }
+    if (started) {
+      result.push(token);
+      added = true;
+    }
+    if (token.id === to) {
+      return { done: true, added };
+    }
+    return { done: false, added };
+  }
+
+  for (let obj of tokens) {
+    if (obj.token) {
+      const x = go(obj.token);
+      if (x.added) {
+        words.push(obj)
+        if (x.done) {
+          return words;
+        }
+      }
+    }
+    if (obj.tokens) {
+      for (let token of obj.tokens) {
+        const x = go(token);
+        if (x.added) {
+          words.push(obj)
+          if (x.done) {
+            return words;
+          }
+          break;
+        }
+      }
+    }
+  }
+  return words;
+}
 
 export const seed = (seedData = {}) => ({
   namespaced: true,
@@ -52,16 +97,56 @@ export const seed = (seedData = {}) => ({
     graph(state) {
       return loadGraph(state, state.tokens);
     },
-    findPhrase(state) {
-      return id => {
-        return state.phrases.byId[id];
+    findToken: state => id => {
+      return state.tokens.byId[id];
+    },
+    findWord: (state, getters) => id => {
+      const word = state.words.byId[id];
+      if (word.token) {
+        const token = getters.findToken(word.token);
+        return {
+          ...word, token, label: token.name
+        }
       }
+      return {
+        ...word, tokens: word.tokens.map(getters.findToken)
+      }
+    },
+    findPhrase(state, getters) {
+      return id => {
+        const phrase = state.phrases.byId[id];
+        const from = getters.findToken(phrase.range.from);
+        const to = getters.findToken(phrase.range.to);
+        const words = rangeToWords(getters.words, phrase.range)
+        const tokens = words.map(word => word.token || word.tokens).flat()
+
+        return { ...phrase, from, to, words, tokens };
+      }
+    },
+    find: (state, getters) => id => {
+      if (id.startsWith('phrase')) {
+        return getters.findPhrase(id)
+      }
+      if (id.startsWith('token')) {
+        return getters.findToken(id)
+      }
+    },
+    findConnection(state, getters) {
+      return id => {
+        const connection = state.connections.byId[id];
+        const from = getters.find(connection.from)
+        const to = getters.find(connection.to)
+        return { ...connection, from, to }
+      }
+    },
+    words(state, getters) {
+      return state.words.allIds.map(getters.findWord);
     },
     phrases(state) {
       return state.phrases.allIds.map(id => state.phrases.byId[id]);
     },
-    connections(state) {
-      return state.connections.allIds.map(id => state.connections.byId[id]);
+    connections(state, getters) {
+      return state.connections.allIds.map(getters.findConnection);
     }
   }
 })

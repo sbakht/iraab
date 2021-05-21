@@ -90,7 +90,7 @@
               control="control"
               :connection="connection"
               :to="connection.to"
-              :height="250 * Graph.getLevel(findPhrase(connection.from)) + 100"
+              :height="250 * Graph.getLevel(connection.from) + 100"
             ></QuadraticLine>
             <QuadraticLine
               v-if="mounted && !isPhraseConnection(connection)"
@@ -175,7 +175,6 @@ export default {
     ...mapGetters("Graph", {
       Graph: "graph",
       connections: "connections",
-      findPhrase: "findPhrase",
     }),
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
@@ -193,7 +192,7 @@ export default {
       return this.Graph.getLevel(connection);
     },
     isPhraseConnection(connection) {
-      return connection.from.includes("phrase");
+      return connection.from.id.includes("phrase");
     },
     head(id) {
       return this.Graph.toHead(id);
