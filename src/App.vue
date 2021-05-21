@@ -1,39 +1,31 @@
 <template>
-  <div>
-    <Graph></Graph>
-    <!-- <Konva></Konva> -->
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/graph">Dependency Graph</router-link>
   </div>
+  <router-view />
 </template>
-
-<script lang="ts">
-import Graph from "./components/Graph.vue";
-
-export default {
-  name: "App",
-  components: { Graph },
-  mounted() {
-    this.$store.dispatch("fetch");
-  },
-};
-</script>
 
 <style>
 #app {
-  margin: 0 auto;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 
-@font-face {
-  font-family: "uthmani-hafs";
-  src: url("./assets/Uthmani-Hafs.woff2") format("woff2"),
-    url("./assets/Uthmani-Hafs.woff") format("woff");
+#nav {
+  padding: 30px;
+  padding-top: 0;
 }
 
-.arabic {
-  font-family: "uthmani-hafs";
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
