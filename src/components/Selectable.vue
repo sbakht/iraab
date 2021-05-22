@@ -1,21 +1,13 @@
 <template>
   <div>
     <div class="p-4 flex flex-row-reverse justify-center">
-      <div
+      <Word
         v-for="word in words"
-        :key="word.label"
-        class="mx-4"
-        :class="{
-          'active-from': highlightFrom(word),
-          'active-to': highlightTo(word),
-          [word.id]: true,
-        }"
-      >
-        <template v-if="word.token">
-          {{ word.label }}
-        </template>
-        <template v-if="word.tokens"> {{ word.label }}</template>
-      </div>
+        :word="word"
+        :key="word.id"
+        :activeFrom="highlightFrom(word)"
+        :activeTo="highlightTo(word)"
+      ></Word>
     </div>
 
     <div class="p-4 flex flex-row justify-center space-x-4">
@@ -52,9 +44,11 @@
 <script>
 import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
+import Word from "@/components/Word";
 
 export default {
   name: "test",
+  components: { Word },
   data() {
     return {
       selectedConnection: null,
@@ -135,11 +129,4 @@ export default {
 </script>
 
 <style>
-.active-from {
-  @apply text-blue-500;
-}
-
-.active-to {
-  @apply text-red-500;
-}
 </style>
