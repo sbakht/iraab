@@ -4,23 +4,14 @@ import { graphSeed } from '../../src/api/Seed'
 import Component from '@/components/Selectable.vue'
 import { seed } from '../../src/store/index'
 
+const activeFromClass = 'active-from'
+const activeToClass = 'active-to'
 
-function expectIntialOptions({ selections, wrapper }) {
-  const tags = wrapper.find('.multiselect__tag')
-
-  expect(tags.exists()).toBe(false);
-  expect(selections.html()).toContain('Ism')
-  expect(selections.html()).toContain('Fil')
-  expect(selections.html()).toContain('Harf')
-  expect(wrapper.findAll('.multiselect__element')).toHaveLength(3)
+function noActiveClass(wrapper, selector) {
+  expect(wrapper.find(selector).classes()).not.toContain(activeFromClass)
+  expect(wrapper.find(selector).classes()).not.toContain(activeToClass)
 }
 
-function mkAnswers(byId) {
-  return {
-    byId,
-    allIds: Object.keys(byId),
-  }
-}
 
 function mkWrapper(data = {}, rest) {
   const wrapper = mount(Component, {
@@ -32,7 +23,7 @@ function mkWrapper(data = {}, rest) {
   return wrapper;
 }
 
-test('renders words and their parts of speech', () => {
+test('renders text of token and relationship on click', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
@@ -41,57 +32,12 @@ test('renders words and their parts of speech', () => {
     }
   });
 
-  expect(wrapper.text()).toContain('zayd - PN')
-  expect(wrapper.text()).toContain('he - PRON')
-  expect(wrapper.text()).toContain('went - V')
-  expect(wrapper.text()).toContain('to - P')
-  expect(wrapper.text()).toContain("his masjid - PN, PRON")
+  await wrapper.find('button[data-testid="connection-1"').trigger('click')
+
+  expect(wrapper.text()).toContain('"masjid" is Majroor to "to"')
 })
 
-test('renders token and their relationship', () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        ...graphSeed
-      }
-    }
-  });
-
-  expect(wrapper.text()).toContain('masjid is Majroor to to')
-  expect(wrapper.text()).toContain('his is Mudaf Ilayhi to masjid')
-})
-
-test('renders phrase and their relationship', () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        ...graphSeed
-      }
-    }
-  });
-
-  expect(wrapper.text()).toContain('"to his masjid" is a PP that is Mutaalliq to went')
-  expect(wrapper.text()).toContain('"went to his masjid" is a VS that is Kabr to he')
-  expect(wrapper.text()).toContain('"he went to his masjid" is a NS that is Kabr to zayd')
-})
-
-test('initalizes to no bold words', () => {
-  const wrapper = mkWrapper({
-    store: {
-      state: {
-        ...graphSeed
-      }
-    }
-  });
-
-  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-3').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-4').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-5').classes()).not.toContain('font-bold')
-})
-
-test('sets bold to words on click', async () => {
+test('renders text of phrase and relationship on click', async () => {
   const wrapper = mkWrapper({
     store: {
       state: {
@@ -102,9 +48,73 @@ test('sets bold to words on click', async () => {
 
   await wrapper.find('button[data-testid="connection-3"').trigger('click')
 
-  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-1').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-3').classes()).not.toContain('font-bold')
-  expect(wrapper.find('.word-4').classes()).toContain('font-bold')
-  expect(wrapper.find('.word-5').classes()).toContain('font-bold')
+  expect(wrapper.text()).toContain('"to his masjid" is a Prepositional Sentence that is Mutaalliq to "went"')
+})
+
+test('no active words on initialize', () => {
+  const activeFromClass = 'active-from'
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...graphSeed
+      }
+    }
+  });
+
+  noActiveClass(wrapper, '.word-1')
+  noActiveClass(wrapper, '.word-2')
+  noActiveClass(wrapper, '.word-3')
+  noActiveClass(wrapper, '.word-4')
+  noActiveClass(wrapper, '.word-5')
+})
+
+test('sets active to and from classes on words when clicking on a grammer button', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...graphSeed
+      }
+    }
+  });
+
+  await wrapper.find('button[data-testid="connection-1"').trigger('click')
+
+  noActiveClass(wrapper, '.word-1')
+  noActiveClass(wrapper, '.word-2')
+  noActiveClass(wrapper, '.word-3')
+  expect(wrapper.find('.word-4').classes()).toContain(activeToClass)
+  expect(wrapper.find('.word-5').classes()).toContain(activeFromClass)
+
+  await wrapper.find('button[data-testid="connection-2"').trigger('click')
+
+  noActiveClass(wrapper, '.word-1')
+  noActiveClass(wrapper, '.word-2')
+  noActiveClass(wrapper, '.word-3')
+  noActiveClass(wrapper, '.word-4')
+  expect(wrapper.find('.word-5').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-5').classes()).toContain(activeToClass)
+
+  await wrapper.find('button[data-testid="connection-3"').trigger('click')
+
+  noActiveClass(wrapper, '.word-1')
+  noActiveClass(wrapper, '.word-2')
+  expect(wrapper.find('.word-3').classes()).toContain(activeToClass)
+  expect(wrapper.find('.word-4').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-5').classes()).toContain(activeFromClass)
+
+  await wrapper.find('button[data-testid="connection-4"').trigger('click')
+
+  noActiveClass(wrapper, '.word-1')
+  expect(wrapper.find('.word-2').classes()).toContain(activeToClass)
+  expect(wrapper.find('.word-3').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-4').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-5').classes()).toContain(activeFromClass)
+
+  await wrapper.find('button[data-testid="connection-5"').trigger('click')
+
+  expect(wrapper.find('.word-1').classes()).toContain(activeToClass)
+  expect(wrapper.find('.word-2').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-3').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-4').classes()).toContain(activeFromClass)
+  expect(wrapper.find('.word-5').classes()).toContain(activeFromClass)
 })
