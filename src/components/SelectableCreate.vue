@@ -2,10 +2,13 @@
   <div>
     <div class="p-4 flex flex-row-reverse justify-center">
       <Word
-        @click="click(word)"
-        @click.shift="shiftClick(word)"
+        :clickable="true"
+        @clickWord="click"
+        @clickToken="clickToken"
+        @shiftClickWord="shiftClick"
         v-for="word in words"
         class="cursor-pointer"
+        :class="{ 'bg-green-100': isSelected(word) }"
         :word="word"
         :key="word.id"
         :activeFrom="highlightFrom(word)"
@@ -77,14 +80,51 @@ export default {
   },
   methods: {
     click(word) {
-      this.from.push(word);
+      console.log("click word");
+      this.clearSelectedConnection();
+      const tokens = this.toTokens(word);
+      if (this.isSelected(word)) {
+        this.from = this.from.filter(
+          (t) => !tokens.some((t2) => t.id === t2.id)
+        );
+      } else {
+        this.from = this.from.concat(tokens);
+      }
+    },
+    clickToken(token) {
+      console.log("click token");
+      this.clearSelectedConnection();
+      const tokens = this.toTokens(token);
+      if (this.isSelected(token)) {
+        this.from = this.from.filter(
+          (t) => !tokens.some((t2) => t.id === t2.id)
+        );
+      } else {
+        this.from = this.from.concat(tokens);
+      }
     },
     shiftClick(word) {
       this.to = word;
-      this.$store.commit("Graph/addConnection", {
-        from: this.from[0].token,
-        to: this.to.token,
-      });
+      // TODO implement for multiple tokens
+      console.log(this.from);
+      if (this.from.length === 1) {
+        this.$store.commit("Graph/addConnection", {
+          from: this.from[0],
+          to: this.to.token,
+        });
+      }
+      this.resetSelections();
+    },
+    resetSelections() {
+      this.to = null;
+      this.from = [];
+    },
+    isSelected(word) {
+      const tokens = this.toTokens(word);
+      return (
+        this.from.filter((t) => tokens.some((t2) => t.id === t2.id)).length ===
+        tokens.length
+      );
     },
     highlightFrom(word) {
       if (!this.selectedConnection) return false;
@@ -102,6 +142,10 @@ export default {
     },
     selectConnection(connection) {
       this.selectedConnection = connection;
+      this.resetSelections();
+    },
+    clearSelectedConnection() {
+      this.selectedConnection = null;
     },
     toTokens(obj) {
       if (this.isPhrase(obj)) {
