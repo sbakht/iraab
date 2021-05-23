@@ -19,7 +19,11 @@
         :key="connection.id"
         @click="selectConnection(connection)"
       >
-        <button class="rounded p-2 border" :data-testid="connection.id">
+        <button
+          v-if="connection.userAdded"
+          class="rounded p-2 border"
+          :data-testid="connection.id"
+        >
           {{ connection.grammar.name }}
         </button>
       </div>

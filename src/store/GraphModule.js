@@ -89,7 +89,8 @@ export const seed = (seedData = {}) => ({
         id,
         from: from.id,
         to: to.id,
-        grammar: data.Majroor
+        grammar: data.Majroor,
+        userAdded: true,
       }
       state.connections.allIds.push(id);
     },
