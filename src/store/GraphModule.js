@@ -1,6 +1,7 @@
 import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
+import { data } from '../data/data';
 
 function rangeToWords(tokens, { from, to }) {
   const result = []
@@ -81,7 +82,17 @@ export const seed = (seedData = {}) => ({
       state.tokens.byId[id] = { id, name, pos: 'PRO' }
       state.tokens.allIds.push(id);
       console.log(state.tokens)
-    }
+    },
+    addConnection(state, { from, to }) {
+      const id = 'connection-' + uuidv4();
+      state.connections.byId[id] = {
+        id,
+        from: from.id,
+        to: to.id,
+        grammar: data.Majroor
+      }
+      state.connections.allIds.push(id);
+    },
   },
   actions: {
     fetch({ commit }) {

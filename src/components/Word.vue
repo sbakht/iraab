@@ -35,7 +35,7 @@ export default {
 
 <style>
 .active-from {
-  @apply text-blue-500;
+  @apply text-blue-500 bg-gray-100;
 }
 
 .active-to {
