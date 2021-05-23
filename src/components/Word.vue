@@ -5,6 +5,7 @@
       'active-from': activeFrom,
       'active-to': activeTo,
       'cursor-pointer': clickable,
+      selected: selected,
       [word.id]: true,
     }"
   >
@@ -23,6 +24,10 @@
         <div
           v-for="token in word.tokens"
           :key="token.id"
+          :class="{
+            'active-from-token': activeFromToken === token.id,
+            'active-to-token': activeToToken === token.id,
+          }"
           @click.exact="clickToken(token)"
           @click.shift.stop="shiftClickToken(token)"
         >
@@ -44,11 +49,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    activeFromToken: {
+      type: String,
+      default: "",
+    },
     activeTo: {
       type: Boolean,
       default: false,
     },
+    activeToToken: {
+      type: String,
+      default: "",
+    },
     clickable: {
+      type: Boolean,
+      default: false,
+    },
+    selected: {
       type: Boolean,
       default: false,
     },
@@ -71,11 +88,24 @@ export default {
 </script>
 
 <style>
-.active-from {
+.active-from,
+.active-from-token {
   @apply text-blue-500 bg-gray-100;
 }
 
-.active-to {
+.active-to,
+.active-to-token {
   @apply text-red-500;
 }
+
+.selected {
+  @apply bg-yellow-50;
+}
+
+/* .active-from-token {
+  @apply font-bold;
+}
+.active-to-token {
+  @apply font-bold;
+} */
 </style>

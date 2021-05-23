@@ -6,13 +6,20 @@
         @clickWord="click"
         @clickToken="clickToken"
         @shiftClickWord="shiftClick"
+        @shiftClickToken="shiftClickToken"
         v-for="word in words"
         class="cursor-pointer"
-        :class="{ 'bg-green-100': isSelected(word) }"
         :word="word"
         :key="word.id"
-        :activeFrom="highlightFrom(word)"
-        :activeTo="highlightTo(word)"
+        :selected="isSelected(word)"
+        :activeFrom="highlightFrom(word).match && highlightFrom(word).word"
+        :activeFromToken="
+          (highlightFrom(word).match && highlightFrom(word).token) || ''
+        "
+        :activeTo="highlightTo(word).match && highlightTo(word).word"
+        :activeToToken="
+          (highlightTo(word).match && highlightTo(word).token) || ''
+        "
       ></Word>
     </div>
 
@@ -55,6 +62,7 @@
 import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
 import Word from "@/components/Word";
+import Utils from "../utils/Utils";
 
 export default {
   name: "test",
@@ -80,7 +88,6 @@ export default {
   },
   methods: {
     click(word) {
-      console.log("click word");
       this.clearSelectedConnection();
       const tokens = this.toTokens(word);
       if (this.isSelected(word)) {
@@ -90,9 +97,9 @@ export default {
       } else {
         this.from = this.from.concat(tokens);
       }
+      console.log("click word", this.from);
     },
     clickToken(token) {
-      console.log("click token");
       this.clearSelectedConnection();
       const tokens = this.toTokens(token);
       if (this.isSelected(token)) {
@@ -102,15 +109,30 @@ export default {
       } else {
         this.from = this.from.concat(tokens);
       }
+      console.log("click token", this.from);
     },
     shiftClick(word) {
       this.to = word;
+      const toToken = this.toTokens(word)[0];
+      console.log("shift click", this.from, toToken);
       // TODO implement for multiple tokens
-      console.log(this.from);
       if (this.from.length === 1) {
         this.$store.commit("Graph/addConnection", {
           from: this.from[0],
-          to: this.to.token,
+          to: toToken,
+        });
+      }
+      this.resetSelections();
+    },
+    shiftClickToken(token) {
+      this.to = token;
+      const toToken = this.toTokens(token)[0];
+      console.log("shift click token", this.from, toToken);
+      // TODO implement for multiple tokens
+      if (this.from.length === 1) {
+        this.$store.commit("Graph/addConnection", {
+          from: this.from[0],
+          to: toToken,
         });
       }
       this.resetSelections();
@@ -127,18 +149,34 @@ export default {
       );
     },
     highlightFrom(word) {
-      if (!this.selectedConnection) return false;
+      if (!this.selectedConnection) return { match: false };
 
       const outerTokens = this.toTokens(this.selectedConnection.from);
       const tokens = wordsToTokens([word]);
-      return isSubset(outerTokens, tokens, { param: "id", partial: true });
+      // return isSubset(outerTokens, tokens, { param: "id", partial: true });
+      if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
+        return { match: true, word: true };
+      }
+
+      if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
+        return { match: true, token: outerTokens[0].id };
+      }
+      return { match: false };
     },
     highlightTo(word) {
-      if (!this.selectedConnection) return false;
+      if (!this.selectedConnection) return { match: false };
 
       const outerTokens = this.toTokens(this.selectedConnection.to);
       const tokens = wordsToTokens([word]);
-      return isSubset(outerTokens, tokens, { param: "id", partial: true });
+      console.log(outerTokens, tokens);
+      if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
+        return { match: true, word: true };
+      }
+
+      if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
+        return { match: true, token: outerTokens[0].id };
+      }
+      return { match: false };
     },
     selectConnection(connection) {
       this.selectedConnection = connection;
@@ -148,22 +186,11 @@ export default {
       this.selectedConnection = null;
     },
     toTokens(obj) {
-      if (this.isPhrase(obj)) {
-        return obj.tokens;
-      }
-      if (this.isToken(obj)) {
-        return [obj];
-      }
-      if (this.isWord(obj)) {
-        return obj.token ? [obj.token] : obj.tokens;
-      }
+      return Utils.toTokens(obj);
     },
     test(token) {
       const connection = this.Graph.toHead(token.id).connection;
       return this.Graph.getLevel(connection);
-    },
-    isConnection(obj) {
-      return obj.id.includes("connection");
     },
     isPhrase(obj) {
       return obj.id.includes("phrase");
