@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mx-4"
+    class="arabic mx-4 text-6xl"
     :class="{
       'active-from': activeFrom,
       'active-to': activeTo,

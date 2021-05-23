@@ -29,4 +29,14 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+@font-face {
+  font-family: "uthmani-hafs";
+  src: url("./assets/Uthmani-Hafs.woff2") format("woff2"),
+    url("./assets/Uthmani-Hafs.woff") format("woff");
+}
+
+.arabic {
+  font-family: "uthmani-hafs";
+}
 </style>

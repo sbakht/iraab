@@ -2,16 +2,41 @@ import { data } from '../data/data';
 import { Speech } from './PartsOfSpeech'
 import { Phrase } from './Phrase';
 // import { loadGraph } from '../utils/GraphUtils'
+'زيدٌ',
+  //         answers: { '123': { answerable: false, answerKey: '1' } },
+  //         sentences: ['123'],
+  //       },
+  //       2: {
+  //         id: '2',
+  'هو',
+  //         answers: { '123': { answerable: true, key: '1', answerKey: '1' } },
+  //         sentences: ['123'],
+  //       },
+  //       3: {
+  //         id: '3',
+  'جالسٌ',
+  //         answers: { '123': { answerable: true, key: '2', answerKey: '2' } },
+  //         sentences: ['123'],
+  //       },
+  //       4: {
+  //         id: '4',
+  'فِ',
+  //         answers: { '123': { answerable: false, hideAnswer: true, answerKey: '3' } },
+  //         sentences: ['123'],
+  //       },
+  //       5: {
+  //         id: '5',
+  'مَسْجِدِهِ'
 
 const obj = {
   tokens: {
     byId: {
-      'token-1': { id: 'token-1', name: 'zayd', pos: Speech.Ism.Noun.PN },
-      'token-2': { id: 'token-2', name: "he", pos: Speech.Ism.Pronoun.PRON },
-      'token-3': { id: 'token-3', name: "went", pos: Speech.Fil.Verb.V },
-      'token-4': { id: 'token-4', name: "to", pos: Speech.Harf.Preposition.P },
-      'token-5': { id: 'token-5', name: "masjid", pos: Speech.Ism.Noun.PN },
-      'token-6': { id: 'token-6', name: "his", pos: Speech.Ism.Pronoun.PRON },
+      'token-1': { id: 'token-1', name: 'زيدٌ', pos: Speech.Ism.Noun.PN },
+      'token-2': { id: 'token-2', name: "هو", pos: Speech.Ism.Pronoun.PRON },
+      'token-3': { id: 'token-3', name: "جالسٌ", pos: Speech.Fil.Verb.V },
+      'token-4': { id: 'token-4', name: "فِ", pos: Speech.Harf.Preposition.P },
+      'token-5': { id: 'token-5', name: "مَسْجِدِِ", pos: Speech.Ism.Noun.PN },
+      'token-6': { id: 'token-6', name: "هو", pos: Speech.Ism.Pronoun.PRON },
     },
     allIds: ['token-1', 'token-2', 'token-3', 'token-4', 'token-5', 'token-6'],
   },
@@ -21,7 +46,7 @@ const obj = {
       'word-2': { id: 'word-2', token: 'token-2' },
       'word-3': { id: 'word-3', token: 'token-3' },
       'word-4': { id: 'word-4', token: 'token-4' },
-      'word-5': { id: 'word-5', tokens: ['token-5', 'token-6'], label: 'his masjid' },
+      'word-5': { id: 'word-5', tokens: ['token-5', 'token-6'], label: 'مَسْجِدِهِ' },
     },
     allIds: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
   },
