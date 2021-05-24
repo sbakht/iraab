@@ -63,9 +63,22 @@ import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
 import Word from "@/components/Word";
 import Utils from "../utils/Utils";
+import { data } from "../data/data";
+import { Phrase } from "../api/Phrase";
+
+function highlight(outerTokens, word) {
+  const tokens = wordsToTokens([word]);
+  if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
+    return { match: true, word: true };
+  }
+
+  if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
+    return { match: true, token: outerTokens[0].id };
+  }
+  return { match: false };
+}
 
 export default {
-  name: "test",
   components: { Word },
   data() {
     return {
@@ -87,14 +100,10 @@ export default {
     },
   },
   methods: {
+    ...Utils,
     click(word) {
       this.clearFocusedConnection();
-      const tokens = this.toTokens(word);
-      if (this.isSelected(word)) {
-        this.from = Utils.filterByArray(tokens, this.from, { param: "id" });
-      } else {
-        this.from = this.from.concat(tokens);
-      }
+      this.from = this.getUpdatedSelection(word);
       console.log("click word", this.from);
     },
     shiftClick(word) {
@@ -110,9 +119,18 @@ export default {
       }
       this.clearSelection();
     },
+    getUpdatedSelection(word) {
+      const tokens = Utils.toTokens(word);
+      if (this.isSelected(word)) {
+        return Utils.filterByArray(tokens, this.from, { param: "id" });
+      } else {
+        return this.from.concat(tokens);
+      }
+    },
     addPhrase(items) {
       return this.$store.dispatch("Graph/addPhrase", {
         items: items,
+        phrase: Phrase.PP,
       });
     },
     addConnection(phrase, toToken) {
@@ -120,6 +138,7 @@ export default {
         .dispatch("Graph/addConnection", {
           from: phrase,
           to: toToken,
+          grammar: data.Empty,
         })
         .then((connection) => {
           this.focusConnection(connection);
@@ -130,40 +149,19 @@ export default {
       this.from = [];
     },
     isSelected(word) {
-      const tokens = this.toTokens(word);
-      return (
-        this.from.filter((t) => tokens.some((t2) => t.id === t2.id)).length ===
-        tokens.length
-      );
+      return Utils.containsArray(this.toTokens(word), this.from);
     },
     highlightFrom(word) {
       if (!this.selectedConnection) return { match: false };
 
       const outerTokens = this.toTokens(this.selectedConnection.from);
-      const tokens = wordsToTokens([word]);
-      // return isSubset(outerTokens, tokens, { param: "id", partial: true });
-      if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
-        return { match: true, word: true };
-      }
-
-      if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
-        return { match: true, token: outerTokens[0].id };
-      }
-      return { match: false };
+      return highlight(outerTokens, word);
     },
     highlightTo(word) {
       if (!this.selectedConnection) return { match: false };
 
       const outerTokens = this.toTokens(this.selectedConnection.to);
-      const tokens = wordsToTokens([word]);
-      if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
-        return { match: true, word: true };
-      }
-
-      if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
-        return { match: true, token: outerTokens[0].id };
-      }
-      return { match: false };
+      return highlight(outerTokens, word);
     },
     focusConnection(connection) {
       this.selectedConnection = connection;
@@ -171,35 +169,6 @@ export default {
     },
     clearFocusedConnection() {
       this.selectedConnection = null;
-    },
-    toTokens(obj) {
-      return Utils.toTokens(obj);
-    },
-    test(token) {
-      const connection = this.Graph.toHead(token.id).connection;
-      return this.Graph.getLevel(connection);
-    },
-    isPhrase(obj) {
-      return obj.id.includes("phrase");
-    },
-    isToken(obj) {
-      return obj.id.includes("token");
-    },
-    isWord(obj) {
-      return obj.id.includes("word");
-    },
-    isPhraseConnection(connection) {
-      return connection.from.includes("phrase");
-    },
-    head(id) {
-      return this.Graph.toHead(id);
-    },
-    getToken(id) {
-      return this.Graph.graph.node(id);
-    },
-    addNode() {
-      console.log("add");
-      this.$store.dispatch("Graph/addNode", Math.random());
     },
   },
 };

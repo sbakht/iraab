@@ -1,8 +1,6 @@
 import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
-import { data } from '../data/data';
-import { Phrase } from '../api/Phrase';
 
 function rangeToWords(tokens, { from, to }) {
   const result = []
@@ -84,24 +82,24 @@ export const seed = (seedData = {}) => ({
       state.tokens.allIds.push(id);
       console.log(state.tokens)
     },
-    addPhrase(state, { from, to, id }) {
+    addPhrase(state, { from, to, phrase, id }) {
       state.phrases.byId[id] = {
         id,
         range: {
           from: from.id,
           to: to.id,
         },
-        phrase: Phrase.PP,
+        phrase,
         userAdded: true,
       }
       state.phrases.allIds.push(id);
     },
-    addConnection(state, { from, to, id }) {
+    addConnection(state, { from, to, grammar, id }) {
       state.connections.byId[id] = {
         id,
         from: from.id,
         to: to.id,
-        grammar: data.Majroor,
+        grammar,
         userAdded: true,
       }
       state.connections.allIds.push(id);
@@ -130,12 +128,12 @@ export const seed = (seedData = {}) => ({
       })
 
       const id = 'phrase-' + uuidv4();
-      commit('addPhrase', { from: items[0], to: items[items.length - 1], id })
+      commit('addPhrase', { from: items[0], to: items[items.length - 1], phrase: data.phrase, id })
       return getters.findPhrase(id);
     },
     addConnection({ commit, getters }, data) {
       const id = 'connection-' + uuidv4();
-      commit('addConnection', { from: data.from, to: data.to, id })
+      commit('addConnection', { ...data, id })
       return getters.findConnection(id);
     }
   },
