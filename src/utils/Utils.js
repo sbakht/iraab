@@ -21,7 +21,11 @@ const utils = {
     if (utils.isWord(obj)) {
       return obj.token ? [obj.token] : obj.tokens;
     }
-  }
+  },
+  filterByArray(tokens, arr, { param } = {}) {
+    const val = (x) => (param ? x[param] : x);
+    return arr.filter((t) => !tokens.some((t2) => val(t) === val(t2)));
+  },
 }
 
 export default utils;

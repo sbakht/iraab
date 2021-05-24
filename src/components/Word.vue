@@ -108,4 +108,8 @@ export default {
 .active-to-token {
   @apply font-bold;
 } */
+
+.arabic {
+  user-select: none;
+}
 </style>

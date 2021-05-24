@@ -4,9 +4,9 @@
       <Word
         :clickable="true"
         @clickWord="click"
-        @clickToken="clickToken"
+        @clickToken="click"
         @shiftClickWord="shiftClick"
-        @shiftClickToken="shiftClickToken"
+        @shiftClickToken="shiftClick"
         v-for="word in words"
         class="cursor-pointer"
         :word="word"
@@ -27,7 +27,7 @@
       <div
         v-for="connection in connections"
         :key="connection.id"
-        @click="selectConnection(connection)"
+        @click="focusConnection(connection)"
       >
         <button
           v-if="connection.userAdded"
@@ -88,56 +88,44 @@ export default {
   },
   methods: {
     click(word) {
-      this.clearSelectedConnection();
+      this.clearFocusedConnection();
       const tokens = this.toTokens(word);
       if (this.isSelected(word)) {
-        this.from = this.from.filter(
-          (t) => !tokens.some((t2) => t.id === t2.id)
-        );
+        this.from = Utils.filterByArray(tokens, this.from, { param: "id" });
       } else {
         this.from = this.from.concat(tokens);
       }
       console.log("click word", this.from);
     },
-    clickToken(token) {
-      this.clearSelectedConnection();
-      const tokens = this.toTokens(token);
-      if (this.isSelected(token)) {
-        this.from = this.from.filter(
-          (t) => !tokens.some((t2) => t.id === t2.id)
-        );
-      } else {
-        this.from = this.from.concat(tokens);
-      }
-      console.log("click token", this.from);
-    },
     shiftClick(word) {
       this.to = word;
       const toToken = this.toTokens(word)[0];
       console.log("shift click", this.from, toToken);
-      // TODO implement for multiple tokens
       if (this.from.length === 1) {
-        this.$store.commit("Graph/addConnection", {
-          from: this.from[0],
-          to: toToken,
+        this.addConnection(this.from[0], toToken);
+      } else {
+        this.addPhrase(this.from).then((phrase) => {
+          this.addConnection(phrase, toToken);
         });
       }
-      this.resetSelections();
+      this.clearSelection();
     },
-    shiftClickToken(token) {
-      this.to = token;
-      const toToken = this.toTokens(token)[0];
-      console.log("shift click token", this.from, toToken);
-      // TODO implement for multiple tokens
-      if (this.from.length === 1) {
-        this.$store.commit("Graph/addConnection", {
-          from: this.from[0],
+    addPhrase(items) {
+      return this.$store.dispatch("Graph/addPhrase", {
+        items: items,
+      });
+    },
+    addConnection(phrase, toToken) {
+      this.$store
+        .dispatch("Graph/addConnection", {
+          from: phrase,
           to: toToken,
+        })
+        .then((connection) => {
+          this.focusConnection(connection);
         });
-      }
-      this.resetSelections();
     },
-    resetSelections() {
+    clearSelection() {
       this.to = null;
       this.from = [];
     },
@@ -168,7 +156,6 @@ export default {
 
       const outerTokens = this.toTokens(this.selectedConnection.to);
       const tokens = wordsToTokens([word]);
-      console.log(outerTokens, tokens);
       if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
         return { match: true, word: true };
       }
@@ -178,11 +165,11 @@ export default {
       }
       return { match: false };
     },
-    selectConnection(connection) {
+    focusConnection(connection) {
       this.selectedConnection = connection;
-      this.resetSelections();
+      this.clearSelection();
     },
-    clearSelectedConnection() {
+    clearFocusedConnection() {
       this.selectedConnection = null;
     },
     toTokens(obj) {

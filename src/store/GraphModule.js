@@ -2,10 +2,11 @@ import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
 import { data } from '../data/data';
+import { Phrase } from '../api/Phrase';
 
 function rangeToWords(tokens, { from, to }) {
   const result = []
-  const words = [] //?
+  const words = []
   let started = false;
 
   function go(token) {
@@ -83,8 +84,19 @@ export const seed = (seedData = {}) => ({
       state.tokens.allIds.push(id);
       console.log(state.tokens)
     },
-    addConnection(state, { from, to }) {
-      const id = 'connection-' + uuidv4();
+    addPhrase(state, { from, to, id }) {
+      state.phrases.byId[id] = {
+        id,
+        range: {
+          from: from.id,
+          to: to.id,
+        },
+        phrase: Phrase.PP,
+        userAdded: true,
+      }
+      state.phrases.allIds.push(id);
+    },
+    addConnection(state, { from, to, id }) {
       state.connections.byId[id] = {
         id,
         from: from.id,
@@ -103,6 +115,28 @@ export const seed = (seedData = {}) => ({
     },
     addNode({ commit }) {
       commit('addToken', 'bob')
+    },
+    addPhrase({ commit, getters, state }, data) {
+      const items = [...data.items];
+      const allIds = state.tokens.allIds;
+      const index = token => allIds.indexOf(token.id);
+      items.sort((a, b) => {
+        if (index(a) < index(b)) {
+          return -1;
+        }
+        if (index(a) > index(b)) {
+          return 1;
+        }
+      })
+
+      const id = 'phrase-' + uuidv4();
+      commit('addPhrase', { from: items[0], to: items[items.length - 1], id })
+      return getters.findPhrase(id);
+    },
+    addConnection({ commit, getters }, data) {
+      const id = 'connection-' + uuidv4();
+      commit('addConnection', { from: data.from, to: data.to, id })
+      return getters.findConnection(id);
     }
   },
   getters: {
