@@ -117,7 +117,9 @@ export const seed = (seedData = {}) => ({
     addPhrase({ commit, getters, state }, data) {
       const items = [...data.items];
       const allIds = state.tokens.allIds;
-      const index = token => allIds.indexOf(token.id);
+      const indexOf = arr => token => arr.indexOf(token && token.id);
+      const index = indexOf(allIds);
+
       items.sort((a, b) => {
         if (index(a) < index(b)) {
           return -1;
@@ -127,8 +129,16 @@ export const seed = (seedData = {}) => ({
         }
       })
 
+      const low = items[0];
+      const high = items[items.length - 1];
+
+      const inbetween = allIds.slice(index(low), index(high))
+      if (indexOf(inbetween)(data.to) > -1) {
+        return Promise.reject('Target cannot be within source phrase');
+      }
+
       const id = 'phrase-' + uuidv4();
-      commit('addPhrase', { from: items[0], to: items[items.length - 1], phrase: data.phrase, id })
+      commit('addPhrase', { from: low, to: high, phrase: data.phrase, id })
       return getters.findPhrase(id);
     },
     addConnection({ commit, getters }, data) {

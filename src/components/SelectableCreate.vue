@@ -12,14 +12,10 @@
         :word="word"
         :key="word.id"
         :selected="isSelected(word)"
-        :activeFrom="highlightFrom(word).match && highlightFrom(word).word"
-        :activeFromToken="
-          (highlightFrom(word).match && highlightFrom(word).token) || ''
-        "
-        :activeTo="highlightTo(word).match && highlightTo(word).word"
-        :activeToToken="
-          (highlightTo(word).match && highlightTo(word).token) || ''
-        "
+        :activeFrom="highlightFrom(word).word"
+        :activeFromToken="highlightFrom(word).token"
+        :activeTo="highlightTo(word).word"
+        :activeToToken="highlightTo(word).token"
       ></Word>
     </div>
 
@@ -69,13 +65,13 @@ import { Phrase } from "../api/Phrase";
 function highlight(outerTokens, word) {
   const tokens = wordsToTokens([word]);
   if (isSubset(outerTokens, tokens, { param: "id", partial: false })) {
-    return { match: true, word: true };
+    return { word: true, token: "" };
   }
 
   if (isSubset(outerTokens, tokens, { param: "id", partial: true })) {
-    return { match: true, token: outerTokens[0].id };
+    return { word: false, token: outerTokens[0].id };
   }
-  return { match: false };
+  return { word: false, token: "" };
 }
 
 export default {
@@ -104,32 +100,42 @@ export default {
     click(word) {
       this.clearFocusedConnection();
       this.from = this.getUpdatedSelection(word);
-      console.log("click word", this.from);
     },
     shiftClick(word) {
       this.to = word;
-      const toToken = this.toTokens(word)[0];
-      console.log("shift click", this.from, toToken);
+      const toTokens = this.toTokens(word);
+      this.from = this.removeFromSelected(word);
+      if (toTokens.length > 1 || this.from.length === 0) {
+        return;
+      }
+
+      const toToken = toTokens[0];
+
       if (this.from.length === 1) {
         this.addConnection(this.from[0], toToken);
       } else {
-        this.addPhrase(this.from).then((phrase) => {
+        this.addPhrase(this.from, toToken).then((phrase) => {
           this.addConnection(phrase, toToken);
+          this.clearSelection();
         });
       }
-      this.clearSelection();
+    },
+    removeFromSelected(word) {
+      const tokens = Utils.toTokens(word);
+      return Utils.filterByArray(tokens, this.from, { param: "id" });
     },
     getUpdatedSelection(word) {
-      const tokens = Utils.toTokens(word);
       if (this.isSelected(word)) {
-        return Utils.filterByArray(tokens, this.from, { param: "id" });
+        return this.removeFromSelected(word);
       } else {
+        const tokens = Utils.toTokens(word);
         return this.from.concat(tokens);
       }
     },
-    addPhrase(items) {
+    addPhrase(items, to) {
       return this.$store.dispatch("Graph/addPhrase", {
         items: items,
+        to,
         phrase: Phrase.PP,
       });
     },
@@ -152,13 +158,13 @@ export default {
       return Utils.containsArray(this.toTokens(word), this.from);
     },
     highlightFrom(word) {
-      if (!this.selectedConnection) return { match: false };
+      if (!this.selectedConnection) return { word: false, token: "" };
 
       const outerTokens = this.toTokens(this.selectedConnection.from);
       return highlight(outerTokens, word);
     },
     highlightTo(word) {
-      if (!this.selectedConnection) return { match: false };
+      if (!this.selectedConnection) return { word: false, token: "" };
 
       const outerTokens = this.toTokens(this.selectedConnection.to);
       return highlight(outerTokens, word);
