@@ -4,6 +4,14 @@ import { graphSeed } from '../../src/api/Seed'
 import Component from '@/components/Selectable.vue'
 import { seed } from '../../src/store/index'
 
+const token1 = graphSeed.tokens.byId['token-1'].name;
+const token2 = graphSeed.tokens.byId['token-2'].name;
+const token3 = graphSeed.tokens.byId['token-3'].name;
+const token4 = graphSeed.tokens.byId['token-4'].name;
+const token5 = graphSeed.tokens.byId['token-5'].name;
+const token6 = graphSeed.tokens.byId['token-6'].name;
+const word5 = graphSeed.words.byId['word-5'].label;
+
 const activeFromClass = 'active-from'
 const activeToClass = 'active-to'
 
@@ -48,7 +56,7 @@ test('renders text of phrase and relationship on click', async () => {
 
   await wrapper.find('button[data-testid="connection-3"').trigger('click')
 
-  expect(wrapper.text()).toContain('"to his masjid" is a Prepositional Sentence that is Mutaalliq to "went"')
+  expect(wrapper.text()).toContain(`"${text1}" is a Prepositional Sentence that is Mutaalliq to "went"`)
 })
 
 test('no active words on initialize', () => {
