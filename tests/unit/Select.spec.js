@@ -42,7 +42,7 @@ test('renders text of token and relationship on click', async () => {
 
   await wrapper.find('button[data-testid="connection-1"').trigger('click')
 
-  expect(wrapper.text()).toContain('"masjid" is Majroor to "to"')
+  expect(wrapper.text()).toContain(`"${token5}" is Majroor to "${token4}"`)
 })
 
 test('renders text of phrase and relationship on click', async () => {
@@ -56,7 +56,7 @@ test('renders text of phrase and relationship on click', async () => {
 
   await wrapper.find('button[data-testid="connection-3"').trigger('click')
 
-  expect(wrapper.text()).toContain(`"${text1}" is a Prepositional Sentence that is Mutaalliq to "went"`)
+  expect(wrapper.text()).toContain(`"${token4} ${word5}" is a Prepositional Sentence that is Mutaalliq to "${token3}"`)
 })
 
 test('no active words on initialize', () => {

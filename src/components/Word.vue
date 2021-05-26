@@ -2,22 +2,39 @@
   <div
     class="arabic mx-4 text-6xl"
     :class="{
+      selected: isSelected(word),
       'active-from': activeFrom,
       'active-to': activeTo,
-      'cursor-pointer': clickable,
-      selected: selected,
-      [word.id]: true,
     }"
   >
     <div
       v-if="word.token"
       @click.exact="clickWord"
       @click.shift="shiftClickWord"
+      :class="{
+        'active-from': activeFrom,
+        'active-to': activeTo,
+        'cursor-pointer': clickable,
+        selected: isSelected(word),
+        [word.id]: true,
+      }"
+      :data-testid="word.id"
     >
       {{ word.label }}
     </div>
     <template v-if="word.tokens">
-      <div @click.exact="clickWord" @click.shift="shiftClickWord">
+      <div
+        @click.exact="clickWord"
+        @click.shift="shiftClickWord"
+        :class="{
+          'active-from': activeFrom,
+          'active-to': activeTo,
+          'cursor-pointer': clickable,
+          selected: isSelected(word),
+          [word.id]: true,
+        }"
+        :data-testid="word.id"
+      >
         {{ word.label }}
       </div>
       <div class="text-2xl flex flex-row-reverse justify-between">
@@ -27,9 +44,11 @@
           :class="{
             'active-from-token': activeFromToken === token.id,
             'active-to-token': activeToToken === token.id,
+            selected: isSelected(token),
           }"
           @click.exact="clickToken(token)"
           @click.shift.stop="shiftClickToken(token)"
+          :data-testid="token.id"
         >
           {{ token.name }}
         </div>
@@ -39,6 +58,8 @@
 </template>
 
 <script>
+import Utils from "../utils/Utils";
+
 export default {
   props: {
     word: {
@@ -66,8 +87,12 @@ export default {
       default: false,
     },
     selected: {
-      type: Boolean,
-      default: false,
+      // type: Boolean,
+      // default: false,
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
   },
   methods: {
@@ -82,6 +107,9 @@ export default {
     },
     shiftClickWord() {
       this.$emit("shiftClickWord", this.word);
+    },
+    isSelected(wordOrToken) {
+      return Utils.containsArray(Utils.toTokens(wordOrToken), this.selected);
     },
   },
 };
@@ -99,7 +127,7 @@ export default {
 }
 
 .selected {
-  @apply bg-yellow-50;
+  @apply bg-red-100;
 }
 
 /* .active-from-token {

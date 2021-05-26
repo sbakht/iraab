@@ -58,7 +58,7 @@ const Check = Object.freeze({
 
 
 export const seed = (seedData = {}, graphModuleData = {}) => createStore({
-  strict: true,
+  // strict: true,
   modules: {
     Graph: GraphModule(graphModuleData),
   },

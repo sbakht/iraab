@@ -11,7 +11,7 @@
         class="cursor-pointer"
         :word="word"
         :key="word.id"
-        :selected="isSelected(word)"
+        :selected="from"
         :activeFrom="highlightFrom(word).word"
         :activeFromToken="highlightFrom(word).token"
         :activeTo="highlightTo(word).word"
@@ -81,6 +81,7 @@ export default {
       selectedConnection: null,
       from: [],
       to: null,
+      fromWord: null,
     };
   },
   computed: {
@@ -111,13 +112,18 @@ export default {
 
       const toToken = toTokens[0];
 
+      if (
+        this.fromWord &&
+        this.fromWord.tokens &&
+        this.fromWord.tokens.some((token) => token.id === toToken.id)
+      ) {
+        return;
+      }
+
       if (this.from.length === 1) {
         this.addConnection(this.from[0], toToken);
       } else {
-        this.addPhrase(this.from, toToken).then((phrase) => {
-          this.addConnection(phrase, toToken);
-          this.clearSelection();
-        });
+        this.addPhaseAndConnection(this.from, toToken);
       }
     },
     removeFromSelected(word) {
@@ -129,7 +135,8 @@ export default {
         return this.removeFromSelected(word);
       } else {
         const tokens = Utils.toTokens(word);
-        return this.from.concat(tokens);
+        this.fromWord = word;
+        return [...new Set(this.from.concat(tokens))];
       }
     },
     addPhrase(items, to) {
@@ -139,8 +146,20 @@ export default {
         phrase: Phrase.PP,
       });
     },
+    addPhaseAndConnection(items, to) {
+      return this.$store
+        .dispatch("Graph/addPhraseAndConnection", {
+          items: items,
+          to,
+          phrase: Phrase.PP,
+        })
+        .then((connection) => {
+          this.focusConnection(connection);
+        })
+        .catch(() => {});
+    },
     addConnection(phrase, toToken) {
-      this.$store
+      return this.$store
         .dispatch("Graph/addConnection", {
           from: phrase,
           to: toToken,
@@ -182,3 +201,4 @@ export default {
 
 <style>
 </style>
+addPhraseAndConnection

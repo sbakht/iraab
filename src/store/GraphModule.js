@@ -1,6 +1,9 @@
 import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
+import { data } from '../data/data'
+
+const Type = data;
 
 function rangeToWords(tokens, { from, to }) {
   const result = []
@@ -95,6 +98,7 @@ export const seed = (seedData = {}) => ({
       state.phrases.allIds.push(id);
     },
     addConnection(state, { from, to, grammar, id }) {
+
       state.connections.byId[id] = {
         id,
         from: from.id,
@@ -137,15 +141,49 @@ export const seed = (seedData = {}) => ({
         return Promise.reject('Target cannot be within source phrase');
       }
 
-      const id = 'phrase-' + uuidv4();
+      const id = data.id || 'phrase-' + uuidv4();
       commit('addPhrase', { from: low, to: high, phrase: data.phrase, id })
       return getters.findPhrase(id);
     },
     addConnection({ commit, getters }, data) {
-      const id = 'connection-' + uuidv4();
+      const id = data.id || 'connection-' + uuidv4();
       commit('addConnection', { ...data, id })
       return getters.findConnection(id);
-    }
+    },
+    addPhraseAndConnection({ state, dispatch, getters }, obj) {
+      const phraseId = 'phrase-' + uuidv4();
+      const items = [...obj.items];
+      const allIds = state.tokens.allIds;
+      const indexOf = arr => token => arr.indexOf(token && token.id);
+      const index = indexOf(allIds);
+
+      items.sort((a, b) => {
+        if (index(a) < index(b)) {
+          return -1;
+        }
+        if (index(a) > index(b)) {
+          return 1;
+        }
+      })
+
+      const low = items[0];
+      const high = items[items.length - 1];
+
+      const inbetween = allIds.slice(index(low), index(high)) //?
+      if (indexOf(inbetween)(obj.to) > -1) {
+        return Promise.reject('Target cannot be within source phrase');
+      }
+      dispatch('addPhrase', { ...obj, id: phraseId })
+      const connectionId = 'connection-' + uuidv4();
+      dispatch('addConnection', {
+        from: { id: phraseId },
+        to: obj.to,
+        grammar: Type.Empty,
+        id: connectionId,
+      })
+      // console.log(1);
+      return getters.findConnection(connectionId);
+    },
   },
   getters: {
     graph(state) {
