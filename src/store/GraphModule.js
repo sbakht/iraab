@@ -1,10 +1,10 @@
 import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
-import { data } from '../data/data'
+// import { data } from '../data/data'
 import Utils from '../utils/Utils';
 
-const Type = data;
+// const Type = data;
 
 function rangeToWords(tokens, { from, to }) {
   const result = []
@@ -222,7 +222,7 @@ export const seed = (seedData = {}) => ({
       const low = items[0];
       const high = items[items.length - 1];
 
-      const inbetween = allIds.slice(index(low), index(high)) //?
+      const inbetween = allIds.slice(index(low), index(high))
       if (indexOf(inbetween)(obj.to) > -1) {
         return Promise.reject('Target cannot be within source phrase');
       }
@@ -232,11 +232,10 @@ export const seed = (seedData = {}) => ({
       dispatch('addConnection', {
         from: { id: phraseId },
         to: obj.to,
-        grammar: Type.Empty,
+        grammar: obj.grammar,
         id: connectionId,
         skipDuplicateCheck: true
       })
-      // console.log(1);
       return getters.findConnection(connectionId);
     },
   },

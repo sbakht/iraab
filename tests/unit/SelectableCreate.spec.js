@@ -555,9 +555,30 @@ test('can set connection type on create', async () => {
   });
 
 
-  wrapper.find('[data-testid=select-kabr]').trigger('click')
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
 
   const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections[0].text()).toBe("Kabr");
+})
+
+test('can set connection type on create for phrase', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
+
+  const word = wrapper.find('[data-testid=word-5]')
   const word2 = wrapper.find('[data-testid=word-2]')
   await word.trigger('click')
   await word2.trigger("click", { shiftKey: true });

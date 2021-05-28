@@ -2,10 +2,10 @@
   <div>
     <div class="p-4 flex flex-row-reverse justify-center">
       <ConnectionChips
-        :connections="connectionTypes"
+        :tabs="connectionTypes.map"
+        :selected="connectionType"
         @select="setConnectionType"
       ></ConnectionChips>
-      {{ connectionType && connectionType.name }}
       <Word
         :clickable="true"
         @clickWord="click"
@@ -168,14 +168,15 @@ export default {
           items: items,
           to,
           phrase: Phrase.PP,
+          grammar: this.connectionType || data.Empty,
         })
         .then((connection) => {
           this.focusConnection(connection);
+          this.clearConnectionType();
         })
         .catch(() => {});
     },
     addConnection(phrase, toToken) {
-      console.log(this.connectionType);
       return this.$store
         .dispatch("Graph/addConnection", {
           from: phrase,
@@ -184,10 +185,14 @@ export default {
         })
         .then((connection) => {
           this.focusConnection(connection);
+          this.clearConnectionType();
         });
     },
     setConnectionType(type) {
       this.connectionType = type;
+    },
+    clearConnectionType() {
+      this.connectionType = null;
     },
     clearSelection() {
       this.to = null;
