@@ -83,7 +83,6 @@ export const seed = (seedData = {}) => ({
       const id = 'token-' + uuidv4()
       state.tokens.byId[id] = { id, name, pos: 'PRO' }
       state.tokens.allIds.push(id);
-      console.log(state.tokens)
     },
     addPhrase(state, { from, to, phrase, id }) {
       state.phrases.byId[id] = {
@@ -107,6 +106,10 @@ export const seed = (seedData = {}) => ({
         userAdded: true,
       }
       state.connections.allIds.push(id);
+    },
+    deleteConnection(state, { id }) {
+      delete state.connections.byId[id]
+      state.connections.allIds = state.connections.allIds.filter(i => i !== id)
     },
   },
   actions: {

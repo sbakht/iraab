@@ -21,6 +21,9 @@ function noActiveClass(wrapper, selector) {
   expect(wrapper.find(selector).classes()).not.toContain(activeFromClass)
   expect(wrapper.find(selector).classes()).not.toContain(activeToClass)
 }
+function getSelectableConnections(wrapper) {
+  return wrapper.findAll('[data-testid=select-connection]')
+}
 
 beforeEach(() => {
   seedFromGraph = JSON.parse(JSON.stringify(graphSeed))
@@ -143,7 +146,8 @@ test('can create a connection by clicking and shift clicking on 2 different word
   await word.trigger('click')
   await word2.trigger("click", { shiftKey: true });
 
-  expect(wrapper.findAll('button').length).toBe(1);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
   expect(wrapper.find('button').text()).toBe('?');
 })
 
@@ -162,7 +166,8 @@ test('can create a connection by clicking and shift clicking on 2 different word
   await word2.trigger('click')
   await word2.trigger("click", { shiftKey: true });
 
-  expect(wrapper.findAll('button').length).toBe(1);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
   expect(wrapper.find('button').text()).toBe('?');
 })
 
@@ -180,7 +185,8 @@ test('shift clicking on a selected word should deselect it', async () => {
   await word.trigger("click", { shiftKey: true });
 
   expect(word.classes()).not.toContain('selected')
-  expect(wrapper.findAll('button').length).toBe(0);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(0);
 })
 
 test('after creating a connection, should automatically show the connection', async () => {
@@ -223,7 +229,8 @@ test('should create connection from a range of words including inbetween the sel
   expect(word.classes()).toContain('active-from')
   expect(word2.classes()).toContain('active-from')
   expect(word3.classes()).toContain('active-from')
-  expect(wrapper.findAll('button').length).toBe(1);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
 })
 
 test('can create a link from a word with nested tokens', async () => {
@@ -242,7 +249,8 @@ test('can create a link from a word with nested tokens', async () => {
 
   expect(word5.classes()).toContain('active-from')
   expect(word.classes()).toContain('active-to')
-  expect(wrapper.findAll('button').length).toBe(1);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
 })
 
 test('cannot create a link to a word with nested tokens', async () => {
@@ -259,7 +267,8 @@ test('cannot create a link to a word with nested tokens', async () => {
   await from.trigger('click')
   await to.trigger("click", { shiftKey: true });
 
-  expect(wrapper.findAll('button').length).toBe(0);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(0);
 })
 
 test('can create a link from a nested token within a word', async () => {
@@ -278,7 +287,8 @@ test('can create a link from a nested token within a word', async () => {
 
   expect(from.classes()).toContain('active-from-token')
   expect(to.classes()).toContain('active-to')
-  expect(wrapper.findAll('button').length).toBe(1);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
 })
 
 test('can create a link to a nested token within a word', async () => {
@@ -297,7 +307,9 @@ test('can create a link to a nested token within a word', async () => {
 
   expect(from.classes()).toContain('active-from')
   expect(to.classes()).toContain('active-to-token')
-  expect(wrapper.findAll('button').length).toBe(1);
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
 })
 
 test('can create a link nested tokens within same word', async () => {
@@ -316,7 +328,9 @@ test('can create a link nested tokens within same word', async () => {
 
   expect(from.classes()).toContain('active-from-token')
   expect(to.classes()).toContain('active-to-token')
-  expect(wrapper.findAll('button').length).toBe(1);
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
 })
 
 test('cannot create a link from a word to its nested token', async () => {
@@ -333,7 +347,8 @@ test('cannot create a link from a word to its nested token', async () => {
   await from.trigger('click')
   await to.trigger("click", { shiftKey: true });
 
-  expect(wrapper.findAll('button').length).toBe(0);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(0);
 })
 
 test('cannot create a link to a word within the phrase being linked from', async () => {
@@ -352,7 +367,8 @@ test('cannot create a link to a word within the phrase being linked from', async
   await from2.trigger('click')
   await to.trigger("click", { shiftKey: true });
 
-  expect(wrapper.findAll('button').length).toBe(0);
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(0);
 })
 
 test('clicking on a compound token then the word should select the whole thing', async () => {
@@ -374,4 +390,66 @@ test('clicking on a compound token then the word should select the whole thing',
   expect(word.classes()).toContain('selected')
   expect(token1.classes()).toContain('selected')
   expect(token2.classes()).toContain('selected')
+})
+
+test('selecting a connection should show the delete button', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  expect(wrapper.findAll('[data-testid=delete]').length).toBe(1);
+})
+
+test('should not show delete button when a connection is not selected', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+  await word.trigger('click')
+
+  expect(wrapper.findAll('[data-testid=delete]').length).toBe(0);
+})
+
+test('clicking on delete button should delete the connection', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  const word3 = wrapper.find('[data-testid=word-3]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+  await word3.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  await wrapper.find('[data-testid=delete]').trigger('click')
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+  expect(wrapper.findAll('[data-testid=delete]').length).toBe(0);
 })

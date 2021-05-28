@@ -28,7 +28,7 @@
         <button
           v-if="connection.userAdded"
           class="rounded p-2 border"
-          :data-testid="connection.id"
+          data-testid="select-connection"
         >
           {{ connection.grammar.name }}
         </button>
@@ -51,6 +51,14 @@
         }}"
       </div>
     </div>
+    <button
+      v-if="selectedConnection"
+      class="text-white bg-red-800 p-3 rounded"
+      data-testid="delete"
+      @click="onDelete"
+    >
+      Delete
+    </button>
   </div>
 </template>
 
@@ -194,6 +202,10 @@ export default {
     },
     clearFocusedConnection() {
       this.selectedConnection = null;
+    },
+    onDelete() {
+      this.$store.commit("Graph/deleteConnection", this.selectedConnection);
+      this.clearFocusedConnection();
     },
   },
 };
