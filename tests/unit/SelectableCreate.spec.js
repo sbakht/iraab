@@ -148,7 +148,7 @@ test('can create a connection by clicking and shift clicking on 2 different word
 
   const connections = getSelectableConnections(wrapper);
   expect(connections.length).toBe(1);
-  expect(wrapper.find('button').text()).toBe('?');
+  expect(connections[0].text()).toBe('?');
 })
 
 test('can create a connection by clicking and shift clicking on 2 different words when shift clicked word is already clicked', async () => {
@@ -168,7 +168,7 @@ test('can create a connection by clicking and shift clicking on 2 different word
 
   const connections = getSelectableConnections(wrapper);
   expect(connections.length).toBe(1);
-  expect(wrapper.find('button').text()).toBe('?');
+  expect(connections[0].text()).toBe('?');
 })
 
 test('shift clicking on a selected word should deselect it', async () => {
@@ -543,4 +543,25 @@ test('can create multiple phrase connections', async () => {
 
   const connections = getSelectableConnections(wrapper);
   expect(connections.length).toBe(2);
+})
+
+test('can set connection type on create', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  wrapper.find('[data-testid=select-kabr]').trigger('click')
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections[0].text()).toBe("Kabr");
 })

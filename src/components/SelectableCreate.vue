@@ -1,6 +1,11 @@
 <template>
   <div>
     <div class="p-4 flex flex-row-reverse justify-center">
+      <ConnectionChips
+        :connections="connectionTypes"
+        @select="setConnectionType"
+      ></ConnectionChips>
+      {{ connectionType && connectionType.name }}
       <Word
         :clickable="true"
         @clickWord="click"
@@ -67,8 +72,9 @@ import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
 import Word from "@/components/Word";
 import Utils from "../utils/Utils";
-import { data } from "../data/data";
+import { data, connectionTypes } from "../data/data";
 import { Phrase } from "../api/Phrase";
+import ConnectionChips from "@/components/Chips";
 
 function highlight(outerTokens, word) {
   const tokens = wordsToTokens([word]);
@@ -83,13 +89,15 @@ function highlight(outerTokens, word) {
 }
 
 export default {
-  components: { Word },
+  components: { Word, ConnectionChips },
   data() {
     return {
       selectedConnection: null,
       from: [],
       to: null,
       fromWord: null,
+      connectionType: null,
+      connectionTypes,
     };
   },
   computed: {
@@ -167,15 +175,19 @@ export default {
         .catch(() => {});
     },
     addConnection(phrase, toToken) {
+      console.log(this.connectionType);
       return this.$store
         .dispatch("Graph/addConnection", {
           from: phrase,
           to: toToken,
-          grammar: data.Empty,
+          grammar: this.connectionType || data.Empty,
         })
         .then((connection) => {
           this.focusConnection(connection);
         });
+    },
+    setConnectionType(type) {
+      this.connectionType = type;
     },
     clearSelection() {
       this.to = null;

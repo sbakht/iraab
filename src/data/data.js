@@ -64,3 +64,17 @@ const IsmOptions = IsmGroup.items
 export const data = {
   Ism, IsmOptions, Fil, Harf, Mubtada, Kabr, Fial, Majroor, mafool, fils, MafoolBihi, Madhi, Mudhari, Amr, Jar, Zaida, jars, Mutaalliq, MudafIlayhi, Empty
 }
+
+
+const connections = {
+  byId: {
+    '5': Kabr,
+    '20': Majroor
+  },
+  allIds: ['5', '20'],
+}
+
+export const connectionTypes = {
+  ...connections,
+  map: connections.allIds.map(id => connections.byId[id])
+}
