@@ -1,11 +1,13 @@
 <template>
   <div>
-    <div class="p-4 flex flex-row-reverse justify-center">
+    <div class="p-4 flex justify-center">
       <ConnectionChips
         :tabs="connectionTypes.map"
         :selected="connectionType"
         @select="setConnectionType"
       ></ConnectionChips>
+    </div>
+    <div class="p-4 flex flex-row-reverse justify-center">
       <Word
         :clickable="true"
         @clickWord="click"
@@ -42,18 +44,21 @@
 
     <div v-if="selectedConnection" class="p-4">
       <div v-if="isToken(selectedConnection.from)">
-        "{{ selectedConnection.from.name }}" is
-        {{ selectedConnection.grammar.name }} to "{{
+        "<span class="arabic">{{ selectedConnection.from.name }}</span
+        >" is {{ selectedConnection.grammar.name }} to "<span class="arabic">{{
           selectedConnection.to.name
-        }}"
+        }}</span
+        >"
       </div>
       <div v-if="isPhrase(selectedConnection.from)">
-        "{{
+        "<span class="arabic">{{
           selectedConnection.from.words.map((word) => word.label).join(" ")
-        }}" is a {{ selectedConnection.from.phrase.description }} that is
-        {{ selectedConnection.grammar.name }} to "{{
+        }}</span
+        >" is a {{ selectedConnection.from.phrase.description }} that is
+        {{ selectedConnection.grammar.name }} to "<span class="arabic">{{
           selectedConnection.to.name
-        }}"
+        }}</span
+        >"
       </div>
     </div>
     <button
