@@ -2,6 +2,7 @@ import { loadGraph } from '../utils/GraphUtils'
 import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
 import { data } from '../data/data'
+import Utils from '../utils/Utils';
 
 const Type = data;
 
@@ -149,11 +150,60 @@ export const seed = (seedData = {}) => ({
       return getters.findPhrase(id);
     },
     addConnection({ commit, getters }, data) {
+      function findDuplicate(obj) {
+        const connections = getters.connections.filter(con => con.userAdded)
+
+        const myFrom = Utils.toTokens(obj.from);
+        const myTo = Utils.toTokens(obj.to);
+
+        for (let connection of connections) {
+          const { from, to } = connection; //?
+          const fromTokens = Utils.toTokens(from);
+          const toTokens = Utils.toTokens(to);
+          const isSameFrom = Utils.isSameArray(fromTokens, myFrom)
+          const isSameTo = Utils.isSameArray(toTokens, myTo)
+          if (isSameFrom && isSameTo) {
+            return connection
+          }
+        }
+      }
+
+      if (!data.skipDuplicateCheck) {
+
+        const duplicate = findDuplicate(data);
+        if (duplicate) {
+          return duplicate
+        }
+      }
+
       const id = data.id || 'connection-' + uuidv4();
       commit('addConnection', { ...data, id })
       return getters.findConnection(id);
     },
     addPhraseAndConnection({ state, dispatch, getters }, obj) {
+      const myTo = Utils.toTokens(obj.to);
+
+      function findDuplicate(obj) {
+        const connections = getters.connections
+
+        for (let connection of connections) {
+          const { from, to } = connection;
+          const fromTokens = Utils.toTokens(from);
+          const toTokens = Utils.toTokens(to);
+
+          const isSameFrom = Utils.isSameArray(fromTokens, obj.items)
+          const isSameTo = Utils.isSameArray(toTokens, myTo)
+          if (isSameFrom && isSameTo) {
+            return connection
+          }
+        }
+      }
+
+      const duplicate = findDuplicate(obj);
+      if (duplicate) {
+        return duplicate
+      }
+
       const phraseId = 'phrase-' + uuidv4();
       const items = [...obj.items];
       const allIds = state.tokens.allIds;
@@ -176,6 +226,7 @@ export const seed = (seedData = {}) => ({
       if (indexOf(inbetween)(obj.to) > -1) {
         return Promise.reject('Target cannot be within source phrase');
       }
+
       dispatch('addPhrase', { ...obj, id: phraseId })
       const connectionId = 'connection-' + uuidv4();
       dispatch('addConnection', {
@@ -183,6 +234,7 @@ export const seed = (seedData = {}) => ({
         to: obj.to,
         grammar: Type.Empty,
         id: connectionId,
+        skipDuplicateCheck: true
       })
       // console.log(1);
       return getters.findConnection(connectionId);

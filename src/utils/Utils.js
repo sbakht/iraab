@@ -46,6 +46,9 @@ const utils = {
 
     return outer.filter((t) => inner.some((t2) => t.id === t2.id)).length === inner.length
   },
+  isSameArray(arr1, arr2) {
+    return arr1.length === arr2.length && utils.containsArray(arr1, arr2);
+  }
 }
 
 export default utils;

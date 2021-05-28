@@ -453,3 +453,94 @@ test('clicking on delete button should delete the connection', async () => {
   expect(connections.length).toBe(1);
   expect(wrapper.findAll('[data-testid=delete]').length).toBe(0);
 })
+
+test('creating a duplicate connection will replace the existing instance', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+})
+
+test('creating a duplicate connection will replace the existing instance for compound words', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-5]')
+  const word2 = wrapper.find('[data-testid=word-4]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+})
+
+test('should override existing phrase connection', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  const word3 = wrapper.find('[data-testid=word-3]')
+  await word.trigger('click')
+  await word2.trigger('click')
+  await word3.trigger("click", { shiftKey: true });
+  await word.trigger('click')
+  await word2.trigger('click')
+  await word3.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+})
+
+test('can create multiple phrase connections', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  const word3 = wrapper.find('[data-testid=word-3]')
+  const word4 = wrapper.find('[data-testid=word-4]')
+  await word.trigger('click')
+  await word2.trigger('click')
+  await word3.trigger("click", { shiftKey: true });
+  await word2.trigger('click')
+  await word3.trigger('click')
+  await word4.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(2);
+})
