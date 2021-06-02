@@ -268,7 +268,7 @@ export const seed = (seedData = {}) => ({
         const phrase = state.phrases.byId[id];
         const from = getters.findToken(phrase.range.from);
         const to = getters.findToken(phrase.range.to);
-        const words = rangeToWords(getters.findSentence('sentence-1'), phrase.range)
+        const words = rangeToWords(getters.findSentence(state.activeSentence), phrase.range)
         const tokens = words.map(word => word.token || word.tokens).flat()
 
         return { ...phrase, from, to, words, tokens };

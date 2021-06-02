@@ -29,6 +29,7 @@ import { Phrase } from './Phrase';
   'مَسْجِدِهِ'
 
 const obj = {
+  activeSentence: 'sentence-1',
   tokens: {
     byId: {
       'token-1': { id: 'token-1', name: 'زيدٌ', pos: Speech.Ism.Noun.PN },
