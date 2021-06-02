@@ -108,11 +108,14 @@ export default {
   computed: {
     ...mapGetters("Graph", {
       Graph: "graph",
-      words: "words",
+      findSentence: "findSentence",
       connections: "connections",
       findPhrase: "findPhrase",
       phrases: "phrases",
     }),
+    words() {
+      return this.findSentence("sentence-1").order;
+    },
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
     },

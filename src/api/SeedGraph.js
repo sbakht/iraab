@@ -44,11 +44,18 @@ const obj = {
     byId: {
       'word-1': { id: 'word-1', token: 'token-1' },
       'word-2': { id: 'word-2', token: 'token-2' },
+      'word-fake': { id: 'word-fake', token: 'token-2' },
       'word-3': { id: 'word-3', token: 'token-3' },
       'word-4': { id: 'word-4', token: 'token-4' },
       'word-5': { id: 'word-5', tokens: ['token-5', 'token-6'], label: 'مَسْجِدِهِ' },
     },
-    allIds: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
+    allIds: ['word-1', 'word-2', 'word-fake', 'word-3', 'word-4', 'word-5'],
+  },
+  sentences: {
+    byId: {
+      'sentence-1': { order: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'] },
+    },
+    allIds: ['sentence-1'],
   },
   phrases: {
     byId: {

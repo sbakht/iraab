@@ -69,9 +69,11 @@ export const data = {
 const connections = {
   byId: {
     '5': Kabr,
-    '20': Majroor
+    '17': Mutaalliq,
+    '18': MudafIlayhi,
+    '20': Majroor,
   },
-  allIds: ['5', '20'],
+  allIds: ['5', '17', '20'],
 }
 
 export const connectionTypes = {

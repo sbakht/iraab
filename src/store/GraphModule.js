@@ -6,7 +6,8 @@ import Utils from '../utils/Utils';
 
 // const Type = data;
 
-function rangeToWords(tokens, { from, to }) {
+function rangeToWords(sentence, { from, to }) {
+  const tokens = sentence.order;
   const result = []
   const words = []
   let started = false;
@@ -68,6 +69,10 @@ export const seed = (seedData = {}) => ({
       allIds: [],
     },
     connections: {
+      byId: {},
+      allIds: []
+    },
+    sentences: {
       byId: {},
       allIds: []
     },
@@ -263,10 +268,17 @@ export const seed = (seedData = {}) => ({
         const phrase = state.phrases.byId[id];
         const from = getters.findToken(phrase.range.from);
         const to = getters.findToken(phrase.range.to);
-        const words = rangeToWords(getters.words, phrase.range)
+        const words = rangeToWords(getters.findSentence('sentence-1'), phrase.range)
         const tokens = words.map(word => word.token || word.tokens).flat()
 
         return { ...phrase, from, to, words, tokens };
+      }
+    },
+    findSentence(state, getters) {
+      return id => {
+        const sentence = state.sentences.byId[id] || { order: [] };
+        const order = sentence.order.map(getters.find)
+        return { ...sentence, order }
       }
     },
     find: (state, getters) => id => {
@@ -275,6 +287,9 @@ export const seed = (seedData = {}) => ({
       }
       if (id.startsWith('token')) {
         return getters.findToken(id)
+      }
+      if (id.startsWith('word')) {
+        return getters.findWord(id)
       }
     },
     findConnection(state, getters) {
