@@ -56,6 +56,7 @@ function rangeToWords(sentence, { from, to }) {
 export const seed = (seedData = {}) => ({
   namespaced: true,
   state: () => ({
+    activeSentenceId: 'sentence-1',
     tokens: {
       byId: {},
       allIds: [],
@@ -84,6 +85,7 @@ export const seed = (seedData = {}) => ({
       state.words = data.words;
       state.phrases = data.phrases;
       state.connections = data.connections;
+      state.sentences = data.sentences;
     },
     addToken(state, name) {
       const id = 'token-' + uuidv4()
@@ -101,6 +103,9 @@ export const seed = (seedData = {}) => ({
         userAdded: true,
       }
       state.phrases.allIds.push(id);
+
+      const sentence = state.sentences.byId[state.activeSentenceId];
+      sentence.phrases.push(id);
     },
     addConnection(state, { from, to, grammar, id }) {
 
@@ -112,6 +117,9 @@ export const seed = (seedData = {}) => ({
         userAdded: true,
       }
       state.connections.allIds.push(id);
+
+      const sentence = state.sentences.byId[state.activeSentenceId];
+      sentence.connections.push(id);
     },
     deleteConnection(state, { id }) {
       delete state.connections.byId[id]
@@ -162,7 +170,7 @@ export const seed = (seedData = {}) => ({
         const myTo = Utils.toTokens(obj.to);
 
         for (let connection of connections) {
-          const { from, to } = connection; //?
+          const { from, to } = connection;
           const fromTokens = Utils.toTokens(from);
           const toTokens = Utils.toTokens(to);
           const isSameFrom = Utils.isSameArray(fromTokens, myFrom)
@@ -268,7 +276,7 @@ export const seed = (seedData = {}) => ({
         const phrase = state.phrases.byId[id];
         const from = getters.findToken(phrase.range.from);
         const to = getters.findToken(phrase.range.to);
-        const words = rangeToWords(getters.findSentence(state.activeSentence), phrase.range)
+        const words = rangeToWords(getters.findSentence(state.activeSentenceId), phrase.range)
         const tokens = words.map(word => word.token || word.tokens).flat()
 
         return { ...phrase, from, to, words, tokens };
@@ -308,6 +316,20 @@ export const seed = (seedData = {}) => ({
     },
     connections(state, getters) {
       return state.connections.allIds.map(getters.findConnection);
+    },
+    activeSentence(state, getters) {
+      return getters.findSentence(state.activeSentenceId);
+    },
+    activeWords(state, getters) {
+      const sentence = getters.activeSentence;
+      return sentence.order;
+    },
+    activeConnections(state, getters) {
+      const sentence = getters.activeSentence;
+      const connections = getters.connections;
+      return connections.filter((connection) =>
+        sentence.connections.includes(connection.id)
+      );
     }
   }
 })

@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
 import Word from "@/components/Word";
 import Utils from "../utils/Utils";
@@ -108,17 +108,10 @@ export default {
   computed: {
     ...mapGetters("Graph", {
       Graph: "graph",
-      findSentence: "findSentence",
-      connections: "connections",
-      findPhrase: "findPhrase",
-      phrases: "phrases",
+      sentence: "activeSentence",
+      connections: "activeConnections",
+      words: "activeWords",
     }),
-    ...mapState("Graph", {
-      activeSentenceId: "activeSentence",
-    }),
-    words() {
-      return this.findSentence(this.activeSentenceId).order;
-    },
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
     },

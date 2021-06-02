@@ -29,7 +29,7 @@ import { Phrase } from './Phrase';
   'مَسْجِدِهِ'
 
 const obj = {
-  activeSentence: 'sentence-1',
+  activeSentenceId: 'sentence-1',
   tokens: {
     byId: {
       'token-1': { id: 'token-1', name: 'زيدٌ', pos: Speech.Ism.Noun.PN },
@@ -54,7 +54,11 @@ const obj = {
   },
   sentences: {
     byId: {
-      'sentence-1': { order: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'] },
+      'sentence-1': {
+        order: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
+        connections: ['connection-1', 'connection-2', 'connection-3', 'connection-4', 'connection-5'],
+        phrases: ['phrase-1', 'phrase-2', 'phrase-3'],
+      },
     },
     allIds: ['sentence-1'],
   },
