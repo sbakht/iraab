@@ -7,7 +7,7 @@ import Utils from '../utils/Utils';
 // const Type = data;
 
 function rangeToWords(sentence, { from, to }) {
-  const tokens = sentence.order;
+  const tokens = sentence.words;
   const result = []
   const words = []
   let started = false;
@@ -102,7 +102,7 @@ export const seed = (seedData = {}) => ({
         newWord.token = newWord.token.id;
       }
       if (newWord.tokens) {
-        newWord.tokens = newWord.tokens.map(token => token.id)
+        newWord.tokens = Utils.toIds(newWord.tokens)
       }
       state.words.byId[id] = newWord;
       state.words.allIds.push(id);
@@ -276,15 +276,15 @@ export const seed = (seedData = {}) => ({
       return getters.findConnection(connectionId);
     },
     addSentence({ commit, getters }, sentence) {
-      sentence.order.forEach(word => {
+      sentence.words.forEach(word => {
         const tokens = Utils.toTokens(word);
-        tokens.map(token => {
+        tokens.forEach(token => {
           commit('addToken', token);
         })
         commit('addWord', word);
       })
-      const wordIds = sentence.order.map(word => word.id)
-      commit('addSentence', { ...sentence, order: wordIds });
+      const wordIds = Utils.toIds(sentence.words);
+      commit('addSentence', { ...sentence, words: wordIds });
       return getters.findSentence(sentence.id);
     },
     setActiveSentence({ commit }, id) {
@@ -323,9 +323,9 @@ export const seed = (seedData = {}) => ({
     },
     findSentence(state, getters) {
       return id => {
-        const sentence = state.sentences.byId[id] || { order: [] };
-        const order = sentence.order.map(getters.find)
-        return { ...sentence, order }
+        const sentence = state.sentences.byId[id] || { words: [] };
+        const words = sentence.words.map(getters.find)
+        return { ...sentence, words }
       }
     },
     find: (state, getters) => id => {
@@ -361,7 +361,7 @@ export const seed = (seedData = {}) => ({
     },
     activeWords(state, getters) {
       const sentence = getters.activeSentence;
-      return sentence.order;
+      return sentence.words;
     },
     activeConnections(state, getters) {
       const sentence = getters.activeSentence;

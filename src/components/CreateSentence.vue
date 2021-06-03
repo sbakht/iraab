@@ -15,6 +15,14 @@
 import { mapGetters } from "vuex";
 import Utils from "../utils/Utils";
 
+function createSentence(str) {
+  const tokens = str.split(" ").map((str) => Utils.mkToken({ name: str }));
+  const words = tokens.map((token) =>
+    Utils.mkWord({ tokens: [token], preferObject: true })
+  );
+  return Utils.mkSentence({ words, preferObject: true });
+}
+
 export default {
   data() {
     return {
@@ -28,14 +36,8 @@ export default {
   },
   methods: {
     create() {
-      const tokens = this.input
-        .split(" ")
-        .map((str) => Utils.mkToken({ name: str }));
-      const words = tokens.map((token) =>
-        Utils.mkWord({ tokens: [token], preferObject: true })
-      );
-      const sentence = Utils.mkSentence({ words, preferObject: true });
-      this.$store.dispatch("Graph/addSentence", sentence).then((sentence) => {
+      const sentence = createSentence(this.input);
+      this.$store.dispatch("Graph/addSentence", sentence).then(() => {
         this.$store.dispatch("Graph/setActiveSentence", sentence.id);
       });
     },

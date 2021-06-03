@@ -102,12 +102,18 @@ const utils = {
     };
 
     if (preferObject) {
-      sentence.order = [...words]
+      sentence.words = [...words]
     } else {
-      sentence.order = words.map(word => word.id || word)
+      sentence.words = words.map(word => word.id || word)
     }
 
     return sentence;
+  },
+  toIds(obj) {
+    if (obj instanceof Array) {
+      return obj.map(el => el.id);
+    }
+    throw new Error('not passing array to toIds()')
   }
 }
 

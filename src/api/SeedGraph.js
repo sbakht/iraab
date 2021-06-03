@@ -30,7 +30,7 @@ const obj = {
     byId: {
       'sentence-1': {
         id: 'sentence-1',
-        order: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
+        words: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
         connections: ['connection-1', 'connection-2', 'connection-3', 'connection-4', 'connection-5'],
         phrases: ['phrase-1', 'phrase-2', 'phrase-3'],
       },
