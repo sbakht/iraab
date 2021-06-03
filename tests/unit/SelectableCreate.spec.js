@@ -233,6 +233,30 @@ test('should create connection from a range of words including inbetween the sel
   expect(connections.length).toBe(1);
 })
 
+test('should create connection from a range of words including inbetween the selected ones when selecting the end first', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  const word3 = wrapper.find('[data-testid=word-3]')
+  const word4 = wrapper.find('[data-testid=word-4]')
+  await word3.trigger('click')
+  await word.trigger("click");
+  await word4.trigger("click", { shiftKey: true });
+
+  expect(word.classes()).toContain('active-from')
+  expect(word2.classes()).toContain('active-from')
+  expect(word3.classes()).toContain('active-from')
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+})
+
 test('can create a link from a word with nested tokens', async () => {
   const wrapper = mkWrapper({
     store: {

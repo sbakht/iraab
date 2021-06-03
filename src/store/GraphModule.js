@@ -53,6 +53,19 @@ function rangeToWords(sentence, { from, to }) {
   return words;
 }
 
+function sortTokens(index, items) {
+  const cloned = [...items];
+  cloned.sort((a, b) => {
+    if (index(a) < index(b)) {
+      return -1;
+    }
+    if (index(a) > index(b)) {
+      return 1;
+    }
+  })
+  return cloned;
+}
+
 export const seed = (seedData = {}) => ({
   namespaced: true,
   state: () => ({
@@ -137,9 +150,7 @@ export const seed = (seedData = {}) => ({
       sentence.connections.push(id);
     },
     updateConnectionGrammar(state, { grammar, id }) {
-      id//?
-      state.connections//?
-      const connection = state.connections.byId[id]
+      const connection = state.connections.byId[id];
       connection.grammar = grammar;
     },
     deleteConnection(state, { id }) {
@@ -159,19 +170,11 @@ export const seed = (seedData = {}) => ({
       })
     },
     addPhrase({ commit, getters, state }, data) {
-      const items = [...data.items];
       const allIds = state.tokens.allIds;
       const indexOf = arr => token => arr.indexOf(token && token.id);
       const index = indexOf(allIds);
 
-      items.sort((a, b) => {
-        if (index(a) < index(b)) {
-          return -1;
-        }
-        if (index(a) > index(b)) {
-          return 1;
-        }
-      })
+      const items = sortTokens(index, data.items)
 
       const low = items[0];
       const high = items[items.length - 1];
@@ -199,7 +202,6 @@ export const seed = (seedData = {}) => ({
           const isSameFrom = Utils.isSameArray(fromTokens, myFrom)
           const isSameTo = Utils.isSameArray(toTokens, myTo)
           if (isSameFrom && isSameTo) {
-            commit('updateConnectionGrammar', { id: connection.id, grammar: data.grammar })
             return connection
           }
         }
@@ -208,6 +210,7 @@ export const seed = (seedData = {}) => ({
       if (!data.skipDuplicateCheck) {
         const duplicate = findDuplicate(data);
         if (duplicate) {
+          commit('updateConnectionGrammar', { id: duplicate.id, grammar: data.grammar })
           return duplicate
         }
       }
@@ -230,7 +233,6 @@ export const seed = (seedData = {}) => ({
           const isSameFrom = Utils.isSameArray(fromTokens, obj.items)
           const isSameTo = Utils.isSameArray(toTokens, myTo)
           if (isSameFrom && isSameTo) {
-            commit('updateConnectionGrammar', { id: connection.id, grammar: obj.grammar })
             return connection
           }
         }
@@ -238,23 +240,16 @@ export const seed = (seedData = {}) => ({
 
       const duplicate = findDuplicate(obj);
       if (duplicate) {
+        commit('updateConnectionGrammar', { id: duplicate.id, grammar: obj.grammar })
         return duplicate
       }
 
       const phraseId = 'phrase-' + uuidv4();
-      const items = [...obj.items];
       const allIds = state.tokens.allIds;
       const indexOf = arr => token => arr.indexOf(token && token.id);
       const index = indexOf(allIds);
 
-      items.sort((a, b) => {
-        if (index(a) < index(b)) {
-          return -1;
-        }
-        if (index(a) > index(b)) {
-          return 1;
-        }
-      })
+      const items = sortTokens(index, obj.items)
 
       const low = items[0];
       const high = items[items.length - 1];
