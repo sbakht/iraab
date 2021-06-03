@@ -55,14 +55,14 @@ const utils = {
   isSameArray(arr1, arr2) {
     return arr1.length === arr2.length && utils.containsArray(arr1, arr2);
   },
-  toToken({ name, pos }) {
+  mkToken({ name, pos }) {
     return {
       id: mkID('token'),
       name,
       pos: pos || Speech.Empty,
     }
   },
-  toWord({ tokens, label, preferObject = false }) {
+  mkWord({ tokens, label, preferObject = false }) {
     const word = {
       id: mkID('word'),
     }
@@ -94,7 +94,7 @@ const utils = {
 
     return word;
   },
-  toSentence({ words, preferObject = false }) {
+  mkSentence({ words, preferObject = false }) {
     const sentence = {
       id: mkID('sentence'),
       connections: [],

@@ -30,11 +30,11 @@ export default {
     create() {
       const tokens = this.input
         .split(" ")
-        .map((str) => Utils.toToken({ name: str }));
+        .map((str) => Utils.mkToken({ name: str }));
       const words = tokens.map((token) =>
-        Utils.toWord({ tokens: [token], preferObject: true })
+        Utils.mkWord({ tokens: [token], preferObject: true })
       );
-      const sentence = Utils.toSentence({ words, preferObject: true });
+      const sentence = Utils.mkSentence({ words, preferObject: true });
       this.$store.dispatch("Graph/addSentence", sentence).then((sentence) => {
         this.$store.dispatch("Graph/setActiveSentence", sentence.id);
       });
