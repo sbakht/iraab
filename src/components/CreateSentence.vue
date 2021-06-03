@@ -3,15 +3,28 @@
     <input class="border bg-white p-6 max-w-4xl" type="text" v-model="input" />
     <button @click="create">Create</button>
   </div>
+
+  <div v-for="word in words" :key="word.id">
+    <div v-if="word.token">
+      {{ word.token.name }}
+    </div>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Utils from "../utils/Utils";
+
 export default {
   data() {
     return {
       input: "",
     };
+  },
+  computed: {
+    ...mapGetters("Graph", {
+      words: "activeWords",
+    }),
   },
   methods: {
     create() {
