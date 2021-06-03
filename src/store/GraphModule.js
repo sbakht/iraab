@@ -87,10 +87,25 @@ export const seed = (seedData = {}) => ({
       state.connections = data.connections;
       state.sentences = data.sentences;
     },
-    addToken(state, name) {
-      const id = 'token-' + uuidv4()
-      state.tokens.byId[id] = { id, name, pos: 'PRO' }
+    setActiveSentence(state, id) {
+      state.activeSentenceId = id
+    },
+    addToken(state, token) {
+      const id = token.id;
+      state.tokens.byId[id] = token;
       state.tokens.allIds.push(id);
+    },
+    addWord(state, word) {
+      const id = word.id;
+      const newWord = { ...word };
+      if (newWord.token) {
+        newWord.token = newWord.token.id;
+      }
+      if (newWord.tokens) {
+        newWord.tokens = newWord.tokens.map(token => token.id)
+      }
+      state.words.byId[id] = newWord;
+      state.words.allIds.push(id);
     },
     addPhrase(state, { from, to, phrase, id }) {
       state.phrases.byId[id] = {
@@ -121,19 +136,27 @@ export const seed = (seedData = {}) => ({
       const sentence = state.sentences.byId[state.activeSentenceId];
       sentence.connections.push(id);
     },
+    updateConnectionGrammar(state, { grammar, id }) {
+      id//?
+      state.connections//?
+      const connection = state.connections.byId[id]
+      connection.grammar = grammar;
+    },
     deleteConnection(state, { id }) {
       delete state.connections.byId[id]
       state.connections.allIds = state.connections.allIds.filter(i => i !== id)
     },
+    addSentence(state, sentence) {
+      const id = sentence.id;
+      state.sentences.byId[id] = sentence;
+      state.sentences.allIds.push(id);
+    }
   },
   actions: {
     fetch({ commit }) {
       return Api.fetchGraph().then(data => {
         commit('setData', data);
       })
-    },
-    addNode({ commit }) {
-      commit('addToken', 'bob')
     },
     addPhrase({ commit, getters, state }, data) {
       const items = [...data.items];
@@ -176,13 +199,13 @@ export const seed = (seedData = {}) => ({
           const isSameFrom = Utils.isSameArray(fromTokens, myFrom)
           const isSameTo = Utils.isSameArray(toTokens, myTo)
           if (isSameFrom && isSameTo) {
+            commit('updateConnectionGrammar', { id: connection.id, grammar: data.grammar })
             return connection
           }
         }
       }
 
       if (!data.skipDuplicateCheck) {
-
         const duplicate = findDuplicate(data);
         if (duplicate) {
           return duplicate
@@ -193,7 +216,7 @@ export const seed = (seedData = {}) => ({
       commit('addConnection', { ...data, id })
       return getters.findConnection(id);
     },
-    addPhraseAndConnection({ state, dispatch, getters }, obj) {
+    addPhraseAndConnection({ commit, state, dispatch, getters }, obj) {
       const myTo = Utils.toTokens(obj.to);
 
       function findDuplicate(obj) {
@@ -207,6 +230,7 @@ export const seed = (seedData = {}) => ({
           const isSameFrom = Utils.isSameArray(fromTokens, obj.items)
           const isSameTo = Utils.isSameArray(toTokens, myTo)
           if (isSameFrom && isSameTo) {
+            commit('updateConnectionGrammar', { id: connection.id, grammar: obj.grammar })
             return connection
           }
         }
@@ -251,6 +275,21 @@ export const seed = (seedData = {}) => ({
       })
       return getters.findConnection(connectionId);
     },
+    addSentence({ commit, getters }, sentence) {
+      sentence.order.forEach(word => {
+        const tokens = Utils.toTokens(word);
+        tokens.map(token => {
+          commit('addToken', token);
+        })
+        commit('addWord', word);
+      })
+      const wordIds = sentence.order.map(word => word.id)
+      commit('addSentence', { ...sentence, order: wordIds });
+      return getters.findSentence(sentence.id);
+    },
+    setActiveSentence({ commit }, id) {
+      commit('setActiveSentence', id)
+    }
   },
   getters: {
     graph(state) {

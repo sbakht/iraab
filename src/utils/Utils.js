@@ -1,4 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
+import { Speech } from '../api/PartsOfSpeech'
 // Arabic = Phrase | Word | Token
+
+function mkID(prefix) {
+  return prefix + '-' + uuidv4();
+}
 
 const utils = {
   // Arabic -> Bool
@@ -48,6 +54,60 @@ const utils = {
   },
   isSameArray(arr1, arr2) {
     return arr1.length === arr2.length && utils.containsArray(arr1, arr2);
+  },
+  toToken({ name, pos }) {
+    return {
+      id: mkID('token'),
+      name,
+      pos: pos || Speech.Empty,
+    }
+  },
+  toWord({ tokens, label, preferObject = false }) {
+    const word = {
+      id: mkID('word'),
+    }
+
+    if (label) {
+      word.label = label;
+    }
+
+    if (tokens.length === 0) {
+      throw new Error('empty tokens')
+    }
+
+    if (tokens.length === 1) {
+      const token = tokens[0];
+      if (preferObject) {
+        word.token = token;
+      } else {
+        word.token = token.id || token;
+      }
+    }
+
+    if (tokens.length > 1) {
+      if (preferObject) {
+        word.tokens = [...tokens];
+      } else {
+        word.tokens = tokens.map(token => token.id || token);
+      }
+    }
+
+    return word;
+  },
+  toSentence({ words, preferObject = false }) {
+    const sentence = {
+      id: mkID('sentence'),
+      connections: [],
+      phrases: [],
+    };
+
+    if (preferObject) {
+      sentence.order = [...words]
+    } else {
+      sentence.order = words.map(word => word.id || word)
+    }
+
+    return sentence;
   }
 }
 

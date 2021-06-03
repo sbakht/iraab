@@ -1,32 +1,6 @@
 import { data } from '../data/data';
 import { Speech } from './PartsOfSpeech'
 import { Phrase } from './Phrase';
-// import { loadGraph } from '../utils/GraphUtils'
-'زيدٌ',
-  //         answers: { '123': { answerable: false, answerKey: '1' } },
-  //         sentences: ['123'],
-  //       },
-  //       2: {
-  //         id: '2',
-  'هو',
-  //         answers: { '123': { answerable: true, key: '1', answerKey: '1' } },
-  //         sentences: ['123'],
-  //       },
-  //       3: {
-  //         id: '3',
-  'جالسٌ',
-  //         answers: { '123': { answerable: true, key: '2', answerKey: '2' } },
-  //         sentences: ['123'],
-  //       },
-  //       4: {
-  //         id: '4',
-  'فِ',
-  //         answers: { '123': { answerable: false, hideAnswer: true, answerKey: '3' } },
-  //         sentences: ['123'],
-  //       },
-  //       5: {
-  //         id: '5',
-  'مَسْجِدِهِ'
 
 const obj = {
   activeSentenceId: 'sentence-1',
@@ -55,6 +29,7 @@ const obj = {
   sentences: {
     byId: {
       'sentence-1': {
+        id: 'sentence-1',
         order: ['word-1', 'word-2', 'word-3', 'word-4', 'word-5'],
         connections: ['connection-1', 'connection-2', 'connection-3', 'connection-4', 'connection-5'],
         phrases: ['phrase-1', 'phrase-2', 'phrase-3'],
@@ -81,57 +56,4 @@ const obj = {
     allIds: ['connection-1', 'connection-2', 'connection-3', 'connection-4', 'connection-5']
   },
 }
-// const loaded = loadGraph(obj);
-
-// const phrases = obj.phrases.byId;
-
-
-
-// loaded.getLevel(obj.phrases.byId['phrase-3']) //?
-
-
-// const Graph = createGraph();
-
-// //zayd he went to masjid
-// const words = [
-//   Graph.makeWord({ name: "zayd", pos: Speech.Ism.Noun.PN }),
-//   Graph.makeWord({ name: "he", pos: Speech.Ism.Pronoun.PRON }),
-//   Graph.makeWord({ name: "went", pos: Speech.Fil.Verb.V }),
-//   Graph.makeWord({ name: "to", pos: Speech.Harf.Preposition.P }),
-//   Graph.makeWord([
-//     { name: "masjid", pos: Speech.Ism.Noun.PN },
-//     { name: "his", pos: Speech.Ism.Pronoun.PRON }
-//   ], "his masjid"),
-// ]
-
-// Graph.addWords(words);
-
-// const tokens = Graph.getTokenObjects();
-
-// const zayd = tokens[0]
-// const he = tokens[1]
-// const went = tokens[2]
-// const to = tokens[3]
-// const masjid = tokens[4]
-// const his = tokens[5]
-
-// const phrases = [
-//   { phrase: Phrase.PP, range: { from: 'to', to: 'his' } },
-//   { phrase: Phrase.VS, range: { from: 'went', to: 'his' } },
-//   { phrase: Phrase.NS, range: { from: 'he', to: 'his' } },
-// ].map(Graph.makePhrase);
-
-// Graph.addPhrases(phrases);
-
-// Graph.createGrammarLink(masjid, to, data.Majroor)
-// Graph.createGrammarLink(his, masjid, data.MudafIlayhi)
-
-// Graph.createGrammarLink(phrases[0], went, data.Mutaalliq)
-// Graph.createGrammarLink(phrases[1], he, data.Kabr)
-// Graph.createGrammarLink(phrases[2], zayd, data.Kabr)
-
-
-
-
 export const graphSeed = obj
-// export const graphSeed = Graph

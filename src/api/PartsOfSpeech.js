@@ -1,5 +1,6 @@
 
 export const Speech = {
+  Empty: { tag: '?', arabic: '?', description: '?' },
   Ism: {
     Noun: {
       N: { tag: 'N', arabic: '', description: 'Noun' },

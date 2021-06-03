@@ -566,6 +566,27 @@ test('can set connection type on create', async () => {
   expect(connections[0].text()).toBe("Kabr");
 })
 
+test('can set connection type right before create', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  await word.trigger('click')
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections[0].text()).toBe("Kabr");
+})
+
 test('can set connection type on create for phrase', async () => {
   const wrapper = mkWrapper({
     store: {
@@ -584,5 +605,83 @@ test('can set connection type on create for phrase', async () => {
   await word2.trigger("click", { shiftKey: true });
 
   const connections = getSelectableConnections(wrapper);
+  expect(connections[0].text()).toBe("Kabr");
+})
+
+test('creating a duplicate connection will update the grammar type', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-3]')
+  const word2 = wrapper.find('[data-testid=word-4]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
+
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+  expect(connections[0].text()).toBe("Kabr");
+})
+
+test('creating a duplicate connection will update the grammar type for compound', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-5]')
+  const word2 = wrapper.find('[data-testid=word-4]')
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
+
+  await word.trigger('click')
+  await word2.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
+  expect(connections[0].text()).toBe("Kabr");
+})
+
+test('should override existing phrase connection', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+
+  const word = wrapper.find('[data-testid=word-1]')
+  const word2 = wrapper.find('[data-testid=word-2]')
+  const word3 = wrapper.find('[data-testid=word-3]')
+  await word.trigger('click')
+  await word2.trigger('click')
+  await word3.trigger("click", { shiftKey: true });
+
+  await wrapper.find('[data-testid=select-kabr]').trigger('click')
+
+  await word.trigger('click')
+  await word2.trigger('click')
+  await word3.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(1);
   expect(connections[0].text()).toBe("Kabr");
 })
