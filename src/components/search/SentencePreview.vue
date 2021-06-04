@@ -11,14 +11,8 @@
     </div>
 
     <div class="p-4 flex flex-row justify-center space-x-4">
-      <div
-        v-for="connection in sentence.connections"
-        :key="connection.id"
-        @click="selectConnection(connection)"
-      >
-        <button class="rounded p-2 border" :data-testid="connection.id">
-          {{ connection.grammar.name }}
-        </button>
+      <div v-for="(name, i) in uniqueNames(sentence.connections)" :key="i">
+        <badge-view :text="name" :large="false"></badge-view>
       </div>
     </div>
 
@@ -44,6 +38,8 @@
 <script>
 import { wordsToTokens, isSubset } from "@/utils/GraphUtils";
 import Word from "@/components/Word";
+import BadgeView from "@/components/common/BadgeView.vue";
+import * as _ from "ramda";
 
 export default {
   props: {
@@ -52,7 +48,7 @@ export default {
       required: true,
     },
   },
-  components: { Word },
+  components: { Word, BadgeView },
   data() {
     return {
       selectedConnection: null,
@@ -72,9 +68,6 @@ export default {
       const outerTokens = this.toTokens(this.selectedConnection.to);
       const tokens = wordsToTokens([word]);
       return isSubset(outerTokens, tokens, { param: "id", partial: true });
-    },
-    selectConnection(connection) {
-      this.selectedConnection = connection;
     },
     toTokens(obj) {
       if (this.isPhrase(obj)) {
@@ -104,6 +97,9 @@ export default {
     },
     selectSentence(sentenceId) {
       this.$store.dispatch("Graph/setActiveSentence", sentenceId);
+    },
+    uniqueNames(connections) {
+      return _.uniq(connections.map((connection) => connection.grammar.name));
     },
   },
 };

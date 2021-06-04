@@ -6,7 +6,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import SentenceFull from "@/components/search/SentenceFull.vue";
+import SentenceFull from "@/components/search/SentencePreview.vue";
 
 export default {
   components: { SentenceFull },
