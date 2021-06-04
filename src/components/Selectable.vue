@@ -1,5 +1,10 @@
 <template>
   <div>
+    <SelectBox
+      :items="sentenceIds"
+      :selected="2"
+      @change="selectSentence"
+    ></SelectBox>
     <div class="p-4 flex flex-row-reverse justify-center">
       <Word
         v-for="word in words"
@@ -45,10 +50,11 @@
 import { mapGetters } from "vuex";
 import { wordsToTokens, isSubset } from "../utils/GraphUtils";
 import Word from "@/components/Word";
+import SelectBox from "@/components/common/SelectBox";
 
 export default {
   name: "test",
-  components: { Word },
+  components: { Word, SelectBox },
   data() {
     return {
       selectedConnection: null,
@@ -62,6 +68,9 @@ export default {
       findPhrase: "findPhrase",
       phrases: "phrases",
     }),
+    sentenceIds() {
+      return this.$store.state.Graph.sentences.allIds;
+    },
     tokens() {
       return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
     },
@@ -120,9 +129,8 @@ export default {
     getToken(id) {
       return this.Graph.graph.node(id);
     },
-    addNode() {
-      console.log("add");
-      this.$store.dispatch("Graph/addNode", Math.random());
+    selectSentence(sentenceId) {
+      this.$store.dispatch("Graph/setActiveSentence", sentenceId);
     },
   },
 };

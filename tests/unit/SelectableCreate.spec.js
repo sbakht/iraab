@@ -395,6 +395,26 @@ test('cannot create a link to a word within the phrase being linked from', async
   expect(connections.length).toBe(0);
 })
 
+test('cannot create a link to a word within the phrase being linked from when selecting tail first', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+  const from1 = wrapper.find('[data-testid=word-3]')
+  const from2 = wrapper.find('[data-testid=word-1]')
+  const to = wrapper.find('[data-testid=word-2]')
+  await from1.trigger('click')
+  await from2.trigger('click')
+  await to.trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(0);
+})
+
 test('clicking on a compound token then the word should select the whole thing', async () => {
   const wrapper = mkWrapper({
     store: {
