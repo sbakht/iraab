@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <SentenceFull :words="words" :connections="connections"></SentenceFull>
+  <div v-for="sentence in sentences" :key="sentence.id">
+    <SentenceFull :sentence="sentence"></SentenceFull>
   </div>
 </template>
 
@@ -15,8 +15,7 @@ export default {
   },
   computed: {
     ...mapGetters("Graph", {
-      words: "words",
-      connections: "connections",
+      sentences: "sentences",
     }),
   },
 };

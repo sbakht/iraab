@@ -6,8 +6,8 @@ import Utils from '../utils/Utils';
 
 // const Type = data;
 
-function rangeToWords(sentence, { from, to }) {
-  const tokens = sentence.words;
+function rangeToWords(words1, { from, to }) {
+  const tokens = words1;
   const result = []
   const words = []
   let started = false;
@@ -156,6 +156,9 @@ export const seed = (seedData = {}) => ({
     deleteConnection(state, { id }) {
       delete state.connections.byId[id]
       state.connections.allIds = state.connections.allIds.filter(i => i !== id)
+
+      const sentence = state.sentences.byId[state.activeSentenceId];
+      sentence.connections = sentence.connections.filter(i => i !== id)
     },
     addSentence(state, sentence) {
       const id = sentence.id;
@@ -310,7 +313,7 @@ export const seed = (seedData = {}) => ({
         const phrase = state.phrases.byId[id];
         const from = getters.findToken(phrase.range.from);
         const to = getters.findToken(phrase.range.to);
-        const words = rangeToWords(getters.findSentence(state.activeSentenceId), phrase.range)
+        const words = rangeToWords(getters.activeWords, phrase.range)
         const tokens = words.map(word => word.token || word.tokens).flat()
 
         return { ...phrase, from, to, words, tokens };
@@ -318,9 +321,14 @@ export const seed = (seedData = {}) => ({
     },
     findSentence(state, getters) {
       return id => {
-        const sentence = state.sentences.byId[id] || { words: [] };
+        const sentence = state.sentences.byId[id] || { words: [], connections: [] };
         const words = sentence.words.map(getters.find)
-        return { ...sentence, words }
+        let connections = [];
+        if (sentence.connections) {
+          connections = sentence.connections;
+          connections = sentence.connections.map(getters.findConnection);
+        }
+        return { ...sentence, words, connections }
       }
     },
     find: (state, getters) => id => {
@@ -354,17 +362,15 @@ export const seed = (seedData = {}) => ({
     activeSentence(state, getters) {
       return getters.findSentence(state.activeSentenceId);
     },
-    activeWords(state, getters) {
-      const sentence = getters.activeSentence;
-      return sentence.words;
+    sentences(state, getters) {
+      return state.sentences.allIds.map(getters.findSentence);
     },
-    activeConnections(state, getters) {
-      const sentence = getters.activeSentence;
-      const connections = getters.connections;
-      return connections.filter((connection) =>
-        sentence.connections.includes(connection.id)
-      );
-    }
+    activeWords(state, getters) {
+      const id = state.activeSentenceId;
+      const sentence = state.sentences.byId[id] || { words: [] };
+      const words = sentence.words.map(getters.find)
+      return words;
+    },
   }
 })
 

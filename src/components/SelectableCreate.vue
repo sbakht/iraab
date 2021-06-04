@@ -28,7 +28,7 @@
 
     <div class="p-4 flex flex-row justify-center space-x-4">
       <div
-        v-for="connection in connections"
+        v-for="connection in sentence.connections"
         :key="connection.id"
         @click="focusConnection(connection)"
       >
@@ -107,14 +107,9 @@ export default {
   },
   computed: {
     ...mapGetters("Graph", {
-      Graph: "graph",
       sentence: "activeSentence",
-      connections: "activeConnections",
       words: "activeWords",
     }),
-    tokens() {
-      return this.Graph.getTokens().map((id) => this.Graph.graph.node(id));
-    },
   },
   methods: {
     ...Utils,

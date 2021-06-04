@@ -5,7 +5,7 @@
       :selected="2"
       @change="selectSentence"
     ></SelectBox>
-    <SentenceFull :words="words" :connections="connections"></SentenceFull>
+    <SentenceFull :sentence="sentence"></SentenceFull>
   </div>
 </template>
 
@@ -18,11 +18,15 @@ export default {
   components: { SelectBox, SentenceFull },
   computed: {
     ...mapGetters("Graph", {
-      words: "words",
-      connections: "connections",
+      sentence: "activeSentence",
     }),
     sentenceIds() {
       return this.$store.state.Graph.sentences.allIds;
+    },
+  },
+  methods: {
+    selectSentence(sentenceId) {
+      this.$store.dispatch("Graph/setActiveSentence", sentenceId);
     },
   },
 };
