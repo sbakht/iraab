@@ -2,7 +2,7 @@
   <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/graph">Dependency Graph</router-link> |
-    <router-link to="/selectable">Selectable</router-link>
+    <router-link to="/selectable">Selectable</router-link> |
     <router-link to="/create">Create</router-link>
   </div>
   <router-view />
