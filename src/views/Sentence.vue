@@ -1,5 +1,7 @@
 <template>
-  <SentenceFull :sentence="findSentence($route.params.id)"></SentenceFull>
+  <SentenceFull
+    :sentence="findSentence('sentence-' + $route.params.id)"
+  ></SentenceFull>
 </template>
 
 <script>

@@ -6,7 +6,10 @@
       </div>
     </div>
     <div class="flex justify-between pt-6">
-      <router-link :to="`/sentence/${sentence.id}`" class="sentence-link">
+      <router-link
+        :to="`/sentence/${sentence.id.split('-')[1]}`"
+        class="sentence-link"
+      >
         <button
           type="button"
           class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -1,12 +1,15 @@
 <template>
   <div v-for="sentence in sentences" :key="sentence.id">
-    <router-link :to="`/sentence/${sentence.id}`">
+    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
       <SentenceFull :sentence="sentence" class=""></SentenceFull>
     </router-link>
-    <router-link :to="`/sentence/${sentence.id}`">
+    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
       <SentenceFull :sentence="sentence" class=""></SentenceFull>
     </router-link>
-    <router-link :to="`/sentence/${sentence.id}`">
+    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
+      <SentenceFull :sentence="sentence" class=""></SentenceFull>
+    </router-link>
+    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
       <SentenceFull :sentence="sentence" class=""></SentenceFull>
     </router-link>
   </div>
