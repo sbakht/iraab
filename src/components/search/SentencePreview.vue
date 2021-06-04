@@ -12,7 +12,7 @@
 
     <div class="p-4 flex flex-row justify-center space-x-4">
       <div v-for="(name, i) in uniqueNames(sentence.connections)" :key="i">
-        <badge-view :text="name" :large="false"></badge-view>
+        <badge-view :text="name" :large="false" :square="false"></badge-view>
       </div>
     </div>
 
