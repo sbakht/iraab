@@ -1,6 +1,14 @@
 <template>
   <div v-for="sentence in sentences" :key="sentence.id">
-    <SentenceFull :sentence="sentence"></SentenceFull>
+    <router-link :to="`/sentence/${sentence.id}`">
+      <SentenceFull :sentence="sentence" class=""></SentenceFull>
+    </router-link>
+    <router-link :to="`/sentence/${sentence.id}`">
+      <SentenceFull :sentence="sentence" class=""></SentenceFull>
+    </router-link>
+    <router-link :to="`/sentence/${sentence.id}`">
+      <SentenceFull :sentence="sentence" class=""></SentenceFull>
+    </router-link>
   </div>
 </template>
 

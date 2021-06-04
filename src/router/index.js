@@ -27,6 +27,11 @@ const routes = [
     name: 'Search',
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue')
   },
+  {
+    path: '/sentence/:id',
+    name: 'Sentence',
+    component: () => import(/* webpackChunkName: "sentence" */ '../views/Sentence.vue')
+  },
 ]
 
 const router = createRouter({

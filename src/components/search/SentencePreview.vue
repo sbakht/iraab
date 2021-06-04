@@ -1,35 +1,21 @@
 <template>
-  <div>
-    <div class="p-4 flex flex-row-reverse justify-center">
-      <Word
-        v-for="word in sentence.words"
-        :word="word"
-        :key="word.id"
-        :activeFrom="highlightFrom(word)"
-        :activeTo="highlightTo(word)"
-      ></Word>
-    </div>
-
-    <div class="p-4 flex flex-row justify-center space-x-4">
+  <div class="p-4">
+    <div class="py-0 flex flex-row justify-end space-x-4">
       <div v-for="(name, i) in uniqueNames(sentence.connections)" :key="i">
         <badge-view :text="name" :large="false" :square="false"></badge-view>
       </div>
     </div>
-
-    <div v-if="selectedConnection" class="p-4">
-      <div v-if="isToken(selectedConnection.from)">
-        "{{ selectedConnection.from.name }}" is
-        {{ selectedConnection.grammar.name }} to "{{
-          selectedConnection.to.name
-        }}"
-      </div>
-      <div v-if="isPhrase(selectedConnection.from)">
-        "{{
-          selectedConnection.from.words.map((word) => word.label).join(" ")
-        }}" is a {{ selectedConnection.from.phrase.description }} that is
-        {{ selectedConnection.grammar.name }} to "{{
-          selectedConnection.to.name
-        }}"
+    <div class="flex justify-between pt-6">
+      <router-link :to="`/sentence/${sentence.id}`" class="sentence-link">
+        <button
+          type="button"
+          class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Open
+        </button>
+      </router-link>
+      <div class="flex flex-row-reverse justify-start">
+        <Word v-for="word in sentence.words" :word="word" :key="word.id"></Word>
       </div>
     </div>
   </div>
@@ -49,11 +35,6 @@ export default {
     },
   },
   components: { Word, BadgeView },
-  data() {
-    return {
-      selectedConnection: null,
-    };
-  },
   methods: {
     highlightFrom(word) {
       if (!this.selectedConnection) return false;
@@ -106,4 +87,7 @@ export default {
 </script>
 
 <style>
+.sentence-link {
+  margin-top: 27px;
+}
 </style>

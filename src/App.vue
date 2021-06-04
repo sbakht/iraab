@@ -1,12 +1,14 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/graph">Dependency Graph</router-link> |
-    <router-link to="/selectable">Selectable</router-link> |
-    <router-link to="/create">Create</router-link> |
-    <router-link to="/search">Search</router-link>
+  <div class="max-w-screen-lg m-auto">
+    <div id="nav" class="text-center">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/graph">Dependency Graph</router-link> |
+      <router-link to="/selectable">Selectable</router-link> |
+      <router-link to="/create">Create</router-link> |
+      <router-link to="/search">Search</router-link>
+    </div>
+    <router-view />
   </div>
-  <router-view />
 </template>
 
 <style>
@@ -14,7 +16,6 @@
   /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 }
 
 #nav {
