@@ -114,7 +114,10 @@ const utils = {
       return obj.map(el => el.id);
     }
     throw new Error('not passing array to toIds()')
-  }
+  },
+  wordsToTokens(words) {
+    return words.flatMap(utils.toTokens);
+  },
 }
 
 export default utils;
