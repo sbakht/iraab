@@ -1,11 +1,9 @@
 <template>
   <div class="max-w-screen-lg m-auto">
     <div id="nav" class="text-center">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/graph">Dependency Graph</router-link> |
       <router-link to="/selectable">Selectable</router-link> |
-      <router-link to="/create">Create</router-link> |
-      <router-link to="/search">Search</router-link>
+      <router-link to="/search">Search</router-link> |
+      <router-link to="/create">Create</router-link>
     </div>
     <router-view />
   </div>

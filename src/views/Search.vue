@@ -1,5 +1,43 @@
 <template>
-  <div v-for="sentence in sentences" :key="sentence.id">
+  <div class="border-b pb-10">
+    <div class="flex items-center">
+      <BasicMultiSelect
+        class="flex-grow"
+        :options="allPartsOfSpeech"
+        @change="(vals) => (pos = vals)"
+        label="Parts of Speech"
+        itemLabel="description"
+        trackBy="tag"
+      ></BasicMultiSelect>
+      <div class="mt-5 ml-3">
+        <toggle-view
+          label="Exact"
+          :val="allPos"
+          @change="allPos = !allPos"
+        ></toggle-view>
+      </div>
+    </div>
+    <div class="flex items-center mt-4">
+      <BasicMultiSelect
+        class="flex-grow"
+        :options="connections"
+        @change="(vals) => (grammar = vals)"
+        placeholder="Select grammar"
+        label="Grammar"
+        itemLabel="name"
+        trackBy="name"
+      ></BasicMultiSelect>
+      <div class="mt-5 ml-3">
+        <toggle-view
+          label="Exact"
+          :val="allGrammar"
+          @change="allGrammar = !allGrammar"
+        ></toggle-view>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5" v-for="sentence in sentences" :key="sentence.id">
     <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
       <SentenceFull :sentence="sentence" class=""></SentenceFull>
     </router-link>
@@ -19,19 +57,26 @@
 import { mapGetters } from "vuex";
 import Utils from "@/utils/Utils";
 import SentenceFull from "@/components/search/SentencePreview.vue";
+import ToggleView from "@/components/common/ToggleView";
+import BasicMultiSelect from "@/components/common/BasicMultiSelect";
+import { connectionTypes } from "@/data/data.js";
+import { speechArray } from "@/api/PartsOfSpeech.js";
 
-function hasPos(words, tag) {
-  return Utils.wordsToTokens(words).some((token) => token.pos.tag === tag);
+function hasPos(words, pos) {
+  return Utils.wordsToTokens(words).some((token) => token.pos.tag === pos.tag);
 }
-function hasGrammar(connections, name) {
-  return connections.some((connection) => connection.grammar.name === name);
+function hasGrammar(connections, con) {
+  console.log(connections, con);
+  return connections.some((connection) => connection.grammar.id === con.id);
 }
 export default {
-  components: { SentenceFull },
+  components: { SentenceFull, ToggleView, BasicMultiSelect },
   data() {
     return {
-      pos: ["PRONS", "V", "PP"],
-      grammar: ["Kabr"],
+      pos: [],
+      grammar: [],
+      allPos: true,
+      allGrammar: true,
     };
   },
   mounted() {
@@ -41,11 +86,17 @@ export default {
     ...mapGetters("Graph", {
       allSetences: "sentences",
     }),
+    connections() {
+      return connectionTypes.all;
+    },
+    allPartsOfSpeech() {
+      return speechArray;
+    },
     sentences() {
       return this.allSetences.filter(
         (sentence) =>
-          this.filterPos(sentence.words, false) &&
-          this.filterGrammar(sentence.connections, false)
+          this.filterPos(sentence.words, this.allPos) &&
+          this.filterGrammar(sentence.connections, this.allGrammar)
       );
     },
   },
@@ -58,7 +109,7 @@ export default {
       const type = isAnd ? "every" : "some";
       return (
         !this.grammar.length ||
-        this.grammar[type]((name) => hasGrammar(connections, name))
+        this.grammar[type]((connection) => hasGrammar(connections, connection))
       );
     },
   },

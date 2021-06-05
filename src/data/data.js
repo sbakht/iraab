@@ -6,6 +6,7 @@ const Mubtada = { id: 4, name: "Mubtada", exclude: [5] };
 const Kabr = { id: 5, name: "Kabr", exclude: [4, 20], excludeGroup: [1] };
 const Fial = { id: 6, name: "Fial", exclude: [], excludeGroup: [1] };
 const Majroor = { id: 20, name: "Majroor", exclude: [4, 5, 6], excludeGroup: [1] };
+const Sifa = { id: 21, name: "Sifa", exclude: [], excludeGroup: [] };
 
 const Madhi = { id: 12, name: "Madhi", exclude: [], excludeGroup: [] };
 const Mudhari = { id: 13, name: "Mudhari", exclude: [], excludeGroup: [] };
@@ -72,11 +73,13 @@ const connections = {
     '17': Mutaalliq,
     '18': MudafIlayhi,
     '20': Majroor,
+    '21': Sifa,
   },
-  allIds: ['5', '17', '20'],
+  allIds: ['5', '17', '20', '21'],
 }
 
 export const connectionTypes = {
   ...connections,
-  map: connections.allIds.map(id => connections.byId[id])
+  map: connections.allIds.map(id => connections.byId[id]),
+  all: connections.allIds.map(id => connections.byId[id]),
 }
