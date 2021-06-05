@@ -1,10 +1,22 @@
 <template>
   <div class="p-4">
-    <div class="py-0 flex flex-row justify-end space-x-4">
-      <div v-for="(name, i) in uniqueNames(sentence.connections)" :key="i">
-        <badge-view :text="name" :large="false" :square="false"></badge-view>
+    <div class="py-0 flex flex-row justify-end space-x-3">
+      <div v-for="pos in uniquePos" :key="pos.id">
+        <badge-view
+          :label="pos.tag"
+          :title="pos.description"
+          :large="false"
+          :square="false"
+        ></badge-view>
       </div>
     </div>
+
+    <div class="py-0 flex flex-row justify-end space-x-3 mt-1">
+      <div v-for="(name, i) in uniqueNames(sentence.connections)" :key="i">
+        <badge-view :label="name" :large="false" :square="false"></badge-view>
+      </div>
+    </div>
+
     <div class="flex justify-between pt-6">
       <router-link
         :to="`/sentence/${sentence.id.split('-')[1]}`"
@@ -12,7 +24,22 @@
       >
         <button
           type="button"
-          class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="
+            inline-flex
+            items-center
+            px-2.5
+            py-1.5
+            border border-gray-300
+            shadow-sm
+            text-xs
+            font-medium
+            rounded
+            text-gray-700
+            bg-white
+            hover:bg-gray-50
+            focus:outline-none
+            focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+          "
         >
           Open
         </button>
@@ -38,6 +65,14 @@ export default {
     },
   },
   components: { Word, BadgeView },
+  computed: {
+    uniquePos() {
+      const tokens = this.sentence.words
+        .flatMap(this.toTokens)
+        .map((t) => t.pos);
+      return _.uniqBy((o) => o.tag, tokens);
+    },
+  },
   methods: {
     highlightFrom(word) {
       if (!this.selectedConnection) return false;
