@@ -80,6 +80,5 @@ const connections = {
 
 export const connectionTypes = {
   ...connections,
-  map: connections.allIds.map(id => connections.byId[id]),
   all: connections.allIds.map(id => connections.byId[id]),
 }

@@ -9,11 +9,18 @@
       {{ word.token.name }}
     </div>
   </div>
+
+  <apply-grammar
+    v-if="2 > 4"
+    :sentence="sentence"
+    :words="words"
+  ></apply-grammar>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import Utils from "../utils/Utils";
+import ApplyGrammar from "@/components/ApplyGrammar.vue";
 
 function createSentence(str) {
   const tokens = str.split(" ").map((str) => Utils.mkToken({ name: str }));
@@ -24,6 +31,7 @@ function createSentence(str) {
 }
 
 export default {
+  components: { ApplyGrammar },
   data() {
     return {
       input: "",
