@@ -77,6 +77,7 @@ const utils = {
 
     if (tokens.length === 1) {
       const token = tokens[0];
+      word.label = token.name;
       if (preferObject) {
         word.token = token;
       } else {

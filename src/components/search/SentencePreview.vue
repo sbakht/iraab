@@ -19,7 +19,7 @@
 
     <div class="flex justify-between pt-6">
       <router-link
-        :to="`/sentence/${sentence.id.split('-')[1]}`"
+        :to="`/sentence/${sentence.id.split('-').slice(1).join('-')}`"
         class="sentence-link"
       >
         <button

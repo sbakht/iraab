@@ -64,6 +64,7 @@ export default {
 
       const outerTokens = this.toTokens(this.selectedConnection.from);
       const tokens = wordsToTokens([word]);
+      // console.log(this.selectedConnection.from, outerTokens);
       return isSubset(outerTokens, tokens, { param: "id", partial: true });
     },
     highlightTo(word) {

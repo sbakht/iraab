@@ -38,16 +38,7 @@
   </div>
 
   <div class="mt-5" v-for="sentence in sentences" :key="sentence.id">
-    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
-      <SentenceFull :sentence="sentence" class=""></SentenceFull>
-    </router-link>
-    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
-      <SentenceFull :sentence="sentence" class=""></SentenceFull>
-    </router-link>
-    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
-      <SentenceFull :sentence="sentence" class=""></SentenceFull>
-    </router-link>
-    <router-link :to="`/sentence/${sentence.id.split('-')[1]}`">
+    <router-link :to="`/sentence/${sentence.id.split('-').slice(1).join('-')}`">
       <SentenceFull :sentence="sentence" class=""></SentenceFull>
     </router-link>
   </div>

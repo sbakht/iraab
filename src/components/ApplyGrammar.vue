@@ -134,6 +134,7 @@ export default {
       } else {
         this.addPhaseAndConnection(this.from, toToken);
       }
+      this.$emit("change");
     },
     removeFromSelected(word) {
       const tokens = Utils.toTokens(word);
@@ -153,6 +154,7 @@ export default {
         items: items,
         to,
         phrase: Phrase.PP,
+        sentenceId: this.sentence.id,
       });
     },
     addPhaseAndConnection(items, to) {
@@ -162,8 +164,11 @@ export default {
           to,
           phrase: Phrase.PP,
           grammar: this.connectionType || data.Empty,
+          sentenceId: this.sentence.id,
+          sentence: this.sentence,
         })
         .then((connection) => {
+          console.log(connection);
           this.focusConnection(connection);
           this.clearConnectionType();
         })
@@ -175,6 +180,7 @@ export default {
           from: phrase,
           to: toToken,
           grammar: this.connectionType || data.Empty,
+          sentenceId: this.sentence.id,
         })
         .then((connection) => {
           this.focusConnection(connection);
@@ -214,8 +220,12 @@ export default {
       this.selectedConnection = null;
     },
     onDelete() {
-      this.$store.commit("Graph/deleteConnection", this.selectedConnection);
+      this.$store.commit("Graph/deleteConnection", {
+        ...this.selectedConnection,
+        sentenceId: this.sentence.id,
+      });
       this.clearFocusedConnection();
+      this.$emit("change");
     },
   },
 };

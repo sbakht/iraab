@@ -39,7 +39,6 @@ export default {
   },
   computed: {
     ...mapState({
-      userAnswers: "userAnswers",
       activeWordId: "activeWordId",
       submitted: "submitted",
     }),

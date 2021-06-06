@@ -120,7 +120,7 @@ export const seed = (seedData = {}) => ({
       state.words.byId[id] = newWord;
       state.words.allIds.push(id);
     },
-    addPhrase(state, { from, to, phrase, id }) {
+    addPhrase(state, { from, to, phrase, id, sentenceId }) {
       state.phrases.byId[id] = {
         id,
         range: {
@@ -132,10 +132,10 @@ export const seed = (seedData = {}) => ({
       }
       state.phrases.allIds.push(id);
 
-      const sentence = state.sentences.byId[state.activeSentenceId];
+      const sentence = state.sentences.byId[sentenceId];
       sentence.phrases.push(id);
     },
-    addConnection(state, { from, to, grammar, id }) {
+    addConnection(state, { from, to, grammar, id, sentenceId }) {
 
       state.connections.byId[id] = {
         id,
@@ -146,18 +146,18 @@ export const seed = (seedData = {}) => ({
       }
       state.connections.allIds.push(id);
 
-      const sentence = state.sentences.byId[state.activeSentenceId];
+      const sentence = state.sentences.byId[sentenceId];
       sentence.connections.push(id);
     },
     updateConnectionGrammar(state, { grammar, id }) {
       const connection = state.connections.byId[id];
       connection.grammar = grammar;
     },
-    deleteConnection(state, { id }) {
+    deleteConnection(state, { id, sentenceId }) {
       delete state.connections.byId[id]
       state.connections.allIds = state.connections.allIds.filter(i => i !== id)
 
-      const sentence = state.sentences.byId[state.activeSentenceId];
+      const sentence = state.sentences.byId[sentenceId];
       sentence.connections = sentence.connections.filter(i => i !== id)
     },
     addSentence(state, sentence) {
@@ -188,8 +188,8 @@ export const seed = (seedData = {}) => ({
       }
 
       const id = data.id || 'phrase-' + uuidv4();
-      commit('addPhrase', { from: low, to: high, phrase: data.phrase, id })
-      return getters.findPhrase(id);
+      commit('addPhrase', { from: low, to: high, phrase: data.phrase, id, sentenceId: data.sentenceId })
+      return getters.findPhrase(id, data.sentenceId);
     },
     addConnection({ commit, getters }, data) {
       function findDuplicate(obj) {
@@ -223,10 +223,11 @@ export const seed = (seedData = {}) => ({
       return getters.findConnection(id);
     },
     addPhraseAndConnection({ commit, state, dispatch, getters }, obj) {
+      const sentence = obj.sentence;
       const myTo = Utils.toTokens(obj.to);
 
       function findDuplicate(obj) {
-        const connections = getters.connections
+        const connections = sentence.connections
 
         for (let connection of connections) {
           const { from, to } = connection;
@@ -269,9 +270,10 @@ export const seed = (seedData = {}) => ({
         to: obj.to,
         grammar: obj.grammar,
         id: connectionId,
-        skipDuplicateCheck: true
+        skipDuplicateCheck: true,
+        sentenceId: obj.sentenceId,
       })
-      return getters.findConnection(connectionId);
+      return getters.findConnection(connectionId, obj.sentenceId);
     },
     addSentence({ commit, getters }, sentence) {
       sentence.words.forEach(word => {
@@ -309,11 +311,11 @@ export const seed = (seedData = {}) => ({
       }
     },
     findPhrase(state, getters) {
-      return id => {
+      return (id, sentenceId) => {
         const phrase = state.phrases.byId[id];
         const from = getters.findToken(phrase.range.from);
         const to = getters.findToken(phrase.range.to);
-        const words = rangeToWords(getters.activeWords, phrase.range)
+        const words = rangeToWords(getters.wordsFromSentence(sentenceId), phrase.range)
         const tokens = words.map(word => word.token || word.tokens).flat()
 
         return { ...phrase, from, to, words, tokens };
@@ -325,15 +327,14 @@ export const seed = (seedData = {}) => ({
         const words = sentence.words.map(getters.find)
         let connections = [];
         if (sentence.connections) {
-          connections = sentence.connections;
-          connections = sentence.connections.map(getters.findConnection);
+          connections = sentence.connections.map(connection => getters.findConnection(connection, id));
         }
         return { ...sentence, words, connections }
       }
     },
-    find: (state, getters) => id => {
+    find: (state, getters) => (id, sentenceId) => {
       if (id.startsWith('phrase')) {
-        return getters.findPhrase(id)
+        return getters.findPhrase(id, sentenceId)
       }
       if (id.startsWith('token')) {
         return getters.findToken(id)
@@ -343,10 +344,10 @@ export const seed = (seedData = {}) => ({
       }
     },
     findConnection(state, getters) {
-      return id => {
+      return (id, sentenceId) => {
         const connection = state.connections.byId[id];
-        const from = getters.find(connection.from)
-        const to = getters.find(connection.to)
+        const from = getters.find(connection.from, sentenceId)
+        const to = getters.find(connection.to, sentenceId)
         return { ...connection, from, to }
       }
     },
@@ -365,11 +366,12 @@ export const seed = (seedData = {}) => ({
     sentences(state, getters) {
       return state.sentences.allIds.map(getters.findSentence);
     },
-    activeWords(state, getters) {
-      const id = state.activeSentenceId;
-      const sentence = state.sentences.byId[id] || { words: [] };
-      const words = sentence.words.map(getters.find)
-      return words;
+    wordsFromSentence(state, getters) {
+      return id => {
+        const sentence = state.sentences.byId[id] || { words: [] };
+        const words = sentence.words.map(getters.find)
+        return words;
+      }
     },
   }
 })

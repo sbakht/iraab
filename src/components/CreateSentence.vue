@@ -4,16 +4,10 @@
     <button @click="create">Create</button>
   </div>
 
-  <div v-for="word in words" :key="word.id">
-    <div v-if="word.token">
-      {{ word.token.name }}
-    </div>
-  </div>
-
   <apply-grammar
-    v-if="2 > 4"
+    v-if="sentence"
     :sentence="sentence"
-    :words="words"
+    @change="getSentence"
   ></apply-grammar>
 </template>
 
@@ -35,19 +29,26 @@ export default {
   data() {
     return {
       input: "",
+      sentence: null,
+      id: null,
     };
   },
   computed: {
     ...mapGetters("Graph", {
-      words: "activeWords",
+      findSentence: "findSentence",
     }),
   },
   methods: {
     create() {
       const sentence = createSentence(this.input);
+      this.id = sentence.id;
       this.$store.dispatch("Graph/addSentence", sentence).then(() => {
-        this.$store.dispatch("Graph/setActiveSentence", sentence.id);
+        // this.$store.dispatch("Graph/setActiveSentence", sentence.id);
+        this.sentence = this.findSentence(sentence.id);
       });
+    },
+    getSentence() {
+      this.sentence = this.findSentence(this.id);
     },
   },
 };
