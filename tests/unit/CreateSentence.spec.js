@@ -6,6 +6,10 @@ import { seed } from '../../src/store/index'
 
 let seedFromGraph = JSON.parse(JSON.stringify(graphSeed))
 
+function getSelectableConnections(wrapper) {
+  return wrapper.findAll('[data-testid=select-connection]')
+}
+
 beforeEach(() => {
   seedFromGraph = JSON.parse(JSON.stringify(graphSeed))
 })
@@ -35,4 +39,35 @@ test('adds new sentence by rendering', async () => {
 
 
   expect(wrapper.text()).toContain(`thisisgreat`)
+})
+
+test('can add grammar to the new sentence', async () => {
+  const wrapper = mkWrapper({
+    store: {
+      state: {
+        ...seedFromGraph
+      }
+    }
+  });
+
+  const textInput = wrapper.find('input[type="text"]')
+  await textInput.setValue('this is great')
+  await wrapper.find('button').trigger('click')
+  const words = wrapper.findAll('[data-testid^=word]')
+
+  await words[0].trigger('click')
+  await words[1].trigger("click", { shiftKey: true });
+
+  await words[0].trigger('click')
+  await words[1].trigger('click')
+  await words[2].trigger("click", { shiftKey: true });
+
+  const connections = getSelectableConnections(wrapper);
+  expect(connections.length).toBe(2);
+
+  expect(words[0].classes()).toContain('active-from')
+  expect(words[1].classes()).toContain('active-from')
+  expect(words[2].classes()).toContain('active-to')
+  expect(words[0].classes()).not.toContain('selected')
+  expect(words[1].classes()).not.toContain('selected')
 })
