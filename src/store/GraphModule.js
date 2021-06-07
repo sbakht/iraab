@@ -173,6 +173,7 @@ export const seed = (seedData = {}) => ({
       })
     },
     addPhrase({ commit, getters, state }, data) {
+      const phrase = data.phrase;
       const allIds = state.tokens.allIds;
       const indexOf = arr => token => arr.indexOf(token && token.id);
       const index = indexOf(allIds);
@@ -188,10 +189,12 @@ export const seed = (seedData = {}) => ({
       }
 
       const id = data.id || 'phrase-' + uuidv4();
-      commit('addPhrase', { from: low, to: high, phrase: data.phrase, id, sentenceId: data.sentenceId })
+      commit('addPhrase', { from: low, to: high, phrase: phrase.phrase, id, sentenceId: data.sentenceId })
       return getters.findPhrase(id, data.sentenceId);
     },
     addConnection({ commit, getters }, data) {
+      const connection = data.connection;
+      const sentence = data.sentence;
       function findDuplicate(obj) {
         const connections = getters.connections.filter(con => con.userAdded)
 
@@ -218,11 +221,12 @@ export const seed = (seedData = {}) => ({
         }
       }
 
-      const id = data.id || 'connection-' + uuidv4();
-      commit('addConnection', { ...data, id })
+      const id = connection.id;
+      commit('addConnection', { ...connection, sentenceId: sentence.id })
       return getters.findConnection(id);
     },
     addPhraseAndConnection({ commit, state, dispatch, getters }, obj) {
+      const connection = obj.connection
       const sentence = obj.sentence;
       const myTo = Utils.toTokens(obj.to);
 
@@ -248,7 +252,6 @@ export const seed = (seedData = {}) => ({
         return duplicate
       }
 
-      const phraseId = 'phrase-' + uuidv4();
       const allIds = state.tokens.allIds;
       const indexOf = arr => token => arr.indexOf(token && token.id);
       const index = indexOf(allIds);
@@ -263,19 +266,21 @@ export const seed = (seedData = {}) => ({
         return Promise.reject('Target cannot be within source phrase');
       }
 
-      dispatch('addPhrase', { ...obj, id: phraseId })
-      const connectionId = 'connection-' + uuidv4();
+      const phraseId = connection.from.id;
+      dispatch('addPhrase', { ...obj, id: phraseId, phrase: connection.from })
+      const connectionId = connection.id;
       dispatch('addConnection', {
-        from: { id: phraseId },
+        from: connection.from,
         to: obj.to,
         grammar: obj.grammar,
         id: connectionId,
         skipDuplicateCheck: true,
-        sentenceId: obj.sentenceId,
+        sentence,
+        connection,
       })
       return getters.findConnection(connectionId, obj.sentenceId);
     },
-    addSentence({ commit, getters }, sentence) {
+    addSentence({ commit }, sentence) {
       sentence.words.forEach(word => {
         const tokens = Utils.toTokens(word);
         tokens.forEach(token => {
@@ -285,7 +290,6 @@ export const seed = (seedData = {}) => ({
       })
       const wordIds = Utils.toIds(sentence.words);
       commit('addSentence', { ...sentence, words: wordIds });
-      return getters.findSentence(sentence.id);
     },
     setActiveSentence({ commit }, id) {
       commit('setActiveSentence', id)

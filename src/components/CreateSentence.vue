@@ -43,7 +43,6 @@ export default {
       const sentence = createSentence(this.input);
       this.id = sentence.id;
       this.$store.dispatch("Graph/addSentence", sentence).then(() => {
-        // this.$store.dispatch("Graph/setActiveSentence", sentence.id);
         this.sentence = this.findSentence(sentence.id);
       });
     },

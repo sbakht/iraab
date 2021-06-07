@@ -95,6 +95,42 @@ const utils = {
 
     return word;
   },
+  mkPhrase({ phrase, from, to, preferObject = false }) {
+    const obj = {
+      id: mkID('phrase'),
+      phrase,
+    };
+
+    if (preferObject) {
+      obj.range = {
+        from,
+        to
+      }
+    } else {
+      obj.range = {
+        from: from.id || from,
+        to: to.id || to,
+      }
+    }
+
+    return obj;
+  },
+  mkConnection({ from, to, grammar, preferObject = false }) {
+    const connection = {
+      id: mkID('connection'),
+      grammar
+    };
+
+    if (preferObject) {
+      connection.from = from;
+      connection.to = to;
+    } else {
+      connection.from = from.id || from;
+      connection.to = to.id || to;
+    }
+
+    return connection;
+  },
   mkSentence({ words, preferObject = false }) {
     const sentence = {
       id: mkID('sentence'),

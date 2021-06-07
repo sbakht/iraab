@@ -132,7 +132,7 @@ export default {
       if (this.from.length === 1) {
         this.addConnection(this.from[0], toToken);
       } else {
-        this.addPhaseAndConnection(this.from, toToken);
+        this.addPhraseAndConnection(this.from, toToken);
       }
       this.$emit("change");
     },
@@ -150,37 +150,53 @@ export default {
       }
     },
     addPhrase(items, to) {
+      const phrase = Utils.mkPhrase({ phrase: Phrase.PP, from: {}, to: {} });
       return this.$store.dispatch("Graph/addPhrase", {
         items: items,
         to,
-        phrase: Phrase.PP,
         sentenceId: this.sentence.id,
+        phrase,
       });
     },
-    addPhaseAndConnection(items, to) {
+    addPhraseAndConnection(items, to) {
+      const grammar = this.connectionType || data.Empty;
+      const phrase = Utils.mkPhrase({ phrase: Phrase.PP, from: {}, to: {} });
+      const connection = Utils.mkConnection({
+        from: phrase,
+        to,
+        grammar,
+        preferObject: true,
+      });
       return this.$store
         .dispatch("Graph/addPhraseAndConnection", {
           items: items,
           to,
-          phrase: Phrase.PP,
-          grammar: this.connectionType || data.Empty,
+          grammar,
           sentenceId: this.sentence.id,
           sentence: this.sentence,
+          connection,
         })
         .then((connection) => {
-          console.log(connection);
           this.focusConnection(connection);
           this.clearConnectionType();
         })
         .catch(() => {});
     },
-    addConnection(phrase, toToken) {
+    addConnection(from, to) {
+      const grammar = this.connectionType || data.Empty;
+      const connection = Utils.mkConnection({
+        from,
+        to,
+        grammar,
+        preferObject: true,
+      });
       return this.$store
         .dispatch("Graph/addConnection", {
-          from: phrase,
-          to: toToken,
-          grammar: this.connectionType || data.Empty,
-          sentenceId: this.sentence.id,
+          from,
+          to,
+          grammar,
+          sentence: this.sentence,
+          connection,
         })
         .then((connection) => {
           this.focusConnection(connection);
