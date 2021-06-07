@@ -1,5 +1,4 @@
 import { loadGraph } from '../utils/GraphUtils'
-import { v4 as uuidv4 } from 'uuid';
 import Api from '../api/Api';
 // import { data } from '../data/data'
 import Utils from '../utils/Utils';
@@ -120,7 +119,9 @@ export const seed = (seedData = {}) => ({
       state.words.byId[id] = newWord;
       state.words.allIds.push(id);
     },
-    addPhrase(state, { from, to, phrase, id, sentenceId }) {
+    addPhrase(state, { from, to, sentenceId, myPhrase }) {
+      const id = myPhrase.id
+      const phrase = myPhrase.phrase
       state.phrases.byId[id] = {
         id,
         range: {
@@ -188,8 +189,8 @@ export const seed = (seedData = {}) => ({
         return Promise.reject('Target cannot be within source phrase');
       }
 
-      const id = data.id || 'phrase-' + uuidv4();
-      commit('addPhrase', { from: low, to: high, phrase: phrase.phrase, id, sentenceId: data.sentenceId })
+      const id = phrase.id;
+      commit('addPhrase', { from: low, to: high, myPhrase: phrase, sentenceId: data.sentenceId })
       return getters.findPhrase(id, data.sentenceId);
     },
     addConnection({ commit, getters }, data) {
@@ -214,9 +215,9 @@ export const seed = (seedData = {}) => ({
       }
 
       if (!data.skipDuplicateCheck) {
-        const duplicate = findDuplicate(data);
+        const duplicate = findDuplicate(connection);
         if (duplicate) {
-          commit('updateConnectionGrammar', { id: duplicate.id, grammar: data.grammar })
+          commit('updateConnectionGrammar', { id: duplicate.id, grammar: connection.grammar })
           return duplicate
         }
       }
@@ -228,7 +229,7 @@ export const seed = (seedData = {}) => ({
     addPhraseAndConnection({ commit, state, dispatch, getters }, obj) {
       const connection = obj.connection
       const sentence = obj.sentence;
-      const myTo = Utils.toTokens(obj.to);
+      const myTo = Utils.toTokens(connection.to);
 
       function findDuplicate(obj) {
         const connections = sentence.connections
@@ -248,7 +249,7 @@ export const seed = (seedData = {}) => ({
 
       const duplicate = findDuplicate(obj);
       if (duplicate) {
-        commit('updateConnectionGrammar', { id: duplicate.id, grammar: obj.grammar })
+        commit('updateConnectionGrammar', { id: duplicate.id, grammar: connection.grammar })
         return duplicate
       }
 
@@ -262,17 +263,13 @@ export const seed = (seedData = {}) => ({
       const high = items[items.length - 1];
 
       const inbetween = allIds.slice(index(low), index(high))
-      if (indexOf(inbetween)(obj.to) > -1) {
+      if (indexOf(inbetween)(connection.to) > -1) {
         return Promise.reject('Target cannot be within source phrase');
       }
 
-      const phraseId = connection.from.id;
-      dispatch('addPhrase', { ...obj, id: phraseId, phrase: connection.from })
+      dispatch('addPhrase', { ...obj, phrase: connection.from })
       const connectionId = connection.id;
       dispatch('addConnection', {
-        from: connection.from,
-        to: obj.to,
-        grammar: obj.grammar,
         id: connectionId,
         skipDuplicateCheck: true,
         sentence,

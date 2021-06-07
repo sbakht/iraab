@@ -170,8 +170,6 @@ export default {
       return this.$store
         .dispatch("Graph/addPhraseAndConnection", {
           items: items,
-          to,
-          grammar,
           sentenceId: this.sentence.id,
           sentence: this.sentence,
           connection,
@@ -192,9 +190,6 @@ export default {
       });
       return this.$store
         .dispatch("Graph/addConnection", {
-          from,
-          to,
-          grammar,
           sentence: this.sentence,
           connection,
         })
