@@ -345,8 +345,8 @@ test('can create a link nested tokens within same word', async () => {
     }
   });
 
-  const from = wrapper.find('[data-testid=token-6]')
-  const to = wrapper.find('[data-testid=token-5]')
+  const from = wrapper.find('[data-testid=token-5]')
+  const to = wrapper.find('[data-testid=token-6]')
   await from.trigger('click')
   await to.trigger("click", { shiftKey: true });
 

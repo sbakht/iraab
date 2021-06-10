@@ -92,6 +92,19 @@ function highlight(outerTokens, word) {
   return { word: false, token: "" };
 }
 
+function sortTokens(index, items) {
+  const cloned = [...items];
+  cloned.sort((a, b) => {
+    if (index(a) < index(b)) {
+      return -1;
+    }
+    if (index(a) > index(b)) {
+      return 1;
+    }
+  });
+  return cloned;
+}
+
 export default {
   components: { Word, ConnectionChips },
   props: ["sentence"],
@@ -149,27 +162,85 @@ export default {
         return [...new Set(this.from.concat(tokens))];
       }
     },
-    addPhrase(items, to) {
-      const phrase = Utils.mkPhrase({ phrase: Phrase.PP, from: {}, to: {} });
-      return this.$store.dispatch("Graph/addPhrase", {
-        items: items,
-        to,
-        sentenceId: this.sentence.id,
-        phrase,
-      });
+    getPhraseBoundry(data) {
+      const tokens = Utils.wordsToTokens(this.sentence.words);
+      const tokenIds = tokens.map((t) => t.id);
+      const indexOf = (arr) => (token) => arr.indexOf(token && token.id);
+      const index = indexOf(tokenIds);
+
+      const items = sortTokens(index, data.items);
+
+      return { from: items[0], to: items[items.length - 1] };
+    },
+    invalidConnection(connection, { from, to }) {
+      const tokens = Utils.wordsToTokens(this.sentence.words);
+      const tokenIds = tokens.map((t) => t.id);
+      const indexOf = (arr) => (token) => arr.indexOf(token && token.id);
+      const index = indexOf(tokenIds);
+
+      const inbetween = tokenIds.slice(index(from), index(to));
+      return indexOf(inbetween)(connection.to) > -1;
+    },
+    isDuplicate(connection) {
+      if (connection.from.range) {
+        const newFrom = connection.from.range.from;
+        const newTo = connection.from.range.to;
+        for (let con of this.sentence.connections) {
+          const phrase = con.from;
+
+          const isSameFrom = phrase.from && phrase.from.id === newFrom.id;
+          const isSameTo = phrase.to && phrase.to.id === newTo.id;
+
+          if (isSameFrom && isSameTo) {
+            return con;
+          }
+        }
+      } else {
+        const newFrom = connection.from;
+        const newTo = connection.to;
+        for (let connection of this.sentence.connections) {
+          const { from, to } = connection;
+
+          // console.log(connection)l
+          const isSameFrom = from.id === newFrom.id;
+          const isSameTo = to.id === newTo.id;
+
+          if (isSameFrom && isSameTo) {
+            return connection;
+          }
+        }
+      }
     },
     addPhraseAndConnection(items, to) {
+      const boundry = this.getPhraseBoundry({ items });
       const grammar = this.connectionType || data.Empty;
-      const phrase = Utils.mkPhrase({ phrase: Phrase.PP, from: {}, to: {} });
+      const phrase = Utils.mkPhrase({
+        phrase: Phrase.PP,
+        from: boundry.from,
+        to: boundry.to,
+        preferObject: true,
+      });
       const connection = Utils.mkConnection({
         from: phrase,
         to,
         grammar,
         preferObject: true,
       });
+
+      if (this.isDuplicate(connection)) {
+        const duplicate = this.isDuplicate(connection);
+        return this.$store.commit("Graph/updateConnectionGrammar", {
+          id: duplicate.id,
+          grammar: connection.grammar,
+        });
+      }
+
+      if (this.invalidConnection(connection, boundry)) {
+        return;
+      }
+
       return this.$store
         .dispatch("Graph/addPhraseAndConnection", {
-          items: items,
           sentenceId: this.sentence.id,
           sentence: this.sentence,
           connection,
@@ -188,6 +259,14 @@ export default {
         grammar,
         preferObject: true,
       });
+
+      if (this.isDuplicate(connection)) {
+        const duplicate = this.isDuplicate(connection);
+        return this.$store.commit("Graph/updateConnectionGrammar", {
+          id: duplicate.id,
+          grammar: connection.grammar,
+        });
+      }
       return this.$store
         .dispatch("Graph/addConnection", {
           sentence: this.sentence,

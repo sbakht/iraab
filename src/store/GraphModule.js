@@ -52,18 +52,6 @@ function rangeToWords(words1, { from, to }) {
   return words;
 }
 
-function sortTokens(index, items) {
-  const cloned = [...items];
-  cloned.sort((a, b) => {
-    if (index(a) < index(b)) {
-      return -1;
-    }
-    if (index(a) > index(b)) {
-      return 1;
-    }
-  })
-  return cloned;
-}
 
 export const seed = (seedData = {}) => ({
   namespaced: true,
@@ -173,109 +161,28 @@ export const seed = (seedData = {}) => ({
         commit('setData', data);
       })
     },
-    addPhrase({ commit, getters, state }, data) {
-      const phrase = data.phrase;
-      const allIds = state.tokens.allIds;
-      const indexOf = arr => token => arr.indexOf(token && token.id);
-      const index = indexOf(allIds);
-
-      const items = sortTokens(index, data.items)
-
-      const low = items[0];
-      const high = items[items.length - 1];
-
-      const inbetween = allIds.slice(index(low), index(high))
-      if (indexOf(inbetween)(data.to) > -1) {
-        return Promise.reject('Target cannot be within source phrase');
-      }
-
+    addPhrase({ commit, getters }, { phrase, sentence }) {
       const id = phrase.id;
-      commit('addPhrase', { from: low, to: high, myPhrase: phrase, sentenceId: data.sentenceId })
-      return getters.findPhrase(id, data.sentenceId);
+      const from = phrase.range.from;
+      const to = phrase.range.to;
+
+      commit('addPhrase', { from, to, myPhrase: phrase, sentenceId: sentence.id })
+      return getters.findPhrase(id, sentence.id);
     },
-    addConnection({ commit, getters }, data) {
-      const connection = data.connection;
-      const sentence = data.sentence;
-      function findDuplicate(obj) {
-        const connections = getters.connections.filter(con => con.userAdded)
-
-        const myFrom = Utils.toTokens(obj.from);
-        const myTo = Utils.toTokens(obj.to);
-
-        for (let connection of connections) {
-          const { from, to } = connection;
-          const fromTokens = Utils.toTokens(from);
-          const toTokens = Utils.toTokens(to);
-          const isSameFrom = Utils.isSameArray(fromTokens, myFrom)
-          const isSameTo = Utils.isSameArray(toTokens, myTo)
-          if (isSameFrom && isSameTo) {
-            return connection
-          }
-        }
-      }
-
-      if (!data.skipDuplicateCheck) {
-        const duplicate = findDuplicate(connection);
-        if (duplicate) {
-          commit('updateConnectionGrammar', { id: duplicate.id, grammar: connection.grammar })
-          return duplicate
-        }
-      }
-
-      const id = connection.id;
+    addConnection({ commit, getters }, { connection, sentence }) {
       commit('addConnection', { ...connection, sentenceId: sentence.id })
-      return getters.findConnection(id);
+      return getters.findConnection(connection.id);
     },
-    addPhraseAndConnection({ commit, state, dispatch, getters }, obj) {
-      const connection = obj.connection
-      const sentence = obj.sentence;
-      const myTo = Utils.toTokens(connection.to);
+    addPhraseAndConnection({ dispatch, getters }, { connection, sentence }) {
 
-      function findDuplicate(obj) {
-        const connections = sentence.connections
-
-        for (let connection of connections) {
-          const { from, to } = connection;
-          const fromTokens = Utils.toTokens(from);
-          const toTokens = Utils.toTokens(to);
-
-          const isSameFrom = Utils.isSameArray(fromTokens, obj.items)
-          const isSameTo = Utils.isSameArray(toTokens, myTo)
-          if (isSameFrom && isSameTo) {
-            return connection
-          }
-        }
-      }
-
-      const duplicate = findDuplicate(obj);
-      if (duplicate) {
-        commit('updateConnectionGrammar', { id: duplicate.id, grammar: connection.grammar })
-        return duplicate
-      }
-
-      const allIds = state.tokens.allIds;
-      const indexOf = arr => token => arr.indexOf(token && token.id);
-      const index = indexOf(allIds);
-
-      const items = sortTokens(index, obj.items)
-
-      const low = items[0];
-      const high = items[items.length - 1];
-
-      const inbetween = allIds.slice(index(low), index(high))
-      if (indexOf(inbetween)(connection.to) > -1) {
-        return Promise.reject('Target cannot be within source phrase');
-      }
-
-      dispatch('addPhrase', { ...obj, phrase: connection.from })
-      const connectionId = connection.id;
+      dispatch('addPhrase', { sentence, phrase: connection.from })
       dispatch('addConnection', {
-        id: connectionId,
+        id: connection.id,
         skipDuplicateCheck: true,
         sentence,
         connection,
       })
-      return getters.findConnection(connectionId, obj.sentenceId);
+      return getters.findConnection(connection.id, sentence.id);
     },
     addSentence({ commit }, sentence) {
       sentence.words.forEach(word => {
