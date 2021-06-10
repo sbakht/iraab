@@ -201,7 +201,6 @@ export default {
         for (let connection of this.sentence.connections) {
           const { from, to } = connection;
 
-          // console.log(connection)l
           const isSameFrom = from.id === newFrom.id;
           const isSameTo = to.id === newTo.id;
 
@@ -228,11 +227,7 @@ export default {
       });
 
       if (this.isDuplicate(connection)) {
-        const duplicate = this.isDuplicate(connection);
-        return this.$store.commit("Graph/updateConnectionGrammar", {
-          id: duplicate.id,
-          grammar: connection.grammar,
-        });
+        return this.updateConnection(connection);
       }
 
       if (this.invalidConnection(connection, boundry)) {
@@ -261,11 +256,7 @@ export default {
       });
 
       if (this.isDuplicate(connection)) {
-        const duplicate = this.isDuplicate(connection);
-        return this.$store.commit("Graph/updateConnectionGrammar", {
-          id: duplicate.id,
-          grammar: connection.grammar,
-        });
+        return this.updateConnection(connection);
       }
       return this.$store
         .dispatch("Graph/addConnection", {
@@ -276,6 +267,13 @@ export default {
           this.focusConnection(connection);
           this.clearConnectionType();
         });
+    },
+    updateConnection(connection) {
+      const duplicate = this.isDuplicate(connection);
+      return this.$store.commit("Graph/updateConnectionGrammar", {
+        id: duplicate.id,
+        grammar: connection.grammar,
+      });
     },
     setConnectionType(type) {
       this.connectionType = type;
