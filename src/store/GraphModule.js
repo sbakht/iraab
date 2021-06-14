@@ -153,7 +153,16 @@ export const seed = (seedData = {}) => ({
       const id = sentence.id;
       state.sentences.byId[id] = sentence;
       state.sentences.allIds.push(id);
-    }
+    },
+    addTokenToWord(state, { word, token }) {
+      const stateWord = state.words.byId[word.id];
+      if (stateWord.token) {
+        stateWord.tokens = [token.id]
+        delete stateWord.token;
+      } else {
+        stateWord.tokens.push(token.id);
+      }
+    },
   },
   actions: {
     fetch({ commit }) {

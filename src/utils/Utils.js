@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Speech } from '../api/PartsOfSpeech'
+import { filterItems } from './Array';
 // Arabic = Phrase | Word | Token
 
 function mkID(prefix) {
   return prefix + '-' + uuidv4();
 }
 
-const utils = {
+const is = {
   // Arabic -> Bool
   isConnection(obj) {
     return obj.id.includes("connection");
@@ -23,38 +24,9 @@ const utils = {
   isWord(obj) {
     return obj.id.includes("word");
   },
-  // Arabic -> [Token]
-  toTokens(obj) {
-    if (utils.isPhrase(obj)) {
-      return obj.tokens;
-    }
-    if (utils.isToken(obj)) {
-      return [obj];
-    }
-    if (utils.isWord(obj)) {
-      return obj.token ? [obj.token] : obj.tokens;
-    }
-    if (utils.isConnection(obj)) {
-      throw new Error('Need to implement toTokens for connection')
-    }
-    return [];
-  },
-  // [a] -> [a] -> [a]
-  filterByArray(tokens, arr, { param } = {}) {
-    const val = (x) => (param ? x[param] : x);
-    return arr.filter((t) => !tokens.some((t2) => val(t) === val(t2)));
-  },
-  // [a] -> [a] -> Bool 
-  containsArray(inner, outer) {
-    if (inner.length > outer.length) {
-      return false
-    }
+}
 
-    return outer.filter((t) => inner.some((t2) => t.id === t2.id)).length === inner.length
-  },
-  isSameArray(arr1, arr2) {
-    return arr1.length === arr2.length && utils.containsArray(arr1, arr2);
-  },
+const mk = {
   mkToken({ name, pos }) {
     return {
       id: mkID('token'),
@@ -62,7 +34,7 @@ const utils = {
       pos: pos || Speech.Empty,
     }
   },
-  mkWord({ tokens, label, preferObject = false }) {
+  mkWord({ tokens, label, preferObject = true }) {
     const word = {
       id: mkID('word'),
     }
@@ -95,7 +67,7 @@ const utils = {
 
     return word;
   },
-  mkPhrase({ phrase, from, to, preferObject = false }) {
+  mkPhrase({ phrase, from, to, preferObject = true }) {
     const obj = {
       id: mkID('phrase'),
       phrase,
@@ -115,7 +87,7 @@ const utils = {
 
     return obj;
   },
-  mkConnection({ from, to, grammar, preferObject = false }) {
+  mkConnection({ from, to, grammar, preferObject = true }) {
     const connection = {
       id: mkID('connection'),
       grammar
@@ -131,7 +103,7 @@ const utils = {
 
     return connection;
   },
-  mkSentence({ words, preferObject = false }) {
+  mkSentence({ words, preferObject = true }) {
     const sentence = {
       id: mkID('sentence'),
       connections: [],
@@ -146,6 +118,43 @@ const utils = {
 
     return sentence;
   },
+}
+
+const utils = {
+  ...is,
+  // Arabic -> [Token]
+  toTokens(obj) {
+    if (utils.isPhrase(obj)) {
+      return obj.tokens;
+    }
+    if (utils.isToken(obj)) {
+      return [obj];
+    }
+    if (utils.isWord(obj)) {
+      return obj.token ? [obj.token] : obj.tokens;
+    }
+    if (utils.isConnection(obj)) {
+      throw new Error('Need to implement toTokens for connection')
+    }
+    return [];
+  },
+  ...mk,
+  // [a] -> [a] -> [a]
+  filterByArray(tokens, arr, { param } = {}) {
+    const val = (x) => (param ? x[param] : x);
+    return arr.filter((t) => !tokens.some((t2) => val(t) === val(t2)));
+  },
+  // [a] -> [a] -> Bool 
+  containsArray(inner, outer) {
+    if (inner.length > outer.length) {
+      return false
+    }
+
+    return outer.filter((t) => inner.some((t2) => t.id === t2.id)).length === inner.length
+  },
+  isSameArray(arr1, arr2) {
+    return arr1.length === arr2.length && utils.containsArray(arr1, arr2);
+  },
   toIds(obj) {
     if (obj instanceof Array) {
       return obj.map(el => el.id);
@@ -155,6 +164,19 @@ const utils = {
   wordsToTokens(words) {
     return words.flatMap(utils.toTokens);
   },
+  tokensToWords(tokens, words) {
+    const resultWords = words.filter(word => {
+      const wordTokens = utils.toTokens(word)
+      return utils.containsArray(wordTokens, tokens)
+    })
+
+    const resultTokens = filterItems(utils.wordsToTokens(resultWords), tokens, 'id');
+
+    return {
+      resultWords,
+      resultTokens,
+    }
+  }
 }
 
 export default utils;

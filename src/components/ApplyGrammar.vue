@@ -10,9 +10,9 @@
     <div class="p-4 flex flex-row-reverse justify-center">
       <Word
         :clickable="true"
-        @clickWord="click"
+        @clickWord="clickWord"
         @clickToken="click"
-        @shiftClickWord="shiftClick"
+        @shiftClickWord="shiftClickWord"
         @shiftClickToken="shiftClick"
         v-for="word in sentence.words"
         class="cursor-pointer"
@@ -25,6 +25,11 @@
         :activeToToken="highlightTo(word).token"
       ></Word>
     </div>
+
+    <submit-multi-select
+      v-if="selectedWord"
+      @submit="onMultiSelectChange"
+    ></submit-multi-select>
 
     <div class="p-4 flex flex-row justify-center space-x-4">
       <div
@@ -79,6 +84,7 @@ import Utils from "@/utils/Utils";
 import { data, connectionTypes } from "@/data/data";
 import { Phrase } from "@/api/Phrase";
 import ConnectionChips from "@/components/Chips";
+import SubmitMultiSelect from "./common/SubmitMultiSelect.vue";
 
 function highlight(outerTokens, word) {
   const tokens = wordsToTokens([word]);
@@ -106,7 +112,7 @@ function sortTokens(index, items) {
 }
 
 export default {
-  components: { Word, ConnectionChips },
+  components: { Word, ConnectionChips, SubmitMultiSelect },
   props: ["sentence"],
   data() {
     return {
@@ -116,18 +122,35 @@ export default {
       fromWord: null,
       connectionType: null,
       connectionTypes,
+      selectedWord: null,
     };
   },
   methods: {
     ...Utils,
-    click(word) {
-      this.clearFocusedConnection();
-      this.from = this.getUpdatedSelection(word);
+    clickWord(word) {
+      this.click({ token: word });
     },
-    shiftClick(word) {
-      this.to = word;
-      const toTokens = this.toTokens(word);
-      this.from = this.removeFromSelected(word);
+    shiftClickWord(word) {
+      this.shiftClick({ token: word });
+    },
+    click({ token }) {
+      this.clearFocusedConnection();
+      this.from = this.getUpdatedSelection(token);
+
+      const { resultWords, resultTokens } = Utils.tokensToWords(
+        this.from,
+        this.sentence.words
+      );
+      if (resultWords.length === 1 && !resultTokens.length) {
+        this.selectedWord = resultWords[0];
+      } else {
+        this.selectedWord = null;
+      }
+    },
+    shiftClick({ token }) {
+      this.to = token;
+      const toTokens = this.toTokens(token);
+      this.from = this.removeFromSelected(token);
       if (toTokens.length > 1 || this.from.length === 0) {
         return;
       }
@@ -154,7 +177,7 @@ export default {
       return Utils.filterByArray(tokens, this.from, { param: "id" });
     },
     getUpdatedSelection(word) {
-      if (this.isSelected(word)) {
+      if (this.isSelected(this.from, word)) {
         return this.removeFromSelected(word);
       } else {
         const tokens = Utils.toTokens(word);
@@ -284,9 +307,10 @@ export default {
     clearSelection() {
       this.to = null;
       this.from = [];
+      this.selectedWord = null;
     },
-    isSelected(word) {
-      return Utils.containsArray(this.toTokens(word), this.from);
+    isSelected(from, word) {
+      return Utils.containsArray(this.toTokens(word), from);
     },
     highlightFrom(word) {
       if (!this.selectedConnection) return { word: false, token: "" };
@@ -314,6 +338,14 @@ export default {
       });
       this.clearFocusedConnection();
       this.$emit("change");
+    },
+    onMultiSelectChange(obj) {
+      const word = this.selectedWord;
+      const token = Utils.mkToken({ name: obj.tag });
+      this.$store.commit("Graph/addToken", token);
+      this.$store.commit("Graph/addTokenToWord", { word, token });
+      this.$emit("change");
+      this.clearSelection();
     },
   },
 };

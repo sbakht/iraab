@@ -2,6 +2,9 @@ import { data } from '../data/data';
 import { Speech } from './PartsOfSpeech'
 import { Phrase } from './Phrase';
 
+
+//خلقكُمْ نِنْ تُرابٍ
+
 const obj = {
   activeSentenceId: 'sentence-1',
   tokens: {

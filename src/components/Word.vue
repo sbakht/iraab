@@ -97,10 +97,10 @@ export default {
   },
   methods: {
     clickToken(token) {
-      this.$emit("clickToken", token);
+      this.$emit("clickToken", { token, word: this.word });
     },
     shiftClickToken(token) {
-      this.$emit("shiftClickToken", token);
+      this.$emit("shiftClickToken", { token, word: this.word });
     },
     clickWord() {
       this.$emit("clickWord", this.word);

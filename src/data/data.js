@@ -74,11 +74,34 @@ const connections = {
     '18': MudafIlayhi,
     '20': Majroor,
     '21': Sifa,
+    '22': Fial,
+    '23': mafool.items[0],
+    '24': mafool.items[1],
+    '25': mafool.items[2],
+    '26': mafool.items[3],
+    '27': mafool.items[4],
   },
-  allIds: ['5', '17', '20', '21'],
+  allIds: ['5', '17', '18', '20', '21', '22', '23', '24', '25', '26', '27'],
 }
 
 export const connectionTypes = {
   ...connections,
   all: connections.allIds.map(id => connections.byId[id]),
 }
+
+export const pronouns = [
+  { english: 'huwa', arabic: 'هو' },
+  { english: 'humaa', arabic: 'هما' },
+  { english: 'hum', arabic: 'همْ' },
+  { english: 'heya', arabic: 'هِي' },
+  { english: 'humaa', arabic: 'هُمَا' },
+  { english: 'honna', arabic: 'هُنَّ' },
+  { english: 'anta', arabic: 'اَنْتَ' },
+  { english: 'antumaa', arabic: 'اَنْتُمَا' },
+  { english: 'antum', arabic: 'اَنْتُمْ' },
+  { english: 'anti', arabic: 'اَنْتِ' },
+  { english: 'antumaa', arabic: 'اَنْتُما' },
+  { english: 'antunna', arabic: 'اَنْتُنَّ' },
+  { english: 'anaa', arabic: 'اَنَا' },
+  { english: 'nahnu', arabic: 'نَحْنُ' },
+]
